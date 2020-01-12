@@ -1,0 +1,48 @@
+/*
+ * @Author: your name
+ * @Date: 2019-09-03 10:19:47
+ * @LastEditTime: 2019-10-25 17:12:12
+ * @LastEditors: Please set LastEditors
+ * @Description: In User Settings Edit
+ * @FilePath: /d:\element UI\vue-xf\src\router\demo\index.js
+ */
+// import docManage from './docManage.js'
+export default [
+  {
+    path: '',
+    component: () => import('@/components/securityAssessment/indicatorSetting')
+    // redirect: '/assessment/assessmentTask'
+  },
+  {
+    path: '/indicatorSetting',
+    name: 'indicatorSetting',
+    component: () => import('@/components/securityAssessment/indicatorSetting')
+  },
+  {
+    path: '/assessmentTask',
+    name: 'assessmentTask',
+    component: () => import('@/components/securityAssessment/assessmentTask')
+  },
+  {
+    path: '/doc',
+    name: '文档管理',
+    component: () => import('@/components/docManage/docManage.vue')
+  },
+  {
+    path: '/draw',
+    name: '图纸管理',
+    component: () => import('@/components/docManage/drawManage.vue')
+  },
+  {
+    path: '/fire',
+    name: '消防安全',
+
+    component: () => import('@/components/firewarden/fire.vue')
+  },
+  {
+    path: '/maint',
+    name: '维保巡检',
+
+    component: () => import('@/components/maintenance/maintenance.vue')
+  }
+]

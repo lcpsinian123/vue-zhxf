@@ -1,0 +1,69 @@
+@charset "UTF-8";
+
+//-----------------------------------------------------	
+// common.less, 全局通用样式
+//-----------------------------------------------------	
+.page-bg-gray {
+  position: relative;
+  height: 100%;
+  width: 100%;
+  background-color: @colorF;
+}
+.modediv{
+  width: 100%;
+ border:1px solid #01176B;
+ background: rgba(9,19,73,1);
+ border-radius: 5px;
+  max-height:235px;
+  .modetitle{
+      width: 100%;
+     
+      display: flex;
+      .titlelogo{
+         width:4px;
+          height:18px;
+          background:rgba(82,255,255,1);
+         margin-top: 5px;
+          margin-left: 10px;
+      }
+      .titlename{
+          color:rgba(82,255,255,1); 
+           margin-left: 10px;
+           font-size:18px;
+           font-weight:400;
+      }
+  }
+}
+.top{
+  margin-top: 10px;
+}
+.listshow{
+  width: 100%;
+  height: 30px;
+  font-size: 14px;
+  line-height: 30px;
+  text-align: center;
+  background: rgba(35,119,233,0.14);
+}
+.scroll-content {
+//自定义滚动 间隔时间和方向
+position: relative;
+transition: top 0.825s; //向上移动
+}
+.body {
+width: 100%;
+height: 100px;
+overflow-y: hidden;
+//   position: absolute;
+
+}
+.huadongdiv{
+  width: 100%;
+  height: 30px;
+  font-size: 14px;
+  line-height: 30px;
+  text-align: center;
+}
+.huadongdiv:nth-child(even){
+  background: rgba(35,119,233,0.14);
+}

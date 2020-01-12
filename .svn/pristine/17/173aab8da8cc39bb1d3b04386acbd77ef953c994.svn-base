@@ -1,0 +1,732 @@
+<template>
+<div class='container'>
+
+    <div class="rightHead">
+        <Divider orientation="left">巡检计划</Divider>
+        <div class='searchMeun'>
+            <Button class='wdName' @click="add = true" type="info">添加</Button>
+
+            <Button class='wdName' type="error">删除</Button>
+
+            <Button class='wdName' @click="add = true" type="warning">复用</Button>
+            <Dropdown style="margin:0  50px;">
+                <Button type="primary">
+                    下拉菜单
+                    <Icon type="ios-arrow-down"></Icon>
+                </Button>
+                <DropdownMenu slot="list">
+                    <DropdownItem>驴打滚</DropdownItem>
+                    <DropdownItem>炸酱面</DropdownItem>
+                    <DropdownItem disabled>豆汁儿</DropdownItem>
+                    <DropdownItem>冰糖葫芦</DropdownItem>
+                    <DropdownItem divided>北京烤鸭</DropdownItem>
+                </DropdownMenu>
+            </Dropdown>
+            <div>
+                <Input search style='width:700px;' enter-button placeholder="搜索巡检计划名称..." />
+            </div>
+            <!-- 添加模态框   默认时巡-->
+            <Modal width="700" id="add" class="plan" @on-ok='submitPlan' v-model="add">
+                <div slot="header" class="addheader">
+                    巡检计划信息
+                </div>
+                <Form ref="formValidate" :model="formValidate" :label-width="120">
+                    <FormItem label="计划名称:" prop="name">
+                        <Input v-model="formValidate.name" placeholder="计划名称.."></Input>
+                    </FormItem>
+                    <FormItem label="路由编号:" prop="routers">
+                        <Input v-model="formValidate.routers" placeholder="路由编号..."></Input>
+                    </FormItem>
+                    <FormItem label="是否严格执行:" prop="isStrict">
+                        <RadioGroup v-model="formValidate.isStrict">
+                            <Radio style='margin-right:50px' label="1">是</Radio>
+                            <Radio label="0">否</Radio>
+                        </RadioGroup>
+                    </FormItem>
+                    <FormItem label="计划开始日期:" prop="startDay">
+
+                        <DatePicker style='width:100%;' type="date" placeholder="计划开始日期..." v-model="formValidate.startDay"></DatePicker>
+
+                    </FormItem>
+                    <FormItem label="计划结束日期:" prop="endDay">
+
+                        <DatePicker style='width:100%;' type="date" placeholder="计划结束日期..." v-model="formValidate.endDay"></DatePicker>
+
+                    </FormItem>
+                    <FormItem label="类别:" prop="category">
+
+                        <Select v-model="formValidate.category" style="width:100%">
+                            <Option v-for="item in formValidate.interest" :value="item.value" :key="item.value">{{ item.label }}</Option>
+                        </Select>
+
+                    </FormItem>
+                    <div v-if='formValidate.category=="7"'>
+                        <FormItem label="计划执行时间:">
+                            <Row>
+                                <Col span="11">
+                                <FormItem prop="date">
+                                    <DatePicker style='width:100%' type="date" placeholder="计划开始时间..." v-model="formValidate.date"></DatePicker>
+                                </FormItem>
+                                </Col>
+                                <Col span="2" style="text-align: center">-</Col>
+                                <Col span="11">
+                                <FormItem prop="time">
+                                    <TimePicker style='width:100%' type="time" placeholder="计划结束时间..." v-model="formValidate.time"></TimePicker>
+                                </FormItem>
+                                </Col>
+                            </Row>
+                        </FormItem>
+                        <FormItem label="生成时间:" prop="longTime">
+                            <div calss='TimeBox' style='display:flex;width:100%;'>
+
+                                <div style='margin:0 10px;'>每</div>
+                                <div style='width:85%'>
+                                    <Input v-model="formValidate.longTime" placeholder=""></Input>
+                                </div>
+                                <div style='margin:0 10px;'>小时</div>
+
+                            </div>
+
+                        </FormItem>
+                        <FormItem label="有效时间:" prop="city">
+                            <div calss='TimeBox' style='display:flex;width:100%;'>
+                                <div style='width:45%'>
+                                    <Input v-model="formValidate.validDay" placeholder=""></Input>
+                                </div>
+                                <div style='margin:0 10px;'>天</div>
+                                <div style='width:45%'>
+                                    <Input v-model="formValidate.validHour" placeholder=""></Input>
+                                </div>
+                                <div style='margin:0 10px;'>时</div>
+
+                            </div>
+
+                        </FormItem>
+                        <FormItem label="巡检人员编号:" prop="pollingID">
+
+                            <Select v-model="formValidate.pollingID" style="width:100%">
+                                <Option v-for="item in formValidate.interest" :value="item.value" :key="item.value">{{ item.label }}</Option>
+                            </Select>
+
+                        </FormItem>
+                        <FormItem label="计划状态:" prop="planStatus">
+                            <RadioGroup v-model="formValidate.planStatus">
+                                <Radio style='margin-right:50px;' label="1">激活</Radio>
+                                <Radio label="0">冻结</Radio>
+                            </RadioGroup>
+                        </FormItem>
+                    </div>
+                     <!-- 年巡-->
+                    <div v-if='formValidate.category=="8"'>
+                        <FormItem label="生成时间:" prop="longTime">
+                            <div calss='TimeBox' style='display:flex;width:100%;'>
+                                <div style='width:45%'>
+                                    <Input v-model="formValidate.YearGenerateStart" placeholder=""></Input>
+                                </div>
+                                <div style='margin:0 10px;'>1号</div>
+                                <div style='width:45%'>
+                                    <Input v-model="formValidate.YearGenerateEnd" placeholder=""></Input>
+                                </div>
+                               
+
+                            </div>
+
+                        </FormItem>
+                        <FormItem label="有效时间:" prop="city">
+                            <div calss='TimeBox' style='display:flex;width:100%;'>
+                                <div style='width:45%'>
+                                    <Input v-model="formValidate.validDay" placeholder=""></Input>
+                                </div>
+                                <div style='margin:0 10px;'>天</div>
+                                <div style='width:45%'>
+                                    <Input v-model="formValidate.validHour" placeholder=""></Input>
+                                </div>
+                                <div style='margin:0 10px;'>时</div>
+
+                            </div>
+
+                        </FormItem>
+                        <FormItem label="巡检人员编号:" prop="YaerPollingID">
+
+                            <Select v-model="formValidate.YaerPollingID" style="width:100%">
+                                <Option v-for="item in formValidate.interest" :value="item.value" :key="item.value">{{ item.label }}</Option>
+                            </Select>
+
+                        </FormItem>
+                        <FormItem label="计划状态:" prop="planStatus">
+                            <RadioGroup v-model="formValidate.planStatus">
+                                <Radio style='margin-right:50px;' label="1">激活</Radio>
+                                <Radio label="0">冻结</Radio>
+                            </RadioGroup>
+                        </FormItem>
+                    </div>
+                    <!-- 次巡-->
+                    <div v-if='formValidate.category=="6"'>
+                    
+                        <FormItem label="巡检人员编号:" prop="YaerPollingID">
+
+                            <Select v-model="formValidate.YaerPollingID" style="width:100%">
+                                <Option v-for="item in formValidate.interest" :value="item.value" :key="item.value">{{ item.label }}</Option>
+                            </Select>
+
+                        </FormItem>
+                        <FormItem label="计划状态:" prop="planStatus">
+                            <RadioGroup v-model="formValidate.planStatus">
+                                <Radio style='margin-right:50px;' label="1">激活</Radio>
+                                <Radio label="0">冻结</Radio>
+                            </RadioGroup>
+                        </FormItem>
+                    </div>
+                    <!-- 季巡-->
+                    <div v-if='formValidate.category=="5"'>
+                        <FormItem label="生成时间:" prop="longTime">
+                            <div calss='TimeBox' style='display:flex;width:100%;'>
+                                <div style='width:45%'>
+                                    <Input v-model="formValidate.QuarterGenerateStart" placeholder=""></Input>
+                                </div>
+                                <div style='margin:0 10px;'>1号</div>
+                                <div style='width:45%'>
+                                    <Input v-model="formValidate.QuarterGenerateEnd" placeholder=""></Input>
+                                </div>
+                               
+
+                            </div>
+
+                        </FormItem>
+                        <FormItem label="有效时间:" prop="city">
+                            <div calss='TimeBox' style='display:flex;width:100%;'>
+                                <div style='width:45%'>
+                                    <Input v-model="formValidate.QuartervalidDay" placeholder=""></Input>
+                                </div>
+                                <div style='margin:0 10px;'>天</div>
+                                <div style='width:45%'>
+                                    <Input v-model="formValidate.QuartervalidHour" placeholder=""></Input>
+                                </div>
+                                <div style='margin:0 10px;'>时</div>
+
+                            </div>
+
+                        </FormItem>
+                        <FormItem label="巡检人员编号:" prop="YaerPollingID">
+
+                            <Select v-model="formValidate.QuarterPollingID" style="width:100%">
+                                <Option v-for="item in formValidate.interest" :value="item.value" :key="item.value">{{ item.label }}</Option>
+                            </Select>
+
+                        </FormItem>
+                        <FormItem label="计划状态:" prop="planStatus">
+                            <RadioGroup v-model="formValidate.QuarterPlanStatus">
+                                <Radio style='margin-right:50px;' label="1">激活</Radio>
+                                <Radio label="0">冻结</Radio>
+                            </RadioGroup>
+                        </FormItem>
+                    </div>
+                    <!-- 月巡-->
+                    <div v-if='formValidate.category=="4"'>
+                        <FormItem label="生成时间:" prop="longTime">
+                            <div calss='TimeBox' style='display:flex;width:100%;'>
+                                <div style='width:48%;margin-right:10px;'>
+                                   <DatePicker style='width:100%;' type="date" placeholder="计划开始时间..." v-model="formValidate.Monthdate"></DatePicker>
+                                </div>
+                               
+                                <div style='width:50%'>
+                                    <Input v-model="formValidate.MonthEnd" placeholder=""></Input>
+                                </div>
+                               
+
+                            </div>
+
+                        </FormItem>
+                        <FormItem label="有效时间:" prop="city">
+                            <div calss='TimeBox' style='display:flex;width:100%;'>
+                                <div style='width:45%'>
+                                    <Input v-model="formValidate.MonthValidDay" placeholder=""></Input>
+                                </div>
+                                <div style='margin:0 10px;'>天</div>
+                                <div style='width:45%'>
+                                    <Input v-model="formValidate.MonthValidHour" placeholder=""></Input>
+                                </div>
+                                <div style='margin:0 10px;'>时</div>
+
+                            </div>
+
+                        </FormItem>
+                        <FormItem label="巡检人员编号:" prop="YaerPollingID">
+
+                            <Select v-model="formValidate.MonthPollingID" style="width:100%">
+                                <Option v-for="item in formValidate.interest" :value="item.value" :key="item.value">{{ item.label }}</Option>
+                            </Select>
+
+                        </FormItem>
+                        <FormItem label="计划状态:" prop="planStatus">
+                            <RadioGroup v-model="formValidate.MonthPlanStatus">
+                                <Radio style='margin-right:50px;' label="1">激活</Radio>
+                                <Radio label="0">冻结</Radio>
+                            </RadioGroup>
+                        </FormItem>
+                    </div>
+                    <!-- 周巡-->
+                    <div v-if='formValidate.category=="3"'>
+                        <FormItem label="生成时间:" prop="longTime">
+                            <div calss='TimeBox' style='display:flex;width:100%;'>
+                                <div style='width:48%;margin-right:10px;'>
+                                   <DatePicker style='width:100%;' type="date" placeholder="计划开始时间..." v-model="formValidate.weekdate"></DatePicker>
+                                </div>
+                               
+                                <div style='width:50%'>
+                                    <Input v-model="formValidate.weekEnd" placeholder=""></Input>
+                                </div>
+                               
+
+                            </div>
+
+                        </FormItem>
+                        <FormItem label="有效时间:" prop="city">
+                            <div calss='TimeBox' style='display:flex;width:100%;'>
+                                <div style='width:45%'>
+                                    <Input v-model="formValidate.weekValidDay" placeholder=""></Input>
+                                </div>
+                                <div style='margin:0 10px;'>天</div>
+                                <div style='width:45%'>
+                                    <Input v-model="formValidate.weekValidHour" placeholder=""></Input>
+                                </div>
+                                <div style='margin:0 10px;'>时</div>
+
+                            </div>
+
+                        </FormItem>
+                        <FormItem label="巡检人员编号:" prop="YaerPollingID">
+
+                            <Select v-model="formValidate.weekPollingID" style="width:100%">
+                                <Option v-for="item in formValidate.interest" :value="item.value" :key="item.value">{{ item.label }}</Option>
+                            </Select>
+
+                        </FormItem>
+                        <FormItem label="计划状态:" prop="planStatus">
+                            <RadioGroup v-model="formValidate.weekPlanStatus">
+                                <Radio style='margin-right:50px;' label="1">激活</Radio>
+                                <Radio label="0">冻结</Radio>
+                            </RadioGroup>
+                        </FormItem>
+                    </div>
+                     <!-- 日巡-->
+                    <div v-if='formValidate.category=="2"'>
+                        <FormItem label="生成时间:" prop="longTime">
+                            <div calss='TimeBox' style='display:flex;width:100%;'>
+                                
+                                <div>每天</div>
+                                <div style='width:94%'>
+                                    <Input v-model="formValidate.daytime" placeholder=""></Input>
+                                </div>
+                            </div>
+
+                        </FormItem>
+                        <FormItem label="有效时间:" prop="city">
+                            <div calss='TimeBox' style='display:flex;width:100%;'>
+                                <div style='width:42%'>
+                                    <Input v-model="formValidate.dayValidDay" placeholder=""></Input>
+                                </div>
+                                <div style='margin:0 10px;'>天</div>
+                                <div style='width:44%'>
+                                    <Input v-model="formValidate.dayValidHour" placeholder=""></Input>
+                                </div>
+                                <div >小时</div>
+
+                            </div>
+
+                        </FormItem>
+                        <FormItem label="巡检人员编号:" prop="YaerPollingID">
+
+                            <Select v-model="formValidate.dayPollingID" style="width:100%">
+                                <Option v-for="item in formValidate.interest" :value="item.value" :key="item.value">{{ item.label }}</Option>
+                            </Select>
+
+                        </FormItem>
+                        <FormItem label="计划状态:" prop="planStatus">
+                            <RadioGroup v-model="formValidate.dayPlanStatus">
+                                <Radio style='margin-right:50px;' label="1">激活</Radio>
+                                <Radio label="0">冻结</Radio>
+                            </RadioGroup>
+                        </FormItem>
+                    </div>
+                   
+                     <!-- 全部-->
+                    <div v-if='formValidate.category=="0"'>
+                      
+                        <FormItem label="有效时间:" prop="city">
+                            <div calss='TimeBox' style='display:flex;width:100%;'>
+                                <div style='width:42%'>
+                                    <Input v-model="formValidate.allValidDay" placeholder=""></Input>
+                                </div>
+                                <div style='margin:0 10px;'>天</div>
+                                <div style='width:44%'>
+                                    <Input v-model="formValidate.allValidHour" placeholder=""></Input>
+                                </div>
+                                <div>小时</div>
+
+                            </div>
+
+                        </FormItem>
+                        <FormItem label="巡检人员编号:" prop="YaerPollingID">
+
+                            <Select v-model="formValidate.allPollingID" style="width:100%">
+                                <Option v-for="item in formValidate.interest" :value="item.value" :key="item.value">{{ item.label }}</Option>
+                            </Select>
+
+                        </FormItem>
+                        <FormItem label="计划状态:" prop="planStatus">
+                            <RadioGroup v-model="formValidate.allPlanStatus">
+                                <Radio style='margin-right:50px;' label="1">激活</Radio>
+                                <Radio label="0">冻结</Radio>
+                            </RadioGroup>
+                        </FormItem>
+                    </div>
+                    
+
+                </Form>
+            </Modal>
+            <!--  end  -->
+        </div>
+        <div class='tableBox'>
+            <Table stripe border :columns="TableTitle" :data="TableData">
+
+                <template slot-scope="{ row, index }" slot="action">
+                    <Button type="primary" ghost size="small" @click="xjnr = true">巡检内容</Button>
+
+                    <Modal width="700" v-model="xjnr">
+                        <div slot="header" class="">
+                            巡检内容列表
+                        </div>
+                        <div class="seaechType">
+                            <span> 巡检类别&nbsp;&nbsp;: &nbsp;&nbsp;&nbsp;</span>
+                            <Select v-model="floorNum" style="width:120px">
+                                <Option v-for="item in period" :value="item.value" :key="item.value">{{ item.label }}</Option>
+                            </Select>
+                        </div>
+                        <Table stripe border :columns="patrolTitle" :data="patrolcontent">
+                            <template slot="action">
+                                <Button type="warning" ghost size="small" @click="xjnr = true">删除</Button>
+                            </template>
+
+                        </Table>
+                    </Modal>
+                    <Button type="primary" ghost size="small" style="margin:0 10px" @click="updata=true">修改</Button>
+                    <Modal width="700" id="updata" v-model="updata">
+                        <div slot="header" class="addheader">
+                            修改
+                        </div>
+                        <div class="addcontent">
+                            <div class="top">
+                                <span class="XMLXBH">项目类型编号&nbsp;&nbsp;: </span>
+                                <Input v-model="XMLXBH" placeholder="输入项目类型编号" style="width: 30%;margin-right:30px;" />
+                                <span class="XMLXBH">项目类型名称&nbsp;&nbsp;: </span>
+                                <Input v-model="XMLXBH" placeholder="输入项目类型名称" style="width: 30%" />
+                            </div>
+                            <div class="top">
+                                <span class="XMLXBH">设备操作规范&nbsp;&nbsp;: </span>
+                                <Input v-model="XMLXBH" style="width: 30%;margin-right:30px;" />
+                                <span class="XMLXBH">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;备&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;注&nbsp;&nbsp;&nbsp;&nbsp;: </span>
+                                <Input v-model="XMLXBH" style="width: 30%" />
+                            </div>
+                        </div>
+                    </Modal>
+                    <Button type="warning" ghost size="small" @click="remove(index)">删除</Button>
+
+                </template>
+            </Table>
+            <Page :total="TableData.length" :page-size="pageSize" show-total class="paging"></Page>
+        </div>
+
+    </div>
+</div>
+</template>
+
+<script>
+export default {
+    data() {
+        return {
+            // 初始化信息总条数
+            dataCount: 0,
+            // 每页显示多少条
+            pageSize: 10,
+            floorNum: null,
+            XMLXBH: null,
+            xjnr: false,
+            add: false,
+            updata: false,
+            WordName: null,
+            drawCategory: null,
+            period: [{
+                    value: "all",
+                    label: '全部'
+                },
+                {
+                    value: "year",
+                    label: '每年巡检'
+                },
+                {
+                    value: "month",
+                    label: '每月巡检'
+                },
+                {
+                    value: "day",
+                    label: '每日巡检'
+                }
+
+            ],
+            TableTitle: [{
+                    title: '编号',
+                    width: 80,
+                    key: 'sortNum'
+                },
+
+                {
+                    title: '项目类型名称',
+                    align: 'center',
+                    key: 'docCategory'
+                },
+                {
+                    title: '设备操作规范',
+                    align: 'center',
+                    key: 'updataTime'
+                },
+                {
+                    title: '备注',
+                    align: 'center',
+                    key: 'realUnit'
+                },
+                {
+                    title: '操作',
+                    key: 'action',
+                    slot: 'action',
+                    align: 'center'
+                }
+            ],
+            TableData: [{
+                    sortNum: 1,
+
+                    docCategory: '平面图',
+                    updataTime: '2019-04-10',
+                    realUnit: "振南物业",
+
+                },
+                {
+                    sortNum: 2,
+
+                    docCategory: '平面图',
+                    updataTime: '2019-04-10',
+                    realUnit: "振南物业",
+
+                }
+
+            ],
+            patrolTitle: [{
+                    title: '巡检内容',
+                    align: 'center',
+                    key: 'patrolCon'
+                },
+
+                {
+                    title: '操作类型',
+                    align: 'center',
+                    key: 'actionType'
+                },
+                {
+                    title: '最大值',
+                    align: 'center',
+                    key: 'max'
+                },
+                {
+                    title: '最小值',
+                    align: 'center',
+                    key: 'min'
+                },
+                {
+                    title: '数据类型',
+                    align: 'center',
+                    key: 'datasType'
+                },
+                {
+                    title: '操作',
+                    key: 'action',
+                    slot: 'action',
+                    align: 'center'
+                }
+            ],
+            patrolcontent: [{
+                    patrolCon: "压力不足",
+                    actionType: '选择设备',
+                    max: '99',
+                    min: '1',
+                    datasType: "消防安全",
+
+                },
+                {
+                    patrolCon: "瓶体腐蚀",
+                    actionType: '选择设备',
+                    max: '9',
+                    min: '1',
+                    datasType: "消防安全",
+
+                }
+            ],
+            formValidate: {
+                date:"",
+                time:"",
+                name: '', // 名称
+                routers: '', // 路由
+                isStrict: "", // 是否严格
+                startDay: "", // 开始日期
+                endDay: "", // 结束日期
+                planStatus: '', //计划状态
+                validDay: '', // 有效天
+                validHour: "", // 有效小时
+                pollingID:'',// 时巡人员Id
+                interest: [{
+                        value: '0',
+                        label: '全部',
+                    },
+                    {
+                        value: '2',
+                        label: '日巡任务',
+                    },
+                    {
+                        value: '3',
+                        label: '周巡任务',
+                    },
+                    {
+                        value: '4',
+                        label: '月巡任务',
+                    },
+                    {
+                        value: '5',
+                        label: '季巡任务',
+                    },
+                    {
+                        value: '6',
+                        label: '次巡任务',
+                    },
+                    {
+                        value: '7',
+                        label: '时巡任务',
+                    },
+                    {
+                        value: '8',
+                        label: '年巡任务',
+                    },
+
+                ], // 类别
+                category: "7",// 默认类别 时巡查
+                //  以下年巡检相关
+                YaerPollingID:"",// 年巡检
+                YearGenerateStart:'',// 生成时间
+                YearGenerateEnd:"",//生成结束
+                YearValidDay:'',// 有效开始
+                YearValidHour:'',// 有效结束
+                YearPlanStatus:'',// 是否冻结
+               // 以下时次巡相关参数;
+                oncePollingID:'',
+                oncePlanStatus:"",
+                // 以下季巡
+                QuarterPollingID:"",// 年巡检
+                QuarterGenerateStart:'',// 生成时间
+                QuarterGenerateEnd:"",//生成结束时间
+                QuarterValidDay:'',// 有效开始
+                QuarterValidHour:'',// 有效结束
+                QuarterPlanStatus:'',
+                // 以下月巡查
+                Monthdate:'',// 生成时间
+                MonthEnd:'',//生成结束时间
+                MonthPollingID:'',
+                MonthValidDay:'',// 有效开始
+                MonthValidHour:'',// 有效结束
+                MonthPlanStatus:'',
+                // 以下周巡查
+                weekdate:'',// 生成时间
+                weekEnd:'',//生成结束时间
+                weekPollingID:'',
+                weekValidDay:'',// 有效开始
+                weekValidHour:'',// 有效结束
+                weekPlanStatus:'',
+                // 以下日巡查
+                daytime:'',// 生成时间
+                dayPollingID:'',
+                dayValidDay:'',// 有效开始
+                dayValidHour:'',// 有效结束
+                dayPlanStatus:'',
+                // 以下是未定义
+         
+                noPollingID:'',
+                noValidDay:'',// 有效开始
+                noValidHour:'',// 有效结束
+                noPlanStatus:'',
+                // 以下是全部
+       
+                allPollingID:'',
+                allValidDay:'',// 有效开始
+                allValidHour:'',// 有效结束
+                allPlanStatus:'',
+            },
+
+        }
+    },
+    methods: {
+        submitPlan(data) {
+            console.log(this.formValidate)
+
+        }
+    },
+}
+</script>
+
+<style lang="less" scoped>
+.container {
+
+    width: 100%;
+    padding: 0 3px;
+
+    .rightHead {
+
+        .searchMeun {
+            padding: 0 20px;
+            position: relative;
+            top: -27px;
+            height: 50px;
+            border: 1px solid #e8eaec;
+            border-top: none;
+            height: 80px;
+            line-height: 80px;
+            display: flex;
+            align-items: center;
+
+            .wdName {
+                margin-left: 50px;
+            }
+        }
+    }
+}
+</style><style>
+.seaechType {
+    width: 100%;
+    height: 40px;
+    text-align: right;
+}
+
+#add .ivu-modal-header,
+#updata .ivu-modal-header {
+    padding: 0;
+}
+
+#add .ivu-modal-close,
+#updata .ivu-modal-close {
+    top: 3px;
+}
+
+.addheader {
+    background: #394959;
+    height: 40px;
+    line-height: 40px;
+    color: #fff;
+    padding-left: 30px;
+}
+</style>

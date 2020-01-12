@@ -1,0 +1,49 @@
+/*
+ * @Author: your name
+ * @Date: 2019-10-24 16:17:24
+ * @LastEditTime: 2019-10-30 14:13:10
+ * @LastEditors: your name
+ * @Description: In User Settings Edit
+ * @FilePath: \vue-zzxf\src\axios\api\user.js
+ */
+import axiosApi from '@/axios/config'
+
+/**
+ * 用户登录
+ * @param {String} url 接口url
+ * @param {String} method 请求方式
+ * @param {Obj} params 参数
+ *              params.username 用户名
+ *              params.password 密码
+ * @param {Fn} cb 回调函数
+ * @return
+ */
+export const login = params => {
+  return axiosApi(
+    {
+      url: '/user/login',
+      method: 'post'
+    },
+    params
+  )
+}
+
+/**
+ * 用户登录
+ * @param {String} url 接口url
+ * @param {String} method 请求方式
+ * @param {Obj} params 参数
+ *              params.username 用户名
+ *              params.type 找回密码type: 'modify_pwd'
+ * @param {Fn} cb 回调函数
+ * @return
+ */
+export const sendCode = params => {
+  return axiosApi(
+    {
+      url: '/sms/sendcode',
+      method: 'post'
+    },
+    params
+  )
+}

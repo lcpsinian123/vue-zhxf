@@ -1,0 +1,1052 @@
+<!--
+ * @Author: your name
+ * @Date: 2019-11-16 13:21:08
+ * @LastEditTime: 2019-11-18 18:43:04
+ * @LastEditors: Please set LastEditors
+ * @Description: In User Settings Edit
+ * @FilePath: \vue-zzxf\src\components\firealarm\firealarm.vue
+ -->
+<template>
+    <div class="firealarm" id="mapDiv">
+      
+        <div class="headerleft">
+                     <Tabs value="name1">
+                    <TabPane label="集团" name="name1"  >
+                        
+                      <div  class="lefthedaer">
+<Input search enter-button="搜索" placeholder="请输入需要搜索的区域" style="padding:0px 20px;" />
+                        </div> 
+                        <div class="modediv" style="height:140px;border-bottom:1px solid #ccc">
+                           <div class="modetitle">
+                               <span class="titlelogo"></span>
+                               <span class='titlename'>最近二十四小时报警事件</span>
+                           </div>
+                           <div style="width:100%;height:100%;">
+                              <div class="firediv">
+                                  <div class="flexdiv" > 
+                                      <div class="qiu">
+                                        <img src="../../assets/images/huojing/sjzs.png" alt="">
+                                      </div>
+                                         <span>&nbsp;&nbsp;事件总数: 10914</span>
+                                   </div>
+                                  <div class="flexdiv">
+                                      <div class="qiu">
+                                        <img src="../../assets/images/huojing/hj.png" alt="">
+                                      </div>
+                                         <span>&nbsp;&nbsp;火警: 356</span>
+                                  </div>
+                                  <div class="flexdiv">
+                                     <div class="qiu">
+                                        <img src="../../assets/images/huojing/bj.png" alt="">
+                                      </div>
+                                         <span>&nbsp;&nbsp;报警: 356</span>
+                                  </div>
+                              </div>
+                              <div class="firediv">
+                                  <div class="flexdiv" > 
+                                    <div class="qiu">
+                                        <img src="../../assets/images/huojing/gz.png" alt="">
+                                      </div>
+                                         <span>&nbsp;&nbsp;故障: 1.3万</span>
+                                   </div>
+                                  <div class="flexdiv">
+                                     <div class="qiu">
+                                        <img src="../../assets/images/huojing/xx.png" alt="">
+                                      </div>
+                                         <span>&nbsp;&nbsp;下线: 14</span>
+                                  </div>
+                                 <div class="flexdiv">
+
+                                 </div>
+                              </div>
+                           </div>
+                           
+                        </div>
+                         <div class="modediv" style="  border-bottom:1px solid #ccc">
+                              <div class="modetitle">
+                               <span class="titlelogo"></span>
+                               <span class='titlename'>近七天报警趋势</span>
+                           </div>
+                           <div id="mychart11" class="echartsdiv"></div>
+                         </div>
+                          <div class="modediv" style="height:400px;">
+                              <div class="modetitle">
+                               <span class="titlelogo"></span>
+                               <span class='titlename'>事件列表</span>
+                           </div>
+                          <div class="listshow">
+                                <Col span="2">类型</COl>
+                                  <Col span="5">首次报警时间</COl>
+                                    <Col span="4">联网单位</COl>
+                                      <Col span="5">监控对象</COl>
+                                        <Col span="4">报警次数</COl>
+                                          <Col span="2">状态</COl>
+                                            <Col span="2">操作</COl>
+
+                            </div>
+                            <div class="body rollScreen_container" >
+                            <div class="scroll-content " :style="{top}"
+                                     >
+                                <div v-for="(item,index) in dutyRateData" class="huadongdiv "
+                                    >
+                                    <Col span="2" :class="item.color">{{item.leixin}}</Col>
+                                    <Col span="5">{{item.time}}</Col>
+                                    <Col span="4">{{item.danwei}}</Col>
+                                    <Col span="5">{{item.duixiang}}</Col>
+                                    <Col span="4">{{item.bjcs}}</Col>
+                                    <Col span="2">{{item.zt}}</Col>
+                                    <Col span="2" style="color:#2d8cf0;cursor:pointer;" >  <span @click="showmodel">查看</span> </Col>
+                                </div>
+
+                            </div>
+                        </div>
+                         </div>
+                      
+
+                       </TabPane>
+                    <TabPane label="物业一"name="name2">
+                        <button @click="showmodel">弹框</button>
+                    </TabPane>
+                    <TabPane label="物业二" name="name3">标签三的内容</TabPane>
+                      <TabPane label="物业三" name="name4">标签三的内容</TabPane>
+                        <TabPane label="物业四" name="name5">标签三的内容</TabPane>
+                </Tabs>
+        <Modal v-model="modal22" id='selectmodel' width="1600">
+                          <div slot="header" class="addheader flexdivs">
+                                              <div style="padding-left:10px">
+                                                <span>报警时间: 2019-11-16 14:36:12</span>
+                                              </div>
+                                                  <div>
+                                                <h1>金盾园区——消防物联网展示 | 展厅中断一手报</h1>
+                                              </div>
+                                               <div style="padding-right:100px;">
+                                                 <Button type="primary" size="small" @click="chulushow">处理</Button>
+                                              </div>
+                                                  </div>
+                              <div class="divxq">
+                                <div class="divone">
+                                <div class="modediv" style="box-shadow: 0px 2px 6px -2px;">
+                                          <div class="modetitle" style="justify-content: space-between;background:rgba(45,140,240,.2)">
+                                            <div style="display:flex;border-left:3px solid #3c8fff">
+                                              <!-- <span class="titlelogo"></span> -->
+                                              <span class="titlename" style='margin-top: 4px;'>单位联系人</span>
+                                            </div>
+                                             <div >
+                                              <span style="color: #3c8fff;margin-right:10px">更多>></span>
+                                            </div>
+                                          </div>
+                                              <div style="padding: 15px;">
+                                              <div style="width:100%; display: flex;box-shadow: 0px 2px 6px -2px;">
+                                              <div style="width: 60px;height: 60px;">
+                                                <img src="../../assets/images/login/loginmap.png"   >
+                                              </div>
+                                              <div style="display: flex;flex-direction: column;padding-left: 10px;">
+                                                <span>李旭</span>
+                                                <span>电话:18856823659</span>
+                                                <span>
+                                                    <span class="iconfont icon-dianhua red"></span>&nbsp;&nbsp;
+                                                   <span class="iconfont icon-duanxin-cehua-xinxixiangqing red"></span></span>
+                                              </div>
+                                          </div>
+                                                     <div style="width:100%; display:flex;box-shadow: 0px 2px 6px -2px;margin-top:10px; ">
+                                              <div style="width: 60px;height: 60px;">
+                                                <img src="../../assets/images/login/loginmap.png"   >
+                                              </div>
+                                              <div style="display: flex;flex-direction: column;padding-left: 10px;">
+                                                <span>李旭</span>
+                                                <span>电话:18856823659</span>
+                                                <span>
+                                                    <span class="iconfont icon-dianhua red"></span>&nbsp;&nbsp;
+                                                   <span class="iconfont icon-duanxin-cehua-xinxixiangqing red"></span></span>
+                                              </div>
+                                              </div>
+                                  </div>
+                                </div>
+                                  <div class="modediv" style="box-shadow: 0px 2px 6px -2px;margin-top:10px;height:272px">
+                                          <div class="modetitle" style="justify-content: space-between;background:rgba(45,140,240,.2)">
+                                            <div style="display:flex;border-left:3px solid #3c8fff">
+                                              <!-- <span class="titlelogo"></span> -->
+                                              <span class="titlename" style='margin-top: 4px;'>联勤单位</span>
+                                            </div>
+                                             <div >
+                                              <span style="color: #3c8fff;margin-right:10px">更多>></span>
+                                            </div>
+                                          </div>
+                                              <div style="padding: 15px;">
+                                              <div style="width:100%; display: flex;box-shadow: 0px 2px 6px -2px;">
+                                              <div style="width: 60px;height: 60px;">
+                                                <img src="../../assets/images/login/loginmap.png"   >
+                                              </div>
+                                              <div style="display: flex;flex-direction: column;padding-left: 10px;">
+                                                <span>维保单位</span>
+                                                <span>电话:18856823659</span>
+                                                <span>
+                                                    <span class="iconfont icon-dianhua red"></span>&nbsp;&nbsp;
+                                                   <span class="iconfont icon-duanxin-cehua-xinxixiangqing red"></span></span>
+                                              </div>
+                                          </div>
+                                              <div style="width:100%; display:flex;box-shadow: 0px 2px 6px -2px;margin-top:10px; ">
+                                              <div style="width: 60px;height: 60px;">
+                                                <img src="../../assets/images/login/loginmap.png"   >
+                                              </div>
+                                              <div style="display: flex;flex-direction: column;padding-left: 10px;">
+                                                <span>维保单位</span>
+                                                <span>电话:18856823659</span>
+                                                <span>
+                                                    <span class="iconfont icon-dianhua red"></span>&nbsp;&nbsp;
+                                                   <span class="iconfont icon-duanxin-cehua-xinxixiangqing red"></span></span>
+                                              </div>
+                                              </div>
+                                                <div style="width:100%; display:flex;box-shadow: 0px 2px 6px -2px;margin-top:10px; ">
+                                              <div style="width: 60px;height: 60px;">
+                                                <img src="../../assets/images/login/loginmap.png"   >
+                                              </div>
+                                              <div style="display: flex;flex-direction: column;padding-left: 10px;">
+                                                <span>维保单位</span>
+                                                <span>电话:18856823659</span>
+                                                <span>
+                                                    <span class="iconfont icon-dianhua red"></span>&nbsp;&nbsp;
+                                                   <span class="iconfont icon-duanxin-cehua-xinxixiangqing red"></span></span>
+                                              </div>
+                                              </div>
+                                  </div>
+                                  
+                                         <div class="modediv" style="box-shadow: 0px 2px 6px -2px;margin-top:10px;height:26px;">
+                                          <div class="modetitle" style="justify-content: space-between;background:rgba(45,140,240,.2)">
+                                            <div style="display:flex;border-left:3px solid #3c8fff">
+                                              <!-- <span class="titlelogo"></span> -->
+                                              <span class="titlename" style='margin-top: 4px;'>设备设施</span>
+                                            </div>
+                                             <div >
+                                              <span style="color: #3c8fff;margin-right:10px">更多>></span>
+                                            </div>
+                                          </div>
+                                     </div>
+
+                                    <div class="modediv" style="box-shadow: 0px 2px 6px -2px;margin-top:10px;height:272px">
+                                          <div class="modetitle" style="justify-content: space-between;background:rgba(45,140,240,.2)">
+                                            <div style="display:flex;border-left:3px solid #3c8fff">
+                                              <!-- <span class="titlelogo"></span> -->
+                                              <span class="titlename" style='margin-top: 4px;'>建筑信息</span>
+                                            </div>
+                                             <div >
+                                              <span style="color: #3c8fff;margin-right:10px">更多>></span>
+                                            </div>
+                                          </div>
+                                           <div style="display:flex;flex-direction: column;padding:20px;">
+                                             <span>建筑信息：主楼</span>
+                                               <span>使用性质：商业建筑</span>
+                                                 <span>耐火等级：0级</span>
+                                                   <span>结构类型：钢筋混凝土</span>
+                                                     <span>建筑高度：18米</span>
+                                                       <span>地上：6层</span>
+                                                           <span>地下：2层</span>
+                                                               <span>监控室：6</span>
+                                                                   <span>消控室：2</span>
+                                           </div>
+                                  
+                              
+                                         </div>
+                                </div>
+                                </div>
+                                <div class='divtwo'>
+                                   <div id="mapDivs" style="width:100%;height:520px;">
+                                     
+                                   </div>
+                               <div class="modediv" style="box-shadow: 0px 2px 6px -2px;margin-top:10px;height:306px">
+                                          <div class="modetitle" style="justify-content: space-between;background:rgba(45,140,240,.2)">
+                                            <div style="display:flex;border-left:3px solid #3c8fff">
+                                              <!-- <span class="titlelogo"></span> -->
+                                              <span class="titlename" style='margin-top: 4px;'>建筑信息</span>
+                                            </div>
+                                             <div >
+                                              <span style="color: #3c8fff;margin-right:10px">更多>></span>
+                                            </div>
+                                          </div>
+                                          <div style="padding:10px;">
+                                              <div class="listshow">
+                                      <Col span="6">时间</COl>
+                                      <Col span="6">地点</COl>
+                                      <Col span="6">仪器</COl>
+                                      <Col span="6">编码</COl>
+                                               </div>
+                                <div class="body " style="height:200px;">
+                                                      <div class="scroll-content " :style="{top}"
+                                                              >
+                                                          <div v-for="(item,index) in xqlist" class="huadongdiv "
+                                                              >
+                                                              <Col span="6">{{item.time}}</Col>
+                                                              <Col span="6">{{item.address}}</Col>
+                                                              <Col span="6">{{item.yiqi}}</Col>
+                                                              <Col span="6">{{item.bianma}}</Col>
+                                                          
+                                                          </div>
+
+                                                      </div>
+                                                  </div>
+                                  
+                                          </div>
+                                      
+                     
+                              
+                                         </div>
+                                </div>
+                                <div class="divthree">
+                                <div class="modediv" style="height:auto;background:none;border:0px;">
+              <div class="modetitle" style="justify-content: space-between;background:rgba(45,140,240,.2)">
+                                            <div style="display:flex;border-left:3px solid #3c8fff">
+                                              <!-- <span class="titlelogo"></span> -->
+                                              <span class="titlename" style='margin-top: 4px;'>视频监控</span>
+                                            </div>
+                                             <div >
+                                              <span style="color: #3c8fff;margin-right:10px">更多>></span>
+                                            </div>
+                                          </div>
+          <div style="padding:5px;">
+            <div class="divvideo">
+               <video src="../../assets/images/SC.mp4" controls="controls" style="width:100%">
+
+                    </video>
+            </div>
+            <div class="divvideos">
+              <div style="width:50%">
+                 <video src="../../assets/images/SC.mp4" controls="controls" style="width:100%">
+
+                    </video>
+              </div>
+              <div style="width:50%">
+                  <video src="../../assets/images/SC.mp4" controls="controls" style="width:100%">
+
+                    </video>
+              </div>
+            </div>
+            <div class="divvideos">
+              <div style="width:50%">
+                <video src="../../assets/images/SC.mp4" controls="controls" style="width:100%">
+
+                    </video>
+              </div>
+              <div style="width:50%">
+                 <video src="../../assets/images/SC.mp4" controls="controls" style="width:100%">
+
+                 </video>
+              </div>
+            </div>
+             <div class="divvideos">
+              <div style="width:50%">
+                <video src="../../assets/images/SC.mp4" controls="controls" style="width:100%">
+
+                    </video>
+              </div>
+              <div style="width:50%">
+                 <video src="../../assets/images/SC.mp4" controls="controls" style="width:100%">
+
+                 </video>
+              </div>
+            </div>
+             <div class="divvideos">
+              <div style="width:50%">
+                <video src="../../assets/images/SC.mp4" controls="controls" style="width:100%">
+
+                    </video>
+              </div>
+              <div style="width:50%">
+                 <video src="../../assets/images/SC.mp4" controls="controls" style="width:100%">
+
+                 </video>
+              </div>
+            </div>
+             <div class="divvideos">
+              <div style="width:50%">
+                <video src="../../assets/images/SC.mp4" controls="controls" style="width:100%">
+
+                    </video>
+              </div>
+              <div style="width:50%">
+                 <video src="../../assets/images/SC.mp4" controls="controls" style="width:100%">
+
+                 </video>
+              </div>
+            </div>
+          </div>
+        </div>
+      
+                                </div>
+                                </div> 
+
+                              <div slot='footer'>
+
+                              </div>
+                          </Modal>
+             </div>
+         <div class="firealarm-header">
+             
+             <div class="headerright">
+                  <Dropdown>
+              <a href="javascript:void(0)">
+                    北京
+                  <Icon type="ios-arrow-down"></Icon>
+              </a>
+              <DropdownMenu slot="list">
+                  <DropdownItem>四川</DropdownItem>
+                  <DropdownItem>上海</DropdownItem>
+                  <DropdownItem >新疆</DropdownItem>
+                  <DropdownItem>天津</DropdownItem>
+                  <DropdownItem >河北</DropdownItem>
+              </DropdownMenu>
+          </Dropdown>
+             </div>
+                <RadioGroup v-model="buttonSize" type="button" size='small' style="padding-right:10px;">
+            <Radio label="large">地图</Radio>
+            <Radio label="default">地形</Radio>
+            <Radio label="small">卫星</Radio>
+              <Radio label="smalls">街景</Radio>
+        </RadioGroup>
+         </div>
+         <Modal
+        v-model="modal23" width='700'
+        id='chuli'
+      >
+        <div slot="header"  class="addheader flexdivs" style="   justify-content: center;">
+          <h2>相电流_1990921F103_000/000/006</h2>
+        </div>
+           <Tabs value="name1">
+        <TabPane label="报警信息" name="name1">
+            <div class="divetwotop" >
+          <div class="modediv" style="height:100px !important;background:none;border:0px;">
+            <div class="modetitle" style="background:none">
+              <span class="titlelogo" style="background:#3C8FFF !important"></span>
+              <span class="titlename" style="color:#3C8FFF !important">基础信息</span>
+            </div>
+
+            <div class="xqdiv">
+              <Col span="12" class="span-pad">
+                <span>设备名称：</span>
+                <span>相电流_1990921F103_000/000/006</span>
+              </Col>
+              <Col span="12" class="span-pad">
+                <span>编码：</span>
+                <span>000/000/006</span>
+              </Col>
+
+              <Col span="12" class="span-pad">
+                <span>控制器编码：</span>
+                <span>1990921F103</span>
+              </Col>
+              <Col span="12" class="span-pad">
+                <span>所属单位：</span>
+                <span>华都天元广场</span>
+              </Col>
+              <Col span="12" class="span-pad">
+                <span>单位地址：</span>
+                <span>飞鸿南路555号</span>
+              </Col>
+              <Col span="12" class="span-pad">
+                <span>安装位置：</span>
+                <span>主楼负2楼——2F</span>
+              </Col>
+            </div>
+          </div>
+          <Divider size="small" style="margin:5px 0px;" />
+          <div class="modediv" style="height:100px !important;background:none;border:0px;">
+            <div class="modetitle" style="background:none">
+              <span class="titlelogo" style="background:#3C8FFF !important"></span>
+              <span class="titlename" style="color:#3C8FFF !important">警情信息</span>
+            </div>
+            <div class="xqdiv">
+              <Col span="12" class="span-pad">
+                <span>首次报警时间：</span>
+                <span>2019年8月24日10:32:26</span>
+              </Col>
+              <Col span="12" class="span-pad">
+                <span>最新报警时间：</span>
+                <span>2019年8月24日10:32:26</span>
+              </Col>
+
+              <Col span="12" class="span-pad">
+                <span>持续时长：</span>
+                <span>3小时</span>
+              </Col>
+              <Col span="12" class="span-pad">
+                <span>报警类型：</span>
+                <span>故障报警</span>
+              </Col>
+              <Col span="12" class="span-pad">
+                <span>报警次数：</span>
+                <span>1</span>
+              </Col>
+              <Col span="12" class="span-pad">
+                <span>状态：</span>
+                <span>未处理</span>
+              </Col>
+            </div>
+          </div>
+          <Divider size="small" style="margin:5px 0px;" />
+          <div style="width:100%;min-height:220px;">
+            <div class="divcl">
+              <span style="margin:0px 50px 0px 20px;">处理</span>
+              <RadioGroup v-model="qiehuan" type="button">
+                <Radio label="queren">确认</Radio>
+                <Radio label="hulue">忽略</Radio>
+                <Radio label="pingbi">屏蔽</Radio>
+                <Radio label="ceshi">测试</Radio>
+              </RadioGroup>
+            </div>
+            <div class="divc2" v-if="qiehuan=='hulue'">
+              <span style="margin:0px 20px;">原因描述</span>
+              <div class="divif">
+                <RadioGroup v-model="ms">
+                  <Radio label="hjyx">环境影响</Radio>
+                  <Radio label="rwwb">人为误报</Radio>
+                  <Radio label="qt">其他</Radio>
+                </RadioGroup>
+                <Input v-model="value" placeholder="描述信息" style="width: 500px;padding-top:10px;" />
+              </div>
+            </div>
+            <div v-if="qiehuan=='pingbi'">
+              <div class="divcl">
+                <span style="margin:0px 20px;">屏蔽时段</span>
+                <RadioGroup v-model="day">
+                  <Radio label="oneday">一天</Radio>
+                  <Radio label="threeday">三天</Radio>
+                  <Radio label="seventday">七天</Radio>
+                  <Radio label="zdyday">自定义</Radio>
+                </RadioGroup>
+              </div>
+              <div class="divc2">
+                <span style="margin:0px 20px;">原因描述</span>
+                <div class="divif">
+                  <RadioGroup v-model="day">
+                    <Radio label="oneday">设备损坏</Radio>
+                    <Radio label="threeday">其他</Radio>
+                  </RadioGroup>
+                  <Input v-model="value" placeholder="描述信息" style="width: 500px;padding-top:10px;" />
+                </div>
+              </div>
+            </div>
+            <div v-if="qiehuan=='ceshi'">
+              <div class="divcl">
+                <span style="margin:0px 20px;">测试时段</span>
+                <RadioGroup v-model="csday">
+                  <Radio label="today">仅当天</Radio>
+                  <Radio label="oneday">一天</Radio>
+                  <Radio label="threeday">三天</Radio>
+                  <Radio label="seventday">七天</Radio>
+                  <Radio label="zdyday">自定义</Radio>
+                </RadioGroup>
+              </div>
+              <div class="divc2">
+                <span style="margin:0px 20px;">原因描述</span>
+                <div class="divif">
+                  <RadioGroup v-model="day">
+                    <Radio label="oneday">设备测试</Radio>
+                    <Radio label="wbcs">维保测试</Radio>
+                    <Radio label="threeday">其他</Radio>
+                  </RadioGroup>
+                  <Input v-model="value" placeholder="描述信息" style="width: 500px;padding-top:10px;" />
+                </div>
+              </div>
+            </div>
+            <div v-if="qiehuan=='queren'">
+              <div class="divc2">
+                <span style="margin:0px 20px;">原因描述</span>
+                <div class="divif">
+                  <RadioGroup v-model="qrradyy">
+                    <Radio label="wtzr">物体自然</Radio>
+                    <Radio label="rwzh">人为纵火</Radio>
+                    <Radio label="fyqbj">非预期报警</Radio>
+                    <Radio label="qt">其他</Radio>
+                  </RadioGroup>
+                  <Input v-model="value" placeholder="描述信息" style="width: 500px;padding-top:10px;" />
+                </div>
+              </div>
+              <div class="divc2">
+                <span style="margin:0px 20px;">处理记录</span>
+                <div class="divif">
+                  <RadioGroup v-model="qrradcl">
+                    <Radio label="zxmh">自行灭火</Radio>
+                    <Radio label="bdphone">拨打119</Radio>
+                    <Radio label="threeday">其他</Radio>
+                  </RadioGroup>
+                  <Input v-model="value" placeholder="描述信息" style="width: 500px;padding-top:10px;" />
+                </div>
+              </div>
+            </div>
+          </div>
+      
+        </div>
+
+        </TabPane>
+        <TabPane label="通知纪录" name="name2">
+          <div class="btnclass" style="line-height:0px;">
+                    <Button type="primary" size='small' icon="ios-search">微信</Button>
+                    <Button ghost type="primary" size='small' icon="ios-search" >短信</Button>
+                    <Button ghost type="primary" size='small' icon="ios-search">语音</Button>
+                </div>
+           <div class="listshow" style="margin-top:20px;">
+                                      <Col span="5">通知时间</Col>
+                                      <Col span="5">通知对象</Col>
+                                      <Col span="5">岗位</Col>
+                                      <Col span="5">微信号码</Col>
+                                      <Col span="4">昵称</Col>
+                                               </div>
+        </TabPane>
+     
+       </Tabs>
+    </Modal>
+    </div>
+</template>
+<script>
+var echarts = require('echarts')
+export default {
+ name:'firealarm',
+
+ data() {
+     return {
+       buttonSize:'large',
+         modal22:false,
+         modal23:false,
+           num: 0,
+             qiehuan: 'queren',
+      ms: 'hjyx',
+      day: 'oneday',
+      csday: 'today',
+      qrradyy: 'wtzr',
+      qrradcl: 'zxmh',
+         top:"30",
+         xqlist:[{
+            time:'2019-11-16 14:36:12',
+            address:'博山路11号',
+            yiqi:'展中厅1手报',
+            bianma:'110301020102013'
+         },
+         {
+            time:'2019-11-16 14:36:12',
+            address:'博山路11号',
+            yiqi:'展中厅1手报',
+            bianma:'110301020102013'
+         },
+         {
+            time:'2019-11-16 14:36:12',
+            address:'博山路11号',
+            yiqi:'展中厅1手报',
+            bianma:'110301020102013'
+         },
+         {
+            time:'2019-11-16 14:36:12',
+            address:'博山路11号',
+            yiqi:'展中厅1手报',
+            bianma:'110301020102013'
+         },{
+            time:'2019-11-16 14:36:12',
+            address:'博山路11号',
+            yiqi:'展中厅1手报',
+            bianma:'110301020102013'
+         }
+         ],
+      dutyRateData:[{
+              leixin:'火灾',
+              color:"red",
+               time:'02-27 07:42:30',
+               danwei:'浦发银行',
+               duixiang:'点位001',
+               bjcs:'11',
+               zt:'未处理',
+      },{
+              leixin:'火灾',
+              color:"red",
+               time:'02-27 07:42:30',
+               danwei:'浦发银行',
+               duixiang:'点位001',
+               bjcs:'11',
+               zt:'未处理',
+      },{
+              leixin:'火灾',
+              color:"red",
+               time:'02-27 07:42:30',
+               danwei:'浦发银行',
+               duixiang:'点位001',
+               bjcs:'11',
+               zt:'未处理',
+      },{
+              leixin:'火灾',
+              color:"red",
+               time:'02-27 07:42:30',
+               danwei:'浦发银行',
+               duixiang:'点位001',
+               bjcs:'11',
+               zt:'未处理',
+      },{
+              leixin:'火灾',
+              color:"red",
+               time:'02-27 07:42:30',
+               danwei:'浦发银行',
+               duixiang:'点位001',
+               bjcs:'11',
+               zt:'未处理',
+      }
+      ],
+      map:'',
+      maps:""
+     }
+     
+ },  
+ methods:{
+       initMap() {
+      var zoom = 12
+      this.map = new T.Map('mapDiv', {
+        projection: 'EPSG:4326'
+      })
+      //  this.map = new T.Map('mapDivs', {
+      //   projection: 'EPSG:4326'
+      // })
+      this.map.centerAndZoom(new T.LngLat(116.40769, 39.89945), zoom)
+      this.map.disableDoubleClickZoom()
+      // this.map.disableScrollWheelZoom()
+      var ctrl = new T.Control.MapType()
+      // //添加控件
+      // this.map.addControl(ctrl)
+       this.maps = new T.Map('mapDivs', {
+        projection: 'EPSG:4326'
+      })
+      this.maps.centerAndZoom(new T.LngLat(116.40769, 39.89945), zoom)
+      this.maps.disableDoubleClickZoom()
+    },
+    showmodel(){
+        this.modal22 = true;
+
+    },
+    chulushow(){
+       this.modal23 = true;
+    },
+     mychart11() {
+      let myChart = echarts.init(document.getElementById('mychart11'))
+      myChart.resize()
+      myChart.setOption({
+        tooltip: {
+          trigger: 'axis'
+        },
+        legend: {
+          color: ['#ee2cif', '#ff9a1a', '#f6e20f'],
+          data: ['火灾', '报警', '故障','下线'],
+          left: 'center',
+          top: 'top',
+
+          textStyle: {
+            color: '#626262'
+          }
+        },
+        grid: {
+          left: '1%',
+          right: '4%',
+          bottom: '2%',
+          height: '82%',
+          containLabel: true
+        },
+        xAxis: {
+          type: 'category',
+          name: '天',
+          nameTextStyle: {
+            color: '#626262',
+            padding: -15
+          },
+          data: [1, 5, 10, 15, 20, 25, 30],
+          axisLine: {
+            show: false,
+            lineStyle: {
+              color: '#626262'
+            }
+          },
+          axisTick: { show: false }
+        },
+        yAxis: {
+          type: 'value',
+          max: 100,
+          splitLine: {
+            lineStyle: {
+              type: 'dashed',
+              color: '#233e64'
+            }
+          },
+          axisLine: {
+            show: false,
+            lineStyle: {
+              color: '#626262'
+            }
+          },
+
+          nameTextStyle: {
+            color: '#233e64'
+          },
+          splitArea: {
+            show: false
+          },
+          axisTick: { show: false }
+        },
+        series: [
+          {
+            name: '火灾',
+            type: 'line',
+            data: [10, 14, 13, 12, 18, 20, 23],
+            lineStyle: {
+              normal: {
+                width: 2,
+                color: '#ee2c1f'
+              }
+            },
+            itemStyle: {
+              normal: {
+                color: '#ee2c1f',
+                borderWidth: 5,
+                /*shadowColor: 'rgba(72,216,191, 0.3)',
+                     shadowBlur: 100,*/
+                borderColor: '#ee2c1f'
+              }
+            },
+            smooth: true
+          },
+          {
+            name: '报警',
+            type: 'line',
+            data: [20, 14, 12, 9, 24, 19, 30],
+            lineStyle: {
+              normal: {
+                width: 2,
+                color: '#FF9A1A'
+              }
+            },
+            itemStyle: {
+              normal: {
+                color: '#FF9A1A',
+                borderWidth: 5,
+                /*shadowColor: 'rgba(72,216,191, 0.3)',
+                     shadowBlur: 100,*/
+                borderColor: '#FF9A1A'
+              }
+            },
+            smooth: true
+          },
+          {
+            name: '故障',
+            type: 'line',
+            data: [30, 21, 25, 18, 15, 25, 11],
+            lineStyle: {
+              normal: {
+                width: 2,
+                color: '#F6E20F'
+              }
+            },
+            itemStyle: {
+              normal: {
+                color: '#F6E20F',
+                borderWidth: 5,
+                /*shadowColor: 'rgba(72,216,191, 0.3)',
+                     shadowBlur: 100,*/
+                borderColor: '#F6E20F'
+              }
+            },
+            smooth: true
+          },{
+            name: '下线',
+            type: 'line',
+            data: [40, 31, 15, 68, 45, 35, 51],
+            lineStyle: {
+              normal: {
+                width: 2,
+                color: '#F6E20F'
+              }
+            },
+            itemStyle: {
+              normal: {
+                color: '#F6E20F',
+                borderWidth: 5,
+                /*shadowColor: 'rgba(72,216,191, 0.3)',
+                     shadowBlur: 100,*/
+                borderColor: '#F6E20F'
+              }
+            },
+            smooth: true
+          }
+        ]
+      })
+      window.addEventListener('resize', function() {
+        myChart.resize()
+      })
+    },
+ },
+ created() {
+//       setInterval(() => {
+//       if (this.num !== this.dutyRateData.length) {
+//         this.num++
+//       } else {
+//         this.num = 0
+//       }
+//  },3000)
+ },
+ mounted(){
+       this.initMap()
+     
+        this.mychart11()
+ }
+}
+</script>
+<style lang="less" scoped>
+.firealarm{
+    width: 100%;
+    height: 100%;
+   display: flex;
+    .firealarm-header{
+        width: 100%;
+        height: 36px;
+       border-bottom: 1px solid #ccc;
+       display: flex;
+       background: #edf5f7;
+        position: relative;
+        z-index: 10002;
+        top: 0;
+        justify-content: space-between;
+    align-items: center;
+    }
+        .headerleft{
+           width: 640px;
+           border-right: 1px solid #ccc;
+           height: 100%;
+           background: #fff;
+           position: relative;
+             z-index: 1001;
+             
+            .lefthedaer{
+                    display: flex;
+                justify-content: center;
+                align-items: center;
+                width:100%;
+                height:60px;
+                background:#edf5f7;
+                border-bottom: 1px solid #ccc;
+            }
+       }
+    
+}
+        .firealarm /deep/ .ivu-tabs{
+               height: 100%;
+           }
+         .firealarm /deep/  .ivu-tabs-bar{
+            background: #edf5f7;
+            margin-bottom: 0px;
+           }
+         .firealarm  /deep/ .ivu-tabs .ivu-tabs-content-animated{
+               height: 100%;
+           }
+          .firealarm  /deep/ .ivu-tabs-nav .ivu-tabs-tab{
+               padding: 8px 36px;
+           }
+          #selectmodel  /deep/ .ivu-modal-header{
+             padding: 0px;
+           }
+        
+             #selectmodel  /deep/ .ivu-modal-close{
+             top:4px;
+           }
+          #selectmodel  /deep/ .ivu-modal-content{
+             height: 900px;
+           }
+           #selectmodel  /deep/ .ivu-modal{
+             top:20px;
+           }
+           #selectmodel  /deep/ .ivu-modal-footer{
+             border-top: 0px;
+           }
+           .firediv{
+               display: flex;
+            //    justify-content: space-around;
+            width: 100%;
+               padding:15px  0px  15px 35px;
+               span{
+                   font-size: 13px;
+               }
+               .qiu{
+                   width:25px;
+                   height:25px;
+                  //  background: red;
+                   border-radius: 50%;
+               }
+           }
+           .flexdiv{
+               display:flex;
+               justify-content:start;
+               align-items:center;
+               width:33%
+           }
+           .red{
+               color: #f54f5e
+           }
+           .flexdivs{
+               display:flex;
+               justify-content:space-between;
+               align-items:center;
+               padding-left: 0px;
+           }
+           .divxq {
+  width: 100%;
+  display: flex;
+  justify-content: space-evenly;
+  .divone {
+    width: 15%;
+  }
+  .divtwo {
+    width: 58%;
+  }
+  .divthree {
+    width: 25%;
+    box-shadow: 0px 2px 6px -2px;
+  }
+}
+.divvideo {
+  width: 100%;
+  // min-height: 300px;
+}
+.divvideos {
+  width: 100%;
+  // height: 200px;
+  display: flex;
+  div {
+    border: 1px solid snow;
+  }
+}
+   #chuli /deep/ .ivu-modal-header{
+             padding: 0px;
+           }
+             #chuli  /deep/ .ivu-modal-close{
+             top:4px;
+           }
+           .divif {
+  display: flex;
+  flex-direction: column;
+}
+.divcl {
+  display: flex;
+  justify-content: start;
+  align-items: center;
+  padding: 10px;
+}
+.divc2 {
+  display: flex;
+  justify-content: start;
+  padding: 10px;
+}
+.xqdiv {
+  width: 100%;
+  min-height: 100px;
+  padding: 10px 30px;
+  // font-size: 15px;
+}
+.span-pad {
+  padding: 0px 0;
+}
+.headerright{
+  padding-left: 10px;
+  display: flex;
+  justify-content: start;
+  align-items: center;
+}
+</style>

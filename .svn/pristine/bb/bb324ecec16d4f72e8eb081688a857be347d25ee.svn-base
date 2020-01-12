@@ -1,0 +1,478 @@
+<!--
+ * @Author: your name
+ * @Date: 2019-11-16 13:21:08
+ * @LastEditTime: 2019-11-16 17:25:25
+ * @LastEditors: Please set LastEditors
+ * @Description: In User Settings Edit
+ * @FilePath: \vue-zzxf\src\components\firealarm\firealarm.vue
+ -->
+<template>
+    <div class="firealarm" id="mapDiv">
+      
+        <div class="headerleft">
+                     <Tabs value="name1">
+                    <TabPane label="集团" name="name1">
+                        
+                      <div  class="lefthedaer">
+<Input search enter-button="搜索" placeholder="请输入需要搜索的区域" style="padding:0px 20px;" />
+                        </div> 
+                        <div class="modediv" style="height:140px;border-bottom:1px solid #ccc">
+                           <div class="modetitle">
+                               <span class="titlelogo"></span>
+                               <span class='titlename'>最近二十四小时报警事件</span>
+                           </div>
+                           <div style="width:100%;height:100%;">
+                              <div class="firediv">
+                                  <div class="flexdiv" > 
+                                      <div class="qiu"></div>
+                                         <span>&nbsp;&nbsp;事件总数: 111111</span>
+                                   </div>
+                                  <div class="flexdiv">
+                                      <span class="qiu"></span>
+                                         <span>&nbsp;&nbsp;火警: 11111</span>
+                                  </div>
+                                  <div class="flexdiv">
+                                      <span class="qiu"></span>
+                                         <span>&nbsp;&nbsp;报警: 1111</span>
+                                  </div>
+                              </div>
+                              <div class="firediv">
+                                  <div class="flexdiv" > 
+                                      <div class="qiu"></div>
+                                         <span>&nbsp;&nbsp;故障: 111111</span>
+                                   </div>
+                                  <div class="flexdiv">
+                                      <span class="qiu"></span>
+                                         <span>&nbsp;&nbsp;下线: 11111</span>
+                                  </div>
+                                 <div class="flexdiv">
+
+                                 </div>
+                              </div>
+                           </div>
+                           
+                        </div>
+                         <div class="modediv" style="  border-bottom:1px solid #ccc">
+                              <div class="modetitle">
+                               <span class="titlelogo"></span>
+                               <span class='titlename'>近七天报警趋势</span>
+                           </div>
+                           <div id="mychart11" class="echartsdiv"></div>
+                         </div>
+                          <div class="modediv" style="height:400px;">
+                              <div class="modetitle">
+                               <span class="titlelogo"></span>
+                               <span class='titlename'>事件列表</span>
+                           </div>
+                          <div class="listshow">
+                                <Col span="2">类型</COl>
+                                  <Col span="5">首次报警时间</COl>
+                                    <Col span="4">联网单位</COl>
+                                      <Col span="5">监控对象</COl>
+                                        <Col span="4">报警次数</COl>
+                                          <Col span="2">状态</COl>
+                                            <Col span="2">操作</COl>
+
+                            </div>
+                            <div class="body rollScreen_container" >
+                            <div class="scroll-content rollScreen_list" :style="{transform:transform}"
+                                     :class="{rollScreen_list_unanim:num===0}">
+                                <div v-for="(item,index) in dutyRateData" class="huadongdiv rollScreen_once"   
+                                    :key="index"
+                                    :style="{height:height+'px'}">
+                                    <Col span="2" :class="item.color">{{item.leixin}}</Col>
+                                    <Col span="5">{{item.time}}</Col>
+                                    <Col span="4">{{item.danwei}}</Col>
+                                    <Col span="5">{{item.duixiang}}</Col>
+                                    <Col span="4">{{item.bjcs}}</Col>
+                                    <Col span="2">{{item.zt}}</Col>
+                                    <Col span="2" style="color:#2d8cf0;cursor:pointer;" @click="showmodel">查看</Col>
+                                </div>
+                                 <div v-for="(item,index) in dutyRateData" class="huadongdiv rollScreen_once"   
+                                        :key="index+dutyRateData.length"
+                                      :style="{height:height+'px'}">
+                                    <Col span="2" :class="item.color">{{item.leixin}}</Col>
+                                    <Col span="5">{{item.time}}</Col>
+                                    <Col span="4">{{item.danwei}}</Col>
+                                    <Col span="5">{{item.duixiang}}</Col>
+                                    <Col span="4">{{item.bjcs}}</Col>
+                                    <Col span="2">{{item.zt}}</Col>
+                                    <Col span="2" style="color:#2d8cf0;cursor:pointer;" @click="showmodel">查看</Col>
+                                </div>
+                            </div>
+                        </div>
+                         </div>
+                       </TabPane>
+                    <TabPane label="物业一"name="name2">标签二的内容</TabPane>
+                    <TabPane label="物业二" name="name3">标签三的内容</TabPane>
+                      <TabPane label="物业三" name="name4">标签三的内容</TabPane>
+                        <TabPane label="物业四" name="name5">标签三的内容</TabPane>
+                </Tabs>
+   <!-- <Modal v-model="modal22" fullscreen title="Fullscreen Modal">
+        <div>This is a fullscreen modal</div>
+    </Modal> -->
+             </div>
+         <!-- <div class="firealarm-header">
+             
+             <div class="headerright">
+
+             </div>
+         </div> -->
+         <Modal
+        v-model="modal22"
+        title="Common Modal dialog box title"
+      >
+        <p>Content of dialog</p>
+        <p>Content of dialog</p>
+        <p>Content of dialog</p>
+    </Modal>
+    </div>
+</template>
+<script>
+var echarts = require('echarts')
+export default {
+ name:'firealarm',
+   props: {
+    height: {
+      default: 31,
+      type: Number
+    },
+    lineNum: {
+      default: 5,
+      type: Number
+    }
+  },
+ data() {
+     return {
+         modal22:false,
+           num: 0,
+         top:"30",
+      dutyRateData:[{
+              leixin:'火灾',
+              color:"red",
+               time:'02-27 07:42:30',
+               danwei:'浦发银行',
+               duixiang:'点位001',
+               bjcs:'11',
+               zt:'未处理',
+      },{
+              leixin:'火灾',
+              color:"red",
+               time:'02-27 07:42:30',
+               danwei:'浦发银行',
+               duixiang:'点位001',
+               bjcs:'11',
+               zt:'未处理',
+      },{
+              leixin:'火灾',
+              color:"red",
+               time:'02-27 07:42:30',
+               danwei:'浦发银行',
+               duixiang:'点位001',
+               bjcs:'11',
+               zt:'未处理',
+      },{
+              leixin:'火灾',
+              color:"red",
+               time:'02-27 07:42:30',
+               danwei:'浦发银行',
+               duixiang:'点位001',
+               bjcs:'11',
+               zt:'未处理',
+      },{
+              leixin:'火灾',
+              color:"red",
+               time:'02-27 07:42:30',
+               danwei:'浦发银行',
+               duixiang:'点位001',
+               bjcs:'11',
+               zt:'未处理',
+      },
+      {
+              leixin:'火灾',
+              color:"red",
+               time:'02-27 07:42:30',
+               danwei:'浦发银行',
+               duixiang:'点位001',
+               bjcs:'11',
+               zt:'未处理',
+      },
+      {
+              leixin:'火灾',
+              color:"red",
+               time:'02-27 07:42:30',
+               danwei:'浦发银行',
+               duixiang:'点位001',
+               bjcs:'11',
+               zt:'未处理',
+      },
+      {
+              leixin:'火灾',
+              color:"red",
+               time:'02-27 07:42:30',
+               danwei:'浦发银行',
+               duixiang:'点位001',
+               bjcs:'11',
+               zt:'未处理',
+      },
+      {
+              leixin:'火灾',
+              color:"red",
+               time:'02-27 07:42:30',
+               danwei:'浦发银行',
+               duixiang:'点位001',
+               bjcs:'11',
+               zt:'未处理',
+      },
+      {
+              leixin:'火灾',
+              color:"red",
+               time:'02-27 07:42:30',
+               danwei:'浦发银行',
+               duixiang:'点位001',
+               bjcs:'11',
+               zt:'未处理',
+      },
+      ]
+     }
+ },  
+  computed: {
+    transform: function() {
+      return 'translateY(-' + this.num * this.height + 'px)'
+    }
+  },
+ methods:{
+       initMap() {
+      var zoom = 12
+      this.map = new T.Map('mapDiv', {
+        projection: 'EPSG:4326'
+      })
+      this.map.centerAndZoom(new T.LngLat(116.40769, 39.89945), zoom)
+      this.map.disableDoubleClickZoom()
+      this.map.disableScrollWheelZoom()
+      var ctrl = new T.Control.MapType()
+      // //添加控件
+      // this.map.addControl(ctrl)
+    },
+    showmodel(){
+        this.modal22 = true;
+    },
+     mychart11() {
+      let myChart = echarts.init(document.getElementById('mychart11'))
+      myChart.resize()
+      myChart.setOption({
+        tooltip: {
+          trigger: 'axis'
+        },
+        legend: {
+          color: ['#ee2cif', '#ff9a1a', '#f6e20f'],
+          data: ['火灾', '隐患', '故障'],
+          left: 'center',
+          top: 'top',
+
+          textStyle: {
+            color: '#626262'
+          }
+        },
+        grid: {
+          left: '1%',
+          right: '4%',
+          bottom: '2%',
+          height: '82%',
+          containLabel: true
+        },
+        xAxis: {
+          type: 'category',
+          name: '天',
+          nameTextStyle: {
+            color: '#626262',
+            padding: -15
+          },
+          data: [1, 5, 10, 15, 20, 25, 30],
+          axisLine: {
+            show: false,
+            lineStyle: {
+              color: '#626262'
+            }
+          },
+          axisTick: { show: false }
+        },
+        yAxis: {
+          type: 'value',
+          max: 100,
+          splitLine: {
+            lineStyle: {
+              type: 'dashed',
+              color: '#233e64'
+            }
+          },
+          axisLine: {
+            show: false,
+            lineStyle: {
+              color: '#626262'
+            }
+          },
+
+          nameTextStyle: {
+            color: '#233e64'
+          },
+          splitArea: {
+            show: false
+          },
+          axisTick: { show: false }
+        },
+        series: [
+          {
+            name: '火灾',
+            type: 'line',
+            data: [10, 14, 13, 12, 18, 20, 23],
+            lineStyle: {
+              normal: {
+                width: 2,
+                color: '#ee2c1f'
+              }
+            },
+            itemStyle: {
+              normal: {
+                color: '#ee2c1f',
+                borderWidth: 5,
+                /*shadowColor: 'rgba(72,216,191, 0.3)',
+                     shadowBlur: 100,*/
+                borderColor: '#ee2c1f'
+              }
+            },
+            smooth: true
+          },
+          {
+            name: '隐患',
+            type: 'line',
+            data: [20, 14, 12, 9, 24, 19, 30],
+            lineStyle: {
+              normal: {
+                width: 2,
+                color: '#FF9A1A'
+              }
+            },
+            itemStyle: {
+              normal: {
+                color: '#FF9A1A',
+                borderWidth: 5,
+                /*shadowColor: 'rgba(72,216,191, 0.3)',
+                     shadowBlur: 100,*/
+                borderColor: '#FF9A1A'
+              }
+            },
+            smooth: true
+          },
+          {
+            name: '故障',
+            type: 'line',
+            data: [30, 21, 25, 18, 15, 25, 11],
+            lineStyle: {
+              normal: {
+                width: 2,
+                color: '#F6E20F'
+              }
+            },
+            itemStyle: {
+              normal: {
+                color: '#F6E20F',
+                borderWidth: 5,
+                /*shadowColor: 'rgba(72,216,191, 0.3)',
+                     shadowBlur: 100,*/
+                borderColor: '#F6E20F'
+              }
+            },
+            smooth: true
+          }
+        ]
+      })
+      window.addEventListener('resize', function() {
+        myChart.resize()
+      })
+    },
+ },
+ created() {
+      setInterval(() => {
+      if (this.num !== this.dutyRateData.length) {
+        this.num++
+      } else {
+        this.num = 0
+      }
+ },3000)
+ },
+ mounted(){
+       this.initMap()
+        this.mychart11()
+ }
+}
+</script>
+<style lang="less" scoped>
+.firealarm{
+    width: 100%;
+    height: 100%;
+    .firealarm-header{
+        width: 100%;
+        height: 37px;
+       border: 1px solid #ccc;
+       display: flex;
+   
+    }
+        .headerleft{
+           width: 640px;
+           border-right: 1px solid #ccc;
+           height: 100%;
+           background: #fff;
+           position: relative;
+             z-index: 1999;
+             
+            .lefthedaer{
+                    display: flex;
+                justify-content: center;
+                align-items: center;
+                width:100%;
+                height:60px;
+                background:#edf5f7;
+                border-bottom: 1px solid #ccc;
+            }
+       }
+    
+}
+        .firealarm /deep/ .ivu-tabs{
+               height: 100%;
+           }
+         .firealarm /deep/  .ivu-tabs-bar{
+            background: #edf5f7;
+            margin-bottom: 0px;
+           }
+         .firealarm  /deep/ .ivu-tabs .ivu-tabs-content-animated{
+               height: 100%;
+           }
+          .firealarm  /deep/ .ivu-tabs-nav .ivu-tabs-tab{
+               padding: 8px 36px;
+           }
+           .firediv{
+               display: flex;
+            //    justify-content: space-around;
+            width: 100%;
+               padding:15px  0px  15px 35px;
+               span{
+                   font-size: 13px;
+               }
+               .qiu{
+                   width:25px;
+                   height:25px;
+                   background: red;
+                   border-radius: 50%;
+               }
+           }
+           .flexdiv{
+               display:flex;
+               justify-content:start;
+               align-items:center;
+               width:33%
+           }
+           .red{
+               color: #f54f5e
+           }
+</style>

@@ -1,0 +1,479 @@
+ //事件列表查看彈框樣式
+ .eventModel{
+    position: fixed;      
+    width:100%;
+    height:100%;
+    z-index:1000; 
+    top:0;
+    left:0;       
+    // 弹框蒙版
+    .modelMb{
+     width:100%;
+     height:100%;
+     background-color:rgba(0,0,0,.5);
+    }
+    // 弹框主体内容
+    .modcontent{
+        position: absolute;
+        width:80%;
+        height:94%;
+        top:50%;
+        left:50%;
+        z-index:100;
+        background-color:#fff;
+        transform: translate(-50%,-50%);
+        // 头部内容
+        .addheader{
+            display:-webkit-box;
+            display: -moz-box;
+            display: -ms-flexbox;
+            display: -webkit-flex;
+            display: flex;
+            justify-content:space-between;
+            align-items:center;
+            width:100%;
+            height: 40px;
+            line-height: 40px;
+            color: #fff;
+            padding:0 1.2%;
+            background:#223476; 
+            .headRight{
+                .closeModel{
+                    cursor: pointer;
+                    width:40px;
+                    height:40px;                    
+                    text-align:center;
+                } 
+            }
+        
+        }
+        //弹框内容开始
+        .divxq {
+            overflow:hidden;
+            width: 100%;
+            height:95.3%;
+            padding:1%;   
+            .modelScroll{
+               width: 100%;
+               height:100%;
+               overflow-y:scroll;
+               scrollbar-color: transparent transparent;
+               scrollbar-track-color: transparent;
+               -ms-scrollbar-track-color: transparent;
+               display:-webkit-box;
+               display: -moz-box;
+               display: -ms-flexbox;
+               display: -webkit-flex;
+               display: flex;
+               justify-content: space-between;                     
+            }            
+            .modedivCon{
+                 box-shadow:0px 0px 4px 3px rgba(225,225,225,.5);
+                 margin-bottom:20px; 
+                 border-radius: 2px;
+                 overflow:auto;
+                 // 公共的标题栏           
+                .modetitle{                
+                    display:-webkit-box;
+                    display: -moz-box;
+                    display: -ms-flexbox;
+                    display: -webkit-flex;
+                    display: flex;
+                    justify-content: space-between;
+                    width:100%;
+                    padding:5px 7%;
+                    border-left:3px solid #3c8fff;
+                    background-color:#E6F4FF;
+                    color: #3c8fff;   
+                    .titlename{
+                        margin:0;
+                    }    
+                    .more{
+                        cursor: pointer;
+                    }               
+                }  
+                // 公共的阴影模块 
+                .modeCon{
+                    padding:0 7.5% 20px;
+                    width:100%;
+                    min-height:203px;                 
+                    height:auto;
+                    .modeItem{
+                        width:100%;
+                        padding:10px 6%;
+                        margin:20px auto 0;
+                        box-shadow: 0px 3px 4px 3px rgba(225,225,225,.5);                
+                        .contact{                       
+                             p{
+                                 color:#000;
+                                 height:25px;
+                                 line-height:25px;
+                             }
+                             .iconCon{
+                                .modeicon{
+                                    display:inline-block;
+                                    background-color:#0083FF;
+                                    color:#fff;
+                                    width:20px;
+                                    height:20px;
+                                    text-align: center;
+                                    line-height:20px;
+                                    &:nth-of-type(1){
+                                        margin-right:8px;
+                                    }
+                                }
+                             }                          
+                        }
+                    }
+                } 
+                         
+            } 
+            .divone {
+                width: 17%;
+                height:100%;
+                margin-left:0.3%;
+                // 建筑信息
+                .modeInfo{
+                    padding:15px;
+                    p{
+                        color:#000;
+                        line-height:25px;
+                    }
+                }             
+            }
+            .divtwo {
+                width: 55%;
+                min-height:100%;
+                height:auto;
+                // 弹框表格的样式
+                table{
+                    width:100%;
+                    height:100%;
+                    text-align:center; 
+                    margin-top:10px;
+                    tr{
+                        height:32px;
+                        line-height:32px;
+                        th{
+                          color:#000;
+                        }
+                        td{
+                          color:#888;
+                        }
+                        &:nth-of-type(2n){
+                            background-color:#F3F8FE;
+                        }                       
+                    }
+                    thead{
+                        tr{
+                            background-color:#F3F8FE;                                 
+                        }    
+                    }
+                    tbody{
+                        tr{
+                            &:nth-of-type(2n){
+                                background-color:#F3F8FE; 
+                            }
+                        }    
+                    }
+                }
+                // 中间上部分内容
+                .infoCon{
+                    // height:79.1%;
+                    height:89.5%;
+                    .alarmCon{
+                        color:#000;
+                        height:100%;
+                        .Tabtit{
+                           width:100%;
+                           height:55px;
+                           line-height:55px;
+                           font-size:16px;
+                           border-bottom:1px solid #EEEEEE;
+                           li{
+                               float:left;
+                               height:100%;
+                               padding:0 20px;
+                               cursor: pointer;
+                           }
+                           .tabtitshow{
+                               color:#2d8cf0;
+                               border-bottom:1px solid #2d8cf0;
+                           }
+                        } 
+                        .alarmInfo{
+                            position: relative;
+                            height:90%;
+                            .baseCon{
+                                width:96%;                          
+                                padding:15px 2% 15px;
+                                border-bottom:1px solid #EEEEEE;                                
+                                .ptitle{                                   
+                                    height:30px;
+                                    line-height:30px;
+                                    display:-webkit-box;
+                                    display: -moz-box;
+                                    display: -ms-flexbox;
+                                    display: -webkit-flex;
+                                    display: flex;
+                                    font-size:16px;
+                                    .shu{
+                                        display:block;                                        
+                                        width:2px;
+                                        height:20px;
+                                        background-color:#2d8cf0;
+                                        margin:5px 8px 0 0;
+                                    }
+                                    span{
+                                        &:nth-of-type(2){
+                                            flex:1;
+                                        }
+                                    }
+                                }
+                                .baseinfo{
+                                    width:100%;
+                                    padding:0 5px;
+                                    margin-top:10px;
+                                    display:-webkit-box;
+                                    display: -moz-box;
+                                    display: -ms-flexbox;
+                                    display: -webkit-flex;
+                                    display: flex;
+                                    flex-wrap:wrap;
+                                    p{
+                                        width:33.33%;
+                                        line-height:30px;  
+                                    }
+                                }
+                            }
+                            .manage{               
+                                .modeDeal{
+                                    padding:15px 4%;              
+                                    .dealHead{
+                                        display:-webkit-box;
+                                        display: -moz-box;
+                                        display: -ms-flexbox;
+                                        display: -webkit-flex;
+                                        display: flex;
+                                        height:30px;
+                                        line-height:30px;
+                                        label{
+                                          min-width:80px;
+                                        }
+                                        ul{
+                                        height:100%;
+                                            li{
+                                                color:#2d8cf0;
+                                                float:left;
+                                                height:100%;
+                                                padding:0 15px;
+                                                border:1px solid #0183FF;
+                                                margin:0 20px 0 0;
+                                                cursor: pointer;
+                                                border-radius: 3px;
+                                            }
+                                            .dealshow{
+                                                background-color:#0183FF;
+                                                color:#fff;
+                                            }
+                                        }                                     
+                                    }
+                                    .dealTab{
+                                        width:100%;     
+                                        min-height:110px;                                  
+                                        margin:18px 0;
+                                        .dealx{
+                                            display:-webkit-box;
+                                            display: -moz-box;
+                                            display: -ms-flexbox;
+                                            display: -webkit-flex;
+                                            display: flex;
+                                            margin:0 0 15px 0;
+                                            .dealTits{
+                                                min-width:80px;
+                                             }
+                                             .dealright{
+                                                flex:1;
+                                                .desInfo{                                                    
+                                                    display:-webkit-box;
+                                                    display: -moz-box;
+                                                    display: -ms-flexbox;
+                                                    display: -webkit-flex;
+                                                    display: flex;
+                                                    flex-wrap: wrap;
+                                                    min-height:30px;
+                                                    height:auto;
+                                                    p{
+                                                    margin-right:20px;
+                                                        span{
+                                                            margin-left:8px;
+                                                        }
+                                                    }
+                                                    .zdytime{
+                                                        float:left;
+                                                    } 
+                                                }                                                                                      
+                                                input[type="text"]{
+                                                    width:100%;
+                                                    height:30px;
+                                                    padding:0 0 0 20px;
+                                                    margin:10px 0 0 0;
+                                                    border:1px solid #F0F0F0;
+                                                }
+                                            }
+                                        }   
+                                      }
+                                }                              
+                            }
+                            .manageBtn{
+                                position: absolute;
+                                bottom:2%;
+                                right:4%;
+                                width:72px;
+                                height:32px;
+                                line-height:32px;
+                                background-color:#0183FF;
+                                margin:4px 0;
+                                color:#fff;
+                                text-align:center;
+                                border-radius: 3px;
+                                cursor: pointer;
+                            } 
+                        }
+                        .InfoRecord{
+                           .notifyTit{
+                               padding:15px;
+                               display:-webkit-box;
+                               display: -moz-box;
+                               display: -ms-flexbox;
+                               display: -webkit-flex;
+                               display: flex;                              
+                               li{
+                                display:-webkit-box;
+                                display: -moz-box;
+                                display: -ms-flexbox;
+                                display: -webkit-flex;
+                                display: flex;
+                                justify-content: center;
+                                align-items: center;
+                                height:36px;
+                                margin-right:20px;
+                                padding:0 20px;
+                                color:#0183FF;
+                                border-radius:3px;
+                                border:1px solid #0183FF;
+                                cursor: pointer;
+                                 .infoIcon{
+                                     display:block;
+                                     height:20px;
+                                     margin:0 8px 0 0;
+                                 }
+                                 .wxIcon{
+                                     width:24px;
+                                     background:url('../../assets/images/synthesize/wxIcons.png') no-repeat;
+                                     background-size:100% 100%;
+                                 }
+                                 .dxIcon{
+                                    width:22px;
+                                    background:url('../../assets/images/synthesize/dxIcons.png') no-repeat;
+                                    background-size:100% 100%;
+                                 }
+                                 .yyIcon{
+                                    width:20px;
+                                    background:url('../../assets/images/synthesize/phones.png') no-repeat;
+                                    background-size:100% 100%;
+                                 }
+                               }
+                               .selUl{
+                                   background-color:#0183FF;
+                                   color:#fff;
+                                    .wxIcon{
+                                    width:24px;                                
+                                    background:url('../../assets/images/synthesize/wxIcon.png') no-repeat;
+                                    background-size:100% 100%;
+                                    }  
+                               }
+                           }
+                           .recordTable{
+                                padding:5px 2.3%;
+                           }
+                        }
+      
+                    }
+                }
+                @media screen and(min-width:1440px) and (max-width:1680px){
+                    .infoCon{
+                         height:111%;
+                    }
+                }
+                @media screen and (max-width:1440px){
+                    .infoCon{
+                         height:129.2%;
+                    }
+                }
+                // 中间下部分内容
+                .eventCon{
+                    height:43.3%;
+                    // height:42.6%;
+                    overflow:hidden;
+                    .modetitle{
+                        padding:5px 2.3%;
+                    }
+                    .tableCon{
+                        padding:20px 3%;
+                        .scroll-tab{
+                            overflow-y:scroll; 
+                        }      
+                    }
+                }
+                @media screen and(min-width:1440px) and (max-width:1680px){
+                    .eventCon{
+                        height:53%;
+                    }
+                }
+                @media screen and (max-width:1440px){
+                    .eventCon{
+                        height:67%;
+                    }
+                }
+            }
+            .divthree {
+                width: 25%;
+                min-height:120%;
+                height:auto;
+                box-shadow: 0px 2px 6px -2px;
+                margin-right:0.3%;
+                .videoCon{         
+                    .modetitle{
+                        padding:5px 3%;
+                    }
+                    video{
+                        width:100%;
+                        height:100%;
+                    }
+                    .videoTop{
+                        width:100%;
+                    }
+                    .videowrap{
+                        padding:0 5% 20px;
+                        ul{
+                            display:-webkit-box;
+                            display: -moz-box;
+                            display: -ms-flexbox;
+                            display: -webkit-flex;
+                            display: flex;
+                            flex-wrap: wrap;
+                            li{
+                                width:48.5%;
+                                margin-top:4%;
+                                &:nth-of-type(2n+1){
+                                  margin-right:3%;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+} 

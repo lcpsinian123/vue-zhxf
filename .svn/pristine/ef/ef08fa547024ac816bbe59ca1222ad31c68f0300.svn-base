@@ -1,0 +1,22 @@
+<!--
+ * @Author: your name
+ * @Date: 2019-10-30 16:58:17
+ * @LastEditTime: 2019-10-30 17:21:23
+ * @LastEditors: Please set LastEditors
+ * @Description: In User Settings Edit
+ * @FilePath: \vue-zzxf\src\components\user\user.vue
+ -->
+<template>
+    <div class="menu">
+        菜单管理
+ 
+    </div>
+</template>
+<script>
+export default {
+name:'menu'
+}
+</script>
+<style lang="less">
+
+</style>

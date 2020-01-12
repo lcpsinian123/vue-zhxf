@@ -1,0 +1,216 @@
+<template>
+<div>
+    <div class="container">
+       
+        <div class='rightTable'>
+            <div class="rightHead">
+                <Divider orientation="left">消防宣传</Divider>
+                <div class='searchMeun'>
+                    <span class="wdName_doc">
+                        关键字&nbsp;:&nbsp;
+                    </span>
+                    <Input v-model="WordName" placeholder="输入文档名称" style="width: 200px" />
+                    
+                    <span class="wdName">
+                        发布时间&nbsp;:&nbsp;
+                    </span>
+                    <DatePicker :value="startTime" format="yyyy年MM月" type="date" placeholder="Select date" style="width: 200px"></DatePicker>
+                    
+                    <span class="wdName">
+                        分类&nbsp;:&nbsp;
+                    </span>
+                    <Select v-model="floorNum" style="width:100px">
+                        <Option v-for="item in floorLIst" :value="item.value" :key="item.value">{{ item.label }}</Option>
+                    </Select>
+                    <Button class='wdName' type="error">查询</Button>
+                    <Button class='wdName' type="info">查询</Button>
+                </div>
+                <Divider></Divider>
+            </div>
+            <div class="Content">
+             
+                <div class='tableBox'>
+                    <Table stripe border :columns="TableTitle" :data="TableData">
+
+                        <template slot-scope="{ row, index }" slot="downFile">
+                            <Button type="primary" ghost size="small" style="margin-right: 5px" @click="show(row)">下载</Button>
+                            
+                        </template>
+                        <template slot-scope="{ row, index }" slot="total">
+                                <Icon type="md-stats"@click="show(row)" style="font-size:24px" />
+                            
+                        </template>
+                    </Table>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+</template>
+
+<script>
+export default {
+    data() {
+        return {
+            addFlag: false,
+            editFlag: false,
+          
+            WordName: null,
+            startTime: null,
+            endTime: null,
+            drawCategory: null,
+            category: [{
+                    value: "平面图",
+                    label: "平面图"
+                }, {
+                    value: "总平图",
+                    label: "总平图"
+                },
+
+            ],
+            floorLIst: [{
+                value: "open",
+                label: "启用"
+            }, {
+                value: "close",
+                label: "不启用"
+            }],
+            floorNum: null,
+            TableTitle: [{
+                    type: 'selection',
+                    width: 60,
+                    align: 'center'
+                },
+                {
+                    title: '序号',
+                  align: 'center',
+                    key: 'sortNum'
+                },
+                {
+                    title: '发布时间',
+                   align: 'center',
+                    key: 'updataTime'
+                },
+                {
+                    title: '标题',
+                  align: 'center',
+                    key: 'Title'
+                },
+                {
+                    align: 'center',
+                    title: '点击量',
+                    key: 'clicks'
+                },
+                {
+                    title: '下载量',
+                 align: 'center',
+                    key: 'download'
+                },
+                {
+                    title: '附件',
+                    slot:'downFile',
+                    
+                    key: 'downFile'
+                },
+                {
+                    title: '统计',
+             
+                    slot:'total',
+                    key: 'total'
+                }
+            ],
+            TableData: [{
+                    sortNum: 1,
+                    updataTime: '2019-04-10',
+                    Title: "振南物业",
+                    clicks: '20',
+                    download: '2',
+                    downFile: "是",
+                    
+                },
+                {
+                    sortNum: 2,
+                    updataTime: '2019-04-10',
+                    Title: "振南物业",
+                    clicks: '20',
+                    download: '2',
+                    downFile: "是",
+                }
+
+            ],
+
+        }
+    },
+    methods: {
+        show(index) {
+            console.log(index)
+            // this.$Modal.info({
+            //     title: 'User Info',
+            //     content: `Name：${this.data6[index].name}<br>Age：${this.data6[index].age}<br>Address：${this.data6[index].address}`
+            // })
+        },
+        remove(index) {
+            console.log(index)
+        }
+    }
+}
+</script>
+
+<style lang="less" scoped>
+.container {
+    width: 1698px;
+    display: flex;
+    height: 890px;
+
+
+    .rightTable {
+        width:100%;
+        padding: 3px;
+
+        .searchMeun {
+            width: 100%;
+
+            .wdName_doc {
+                margin-left: 10px;
+            }
+
+            .wdName {
+                margin-left: 50px;
+            }
+        }
+
+        .Content {
+            width: 100%;
+
+            .Btn {
+                .Btn_right {
+                    margin-right: 30px;
+                }
+
+                .addDraw {
+                    padding: 10px 0;
+
+                }
+            }
+
+            .tableBox {
+               
+                padding-top: 20px;
+
+                .ivu-table-tip {
+                    overflow-x: hidden;
+                }
+            }
+
+        }
+    }
+
+}
+</style><style>
+.addDraw {
+    padding: 10px 0;
+
+}
+</style>

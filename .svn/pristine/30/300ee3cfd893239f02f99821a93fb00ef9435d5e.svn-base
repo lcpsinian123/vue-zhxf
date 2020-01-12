@@ -1,0 +1,581 @@
+<template>
+<div class='container cententpadding'>
+
+    <div class="rightHead">
+
+        <div class='navpst'>
+            <div class='currentp'>当前位置&nbsp;:</div>
+            <Breadcrumb separator=">">
+
+                <BreadcrumbItem to="/baojing">{{$route.name}}</BreadcrumbItem>
+
+            </Breadcrumb>
+        </div>
+        <div class='sousuo1'>
+            <div style='height:40px;line-height:40px; padding-left:20px;font-size:16px; border-bottom:1px solid #eee;'>搜索查询 </div>
+            <div class='searchMeun'>
+                <span class="wdName_doc">
+                    区域&nbsp;:&nbsp;
+                </span>
+                <Select v-model="WY" style="width:200px" @on-change='wychange'>
+                    <Option v-for="item in wy" :value="item.ppid" :key="item.ppid">{{ item.ppname }}</Option>
+                </Select>
+                <Select v-model="XQ" style="width:200px" @on-change='xqchange'>
+                    <Option v-for="item in xq" :value="item.cpid" :key="item.cpid">{{ item.cpname }}</Option>
+                </Select>
+                <Select v-model="JZ" style="width:200px" @on-change='jzchange'>
+                    <Option v-for="item in jz" :value="item.bdid" :key="item.bdid">{{ item.note }}</Option>
+                </Select>
+
+                <span class="wdName">
+                    统计类型&nbsp;:&nbsp;
+                </span>
+                <Select v-model="sstj" style="width:110px;">
+                    <Option v-for="item in TJLX" :value="item.value" :key="item.value">{{ item.label }}</Option>
+                </Select>
+                <span class="wdName">
+                    时间&nbsp;:&nbsp;
+                </span>
+                <DatePicker style='width:200px' type="date" placeholder="开始时间..." v-model="startDate"></DatePicker>
+                <span>
+                    至&nbsp;&nbsp;
+                </span>
+                <DatePicker style='width:200px' type="date" placeholder="结束时间..." v-model="endDate"></DatePicker>
+                <Button class='wdName' type="primary">查询</Button>
+
+                <Button class='wdName' type="primary">导出</Button>
+
+                <Modal width="700" id="add" v-model="add">
+                    <div slot="header" class="addheader">
+                        添加
+                    </div>
+                    <div class="addcontent">
+                        <div class="top">
+                            <span class="XMLXBH">项目类型编号&nbsp;&nbsp;: </span>
+                            <Input v-model="XMLXBH" placeholder="输入项目类型编号" style="width: 30%;margin-right:30px;" />
+                            <span class="XMLXBH">项目类型名称&nbsp;&nbsp;: </span>
+                            <Input v-model="XMLXBH" placeholder="输入项目类型名称" style="width: 30%" />
+                        </div>
+                        <div class="top">
+                            <span class="XMLXBH">设备操作规范&nbsp;&nbsp;: </span>
+                            <Input v-model="XMLXBH" style="width: 30%;margin-right:30px;" />
+                            <span class="XMLXBH">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;备&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;注&nbsp;&nbsp;&nbsp;&nbsp;: </span>
+                            <Input v-model="XMLXBH" style="width: 30%" />
+                        </div>
+                    </div>
+                </Modal>
+            </div>
+        </div>
+
+        <div class='tableBox'>
+            <div class='topTJ'>
+                <div class='left'>
+                    <div id='event'>
+                       <!--  <div class='search'>
+                           <Select v-model="sstj" style="width:100%">
+                                <Option v-for="item in cityList" :value="item.value" :key="item.value">{{ item.label }}</Option>
+                            </Select> 
+                            
+                        </div> -->
+                        <div class='sjtj'>
+                            <div class="eventTotal">
+                                <p> 事件总数 </p>
+                                <span>102002</span>
+                            </div>
+                            <div class='flnum'>
+                                <div>
+                                    <p> 火警 </p>
+                                    <span>327</span>
+                                </div>
+                                <div>
+                                    <p> 故障 </p>
+                                    <span>1.0万</span>
+                                </div>
+                                <div>
+                                    <p> 报警 </p>
+                                    <span>4</span>
+                                </div>
+                                <div>
+                                    <p> 下线 </p>
+                                    <span>515</span>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <div class='right'>
+                    <div id='category'></div>
+                </div>
+            </div>
+            <div class='bottomTJ'>
+                <Table stripe border :columns="TableTitle" :data="TableData">
+
+                    <template slot-scope="{ row, index }" slot="action">
+                        <Button type="primary" ghost size="small" @click="xjnr = true">巡检内容</Button>
+
+                        <Modal width="700" v-model="xjnr">
+                            <div slot="header" class="">
+                                巡检内容列表
+                            </div>
+                            <div class="seaechType">
+                                <span> 巡检类别&nbsp;&nbsp;: &nbsp;&nbsp;&nbsp;</span>
+                                <Select v-model="floorNum" style="width:120px">
+                                    <Option v-for="item in period" :value="item.value" :key="item.value">{{ item.label }}</Option>
+                                </Select>
+                            </div>
+                            <Table stripe border :columns="patrolTitle" :data="patrolcontent">
+                                <template slot="action">
+                                    <Button type="warning" ghost size="small" @click="xjnr = true">删除</Button>
+                                </template>
+
+                            </Table>
+                        </Modal>
+                        <Button type="primary" ghost size="small" style="margin:0 10px" @click="updata=true">修改</Button>
+                        <Modal width="700" id="updata" v-model="updata">
+                            <div slot="header" class="addheader">
+                                修改
+                            </div>
+                            <div class="addcontent">
+                                <div class="top">
+                                    <span class="XMLXBH">项目类型编号&nbsp;&nbsp;: </span>
+                                    <Input v-model="XMLXBH" placeholder="输入项目类型编号" style="width: 30%;margin-right:30px;" />
+                                    <span class="XMLXBH">项目类型名称&nbsp;&nbsp;: </span>
+                                    <Input v-model="XMLXBH" placeholder="输入项目类型名称" style="width: 30%" />
+                                </div>
+                                <div class="top">
+                                    <span class="XMLXBH">设备操作规范&nbsp;&nbsp;: </span>
+                                    <Input v-model="XMLXBH" style="width: 30%;margin-right:30px;" />
+                                    <span class="XMLXBH">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;备&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;注&nbsp;&nbsp;&nbsp;&nbsp;: </span>
+                                    <Input v-model="XMLXBH" style="width: 30%" />
+                                </div>
+                            </div>
+                        </Modal>
+                        <Button type="warning" ghost size="small" @click="remove(index)">删除</Button>
+
+                    </template>
+                </Table>
+            </div>
+
+            <!--  <Page :total="TableData.length" :page-size="pageSize" show-total class="paging"></Page> -->
+        </div>
+
+    </div>
+</div>
+</template>
+
+<script>
+import {
+    wyjc,
+    dwjc,
+    jzujc,
+    lcjc
+} from 'api/docManage';
+var echarts = require('echarts');
+export default {
+    data() {
+        return {
+            WY:'',
+            XQ:'',
+            JZ:'',
+            sstj: '1',
+            startDate: "",
+            endDate: '',
+            wy: [],
+            xq: [],
+            jz: [],
+            cityList:[
+                {
+                    label:'洋烃物业',
+                    value:'1'
+                },
+                {
+                    label:'振南物业',
+                    value:'2'
+                },
+                {
+                    label:'上钢物业',
+                    value:'3'
+                },
+                {
+                    label:'潍坊物业',
+                    value:'4'
+                }
+            ],
+            // 初始化信息总条数
+            dataCount: 0,
+            // 每页显示多少条
+            pageSize: 10,
+            floorNum: null,
+            XMLXBH: null,
+            xjnr: false,
+            add: false,
+            updata: false,
+            WordName: null,
+            drawCategory: null,
+            period: [{
+                    value: "all",
+                    label: '全部'
+                },
+                {
+                    value: "year",
+                    label: '每年巡检'
+                },
+                {
+                    value: "month",
+                    label: '每月巡检'
+                },
+                {
+                    value: "day",
+                    label: '每日巡检'
+                }
+
+            ],
+            TableTitle: [{
+                    title: '日期',
+                    width: 80,
+                    align: 'center',
+                    key: 'sortNum'
+                },
+
+                {
+                    title: '事件总数',
+                    align: 'center',
+                    key: 'docCategory'
+                },
+                {
+                    title: '火警数',
+                    align: 'center',
+                    key: 'updataTime'
+                },
+                {
+                    title: '故障数',
+                    align: 'center',
+                    key: 'realUnit'
+                },
+                {
+                    title: '报警数',
+                    key: 'warring',
+                    // slot: 'action',
+                    align: 'center'
+                },
+                {
+                    title: '离线数',
+                    key: 'warring',
+                    // slot: 'action',
+                    align: 'center'
+                }
+            ],
+            TJLX:[
+                {
+                    label:"年统计",
+                    value:'1',
+                },{
+                    label:"季度统计",
+                    value:'2',
+                },{
+                    label:"月统计",
+                    value:'3',
+                },{
+                    label:"日统计",
+                    value:'4',
+                },{
+                    label:"周统计",
+                    value:'5',
+                }
+            ],
+            TableData: [
+            ],
+            patrolTitle: [{
+                    title: '巡检内容',
+                    align: 'center',
+                    key: 'patrolCon'
+                },
+
+                {
+                    title: '操作类型',
+                    align: 'center',
+                    key: 'actionType'
+                },
+                {
+                    title: '最大值',
+                    align: 'center',
+                    key: 'max'
+                },
+                {
+                    title: '最小值',
+                    align: 'center',
+                    key: 'min'
+                },
+                {
+                    title: '数据类型',
+                    align: 'center',
+                    key: 'datasType'
+                },
+                {
+                    title: '操作',
+                    key: 'action',
+                    slot: 'action',
+                    align: 'center'
+                }
+            ],
+            patrolcontent: [{
+                    patrolCon: "压力不足",
+                    actionType: '选择设备',
+                    max: '99',
+                    min: '1',
+                    datasType: "消防安全",
+
+                },
+                {
+                    patrolCon: "瓶体腐蚀",
+                    actionType: '选择设备',
+                    max: '9',
+                    min: '1',
+                    datasType: "消防安全",
+
+                }
+            ],
+
+        }
+    },
+    created() {
+        // this.initEvent()
+    },
+    mounted() {
+        // this.initEvent()
+        this.initEvent1()
+        this.initdata()
+    },
+    methods: {
+        initdata() {
+            wyjc({}).then(res => {
+                this.wy = res.obj
+            })
+        },
+        wychange(i){
+            dwjc({
+                ppid:i
+            }).then(res=>{
+                
+                this.xq=res.obj
+            })
+        },
+        xqchange(val){
+            jzujc({
+                cpid: val
+            }).then(res => {
+                this.jz = res.obj;
+            })
+        },
+
+       
+        initEvent1() {
+            var myChart = echarts.init(document.getElementById('category'));
+            myChart.setOption({
+                title: {
+                    // text: '折线图堆叠',
+
+                },
+                // tooltip: {
+                //     trigger: 'axis'
+                // },
+                legend: {
+                    data: ['火灾', '故障', '报警', '离线']
+                },
+                grid: {
+                    left: '3%',
+                    right: '4%',
+                    bottom: '3%',
+                    containLabel: true
+                },
+                // toolbox: {
+                //     feature: {
+                //         saveAsImage: {}
+                //     }
+                // },
+                xAxis: {
+                    type: 'category',
+                    boundaryGap: false,
+                    data: ['周一', '周二', '周三', '周四', '周五', '周六', '周日']
+                },
+                yAxis: {
+                    type: 'value',
+                    splitLine: {
+                        show: false,
+                    }
+                },
+                series: [{
+                        name: '火灾',
+                        type: 'line',
+                        // stack: '总量',
+                        data: [120, 132, 101, 134, 90, 230]
+                    },
+                    {
+                        name: '故障',
+                        type: 'line',
+                        // stack: '总量',
+                        data: [220, 182, 191, 234, 290, 330]
+                    },
+                    {
+                        name: '报警',
+                        type: 'line',
+                        // stack: '总量',
+                        data: [150, 232, 201, 154, 190, 330]
+                    },
+                    {
+                        name: '离线',
+                        type: 'line',
+                        // stack: '总量',
+                        data: [320, 332, 301, 334, 390, 33]
+                    },
+
+                ]
+            });
+        }
+    },
+}
+</script>
+
+<style lang="less" scoped>
+.container {
+    height: 100%;
+    width: 100%;
+    // padding: 0 3px;
+    background-color: #edf5f7;
+
+    .rightHead {
+        height: 100%;
+
+        .searchMeun {
+            padding: 0 20px;
+            position: relative;
+            // top: -27px;
+
+            // border: 1px solid #e8eaec;
+            border-top: none;
+            height: 80px;
+            line-height: 80px;
+
+            .wdName {
+                margin-left: 50px;
+            }
+        }
+
+        .tableBox {
+            margin-top: 20px;
+            // background: #fff;
+            height: 73%;
+
+            .topTJ {
+                display: flex;
+                height: 240px;
+                background: #fff;
+                // background:#282c37;
+                .left {
+                    flex: 1;
+
+                    #event {
+                        height: 100%;
+
+                        .search {
+                            height: 30px;
+                        }
+
+                        .sjtj {
+
+                            // color:#fff;
+                            .eventTotal {
+                                width: 100%;
+                                text-align: center;
+                                padding-top:20px;
+                                font-size:16px;
+                                >span {
+                                    font-size: 20px;
+                                }
+                            }
+
+                            .flnum {
+                                width: 100%;
+                                display: flex;
+                                flex-wrap: wrap;
+                                text-align: center;
+                                height: 200px;
+                                font-size: 16px;
+
+                                >P {
+                                    line-height: 20px;
+                                }
+
+                                >div {
+                                    width: 50%;
+                                    height: 50%;
+
+                                }
+                            }
+                        }
+
+                    }
+                }
+
+                .right {
+                    flex: 2;
+                    height: 240px;
+
+                    #category {
+                        width: 100%;
+                        height: 100%;
+                    }
+                }
+            }
+            .bottomTJ{
+                margin-top:20px;
+                background:#fff;
+                // height:73%;    
+            }   
+        }
+    }
+
+}
+</style><style>
+.seaechType {
+    width: 100%;
+    height: 40px;
+    text-align: right;
+}
+
+#add /deep/ .ivu-modal-header,
+#updata /deep/ .ivu-modal-header {
+    padding: 0;
+}
+
+#add /deep/ .ivu-modal-close,
+#updata /deep/ .ivu-modal-close {
+    top: 3px;
+}
+
+.sousuo1 {
+    background: #fff;
+    box-shadow: 0px 2px 3px -2px;
+
+    margin-top: 20px;
+    background: #fff;
+}
+
+.navpst {
+    height: 60px;
+    line-height: 60px;
+    padding-left: 20px;
+    display: flex;
+    background-color: #fff;
+    box-shadow: 0px 2px 3px -2px;
+}
+
+.navpst .currentp {
+    margin-right: 10px;
+}
+
+.navpst .ivu-breadcrumb-item-link {
+    color: #2456bb;
+}
+</style>

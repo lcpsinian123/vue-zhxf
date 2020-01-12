@@ -1,0 +1,75 @@
+import axiosApi from '@/axios/config'
+
+/**  任务评估
+ *
+ *  新增评估
+ * @param {String} url 接口url
+ * @param {string} method 请求方式
+ * @param {string} params 参数
+ *
+ *
+ */
+export const addAssess = params => {
+  return axiosApi({
+    url: 'scoreType/save',
+    method: 'post'
+  }, params)
+}
+
+/** 查询所有列表
+ *  @param {String} url 接口url
+ * @param {string} method 请求方式
+ * @param {string} params 参数
+ */
+export const getListAll = params => {
+  return axiosApi(
+    {
+      url: 'scoreType/getListAll',
+      method: 'post'
+    }, params
+  )
+}
+
+/**  分页查询
+ *  @param {String} url 接口url
+ * @param {string} method 请求方式
+ * @param {string} params 参数
+ *          pageNum 页码
+ *          pageSize 页容量(每页显示条数)
+ */
+export const getList = params => {
+  return axiosApi({
+    url: 'scoreType/getList',
+    method: 'post'
+  }
+  , params
+  )
+}
+
+/**  删除评估指标
+ *  @param {String} url 接口url
+ * @param {string} method 请求方式
+ * @param {string} params 参数
+ *          ids待删除的id数据，多个逗号分隔
+ *
+ */
+export const deleteAssess = params => {
+  return axiosApi({
+    url: '/scoreType/delete',
+    method: 'post'
+  }, params)
+}
+
+/**  修改评估指标
+ *  @param {String} url 接口url
+ * @param {string} method 请求方式
+ * @param {string} params 参数
+ *          ids待删除的id数据，多个逗号分隔
+ *
+ */
+export const updateAssess = params => {
+  return axiosApi({
+    url: '/scoreType/update',
+    method: 'post'
+  }, params)
+}

@@ -1,0 +1,273 @@
+<template>
+<div class='container'>
+
+    <div class="rightHead">
+        <Divider orientation="left">搜索查询</Divider>
+        <div class='searchMeun'>
+            <span class="wdName_doc">
+                编号&nbsp;:&nbsp;
+            </span>
+            <Input v-model="WordName" placeholder="输入文档名称" style="width: 10%" />
+            <span class="wdName">
+                项目类型&nbsp;:&nbsp;
+            </span>
+            <Select v-model="drawCategory" style="width: 10%">
+                <Option v-for="item in drawCategory" :value="item.value" :key="item.value">{{ item.label }}</Option>
+            </Select>
+
+            <Button class='wdName' type="info">查询</Button>
+
+            <Button class='wdName' @click="add = true" type="success">添加</Button>
+            <Modal width="700" id="add" v-model="add"  >
+                <div slot="header" class="addheader">
+                    添加
+                </div>
+                <div class="addcontent">
+                    <div class="top">
+                        <span class="XMLXBH">项目类型编号&nbsp;&nbsp;: </span>
+                        <Input v-model="XMLXBH" placeholder="输入项目类型编号" style="width: 30%;margin-right:30px;" />
+                        <span class="XMLXBH">项目类型名称&nbsp;&nbsp;: </span>
+                        <Input v-model="XMLXBH" placeholder="输入项目类型名称" style="width: 30%" />
+                    </div>
+                    <div class="top">
+                        <span class="XMLXBH">设备操作规范&nbsp;&nbsp;: </span>
+                        <Input v-model="XMLXBH" style="width: 30%;margin-right:30px;" />
+                        <span class="XMLXBH">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;备&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;注&nbsp;&nbsp;&nbsp;&nbsp;: </span>
+                        <Input v-model="XMLXBH" style="width: 30%" />
+                    </div>
+                </div>
+            </Modal>
+        </div>
+        <div class='tableBox'>
+            <Table stripe border :columns="TableTitle" :data="TableData">
+
+                <template slot-scope="{ row, index }" slot="action">
+                    <Button type="primary" ghost size="small" @click="xjnr = true">巡检内容</Button>
+
+                    <Modal width="700" v-model="xjnr"  >
+                        <div slot="header" class="">
+                            巡检内容列表
+                        </div>
+                        <div class="seaechType">
+                            <span> 巡检类别&nbsp;&nbsp;: &nbsp;&nbsp;&nbsp;</span>
+                            <Select v-model="floorNum" style="width:120px">
+                                <Option v-for="item in period" :value="item.value" :key="item.value">{{ item.label }}</Option>
+                            </Select>
+                        </div>
+                        <Table stripe border :columns="patrolTitle" :data="patrolcontent">
+                            <template slot="action">
+                                 <Button type="warning" ghost size="small" @click="xjnr = true">删除</Button>
+                            </template>
+                        
+                        
+                         </Table>
+                    </Modal>
+                    <Button type="primary" ghost size="small" style="margin:0 10px" @click="updata=true">修改</Button>
+                    <Modal width="700" id="updata" v-model="updata" >
+                        <div slot="header" class="addheader">
+                            修改
+                        </div>
+                        <div class="addcontent">
+                            <div class="top">
+                                <span class="XMLXBH">项目类型编号&nbsp;&nbsp;: </span>
+                                <Input v-model="XMLXBH" placeholder="输入项目类型编号" style="width: 30%;margin-right:30px;" />
+                                <span class="XMLXBH">项目类型名称&nbsp;&nbsp;: </span>
+                                <Input v-model="XMLXBH" placeholder="输入项目类型名称" style="width: 30%" />
+                            </div>
+                            <div class="top">
+                                <span class="XMLXBH">设备操作规范&nbsp;&nbsp;: </span>
+                                <Input v-model="XMLXBH" style="width: 30%;margin-right:30px;" />
+                                <span class="XMLXBH">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;备&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;注&nbsp;&nbsp;&nbsp;&nbsp;: </span>
+                                <Input v-model="XMLXBH" style="width: 30%" />
+                            </div>
+                        </div>
+                    </Modal>
+                    <Button type="warning" ghost size="small" @click="remove(index)">删除</Button>
+
+                </template>
+            </Table>
+        </div>
+
+    </div>
+</div>
+</template>
+
+<script>
+export default {
+    data() {
+        return {
+            floorNum:null,
+            XMLXBH: null,
+            xjnr: false,
+            add: false,
+            updata: false,
+            WordName:null,
+            drawCategory:null,  
+            period: [{
+                    value: "all",
+                    label: '全部'
+                },
+                {
+                    value: "year",
+                    label: '每年巡检'
+                },
+                {
+                    value: "month",
+                    label: '每月巡检'
+                },
+                {
+                    value: "day",
+                    label: '每日巡检'
+                }
+
+            ],
+            TableTitle: [{
+                    title: '编号',
+                    width: 80,
+                    key: 'sortNum'
+                },
+
+                {
+                    title: '项目类型名称',
+                    align: 'center',
+                    key: 'docCategory'
+                },
+                {
+                    title: '设备操作规范',
+                    align: 'center',
+                    key: 'updataTime'
+                },
+                {
+                    title: '备注',
+                    align: 'center',
+                    key: 'realUnit'
+                },
+                {
+                    title: '操作',
+                    key: 'action',
+                    slot: 'action',
+                    align: 'center'
+                }
+            ],
+            TableData: [{
+                    sortNum: 1,
+
+                    docCategory: '平面图',
+                    updataTime: '2019-04-10',
+                    realUnit: "振南物业",
+
+                },
+                {
+                    sortNum: 2,
+
+                    docCategory: '平面图',
+                    updataTime: '2019-04-10',
+                    realUnit: "振南物业",
+
+                }
+
+            ],
+            patrolTitle: [{
+                    title: '巡检内容',
+                    align: 'center',
+                    key: 'patrolCon'
+                },
+
+                {
+                    title: '操作类型',
+                    align: 'center',
+                    key: 'actionType'
+                },
+                {
+                    title: '最大值',
+                    align: 'center',
+                    key: 'max'
+                },
+                {
+                    title: '最小值',
+                    align: 'center',
+                    key: 'min'
+                },
+                {
+                    title: '数据类型',
+                    align: 'center',
+                    key: 'datasType'
+                },
+                {
+                    title: '操作',
+                    key: 'action',
+                    slot: 'action',
+                    align: 'center'
+                }
+            ],
+            patrolcontent: [{
+                    patrolCon: "压力不足",
+                    actionType: '选择设备',
+                    max: '99',
+                    min: '1',
+                    datasType: "消防安全",
+
+                },
+                {
+                    patrolCon: "瓶体腐蚀",
+                    actionType: '选择设备',
+                    max: '9',
+                    min: '1',
+                    datasType: "消防安全",
+
+                }
+            ]
+        }
+    },
+}
+</script>
+
+<style lang="less" scoped>
+.container {
+
+    width: 100%;
+    padding: 0 3px;
+
+    .rightHead {
+
+        .searchMeun {
+            padding: 0 20px;
+            position: relative;
+            top: -27px;
+            height: 50px;
+            border: 1px solid #e8eaec;
+            border-top: none;
+            height: 80px;
+            line-height: 80px;
+
+            .wdName {
+                margin-left: 50px;
+            }
+        }
+    }
+}
+</style><style>
+.seaechType {
+    width: 100%;
+    height: 40px;
+    text-align: right;
+}
+
+#add .ivu-modal-header,
+#updata .ivu-modal-header {
+    padding: 0;
+}
+
+#add .ivu-modal-close,
+#updata .ivu-modal-close {
+    top: 3px;
+}
+
+.addheader {
+    background: #394959;
+    height: 40px;
+    line-height: 40px;
+    color: #fff;
+    padding-left: 30px;
+}
+</style>

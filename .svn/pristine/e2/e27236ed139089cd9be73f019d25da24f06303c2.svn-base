@@ -1,0 +1,382 @@
+<!--
+ * @Author: your name
+ * @Date: 2019-10-30 16:58:17
+ * @LastEditTime: 2019-11-09 16:56:04
+ * @LastEditors: Please set LastEditors
+ * @Description: In User Settings Edit
+ * @FilePath: \vue-zzxf\src\components\user\user.vue
+ -->
+<template>
+    <div class="menu">
+       <div class="indicatorleft">
+          <Tree :data="data5" ref="data5"  :render="renderContent" ></Tree>
+       </div >
+       <div class='indicatorright' >
+           <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="80" v-if='show'>
+        <FormItem label="菜单名称" prop="powerName">
+            <Input v-model="formValidate.powerName" ></Input>
+        </FormItem>
+        <FormItem label="功能代码" prop="powerCode">
+            <Input v-model="formValidate.powerCode" ></Input>
+        </FormItem>
+        <FormItem label="排序" prop="sort">
+             <Input v-model="formValidate.sort" ></Input>
+        </FormItem>
+        <FormItem label="菜单地址" prop="powerUrl">
+            <Input v-model="formValidate.powerUrl"  ></Input>
+        </FormItem>
+        <FormItem label="菜单图标" prop="powerIcon">
+            <Input v-model="formValidate.powerIcon" >
+                
+            </Input>
+        </FormItem>
+        <FormItem>
+            <Button type="primary" @click="handleSubmit('formValidate')">提交</Button>
+            <Button @click="handleReset('formValidate')" style="margin-left: 8px">重置</Button>
+            <Button @click="qxReset('formValidate')" style="margin-left: 8px">取消</Button>
+        </FormItem>
+    </Form>
+               <Form ref="updateValidate" :model="updateValidate" :rules="ruleValidate" :label-width="80" v-if='shows'>
+        <FormItem label="菜单名称" prop="powerName">
+            <Input v-model="updateValidate.powerName" ></Input>
+        </FormItem>
+        <FormItem label="功能代码" prop="powerCode">
+            <Input v-model="updateValidate.powerCode" ></Input>
+        </FormItem>
+        <FormItem label="排序" prop="sort">
+             <Input v-model="updateValidate.sort" ></Input>
+        </FormItem>
+        <FormItem label="菜单地址" prop="powerUrl">
+            <Input v-model="updateValidate.powerUrl"  ></Input>
+        </FormItem>
+        <FormItem label="菜单图标" prop="powerIcon">
+            <Input v-model="updateValidate.powerIcon" > </Input>
+        </FormItem>
+        <FormItem>
+            <Button type="primary" @click="handleSubmit('updateValidate')">提交</Button>
+            <!-- <Button @click="handleReset('updateValidate')" style="margin-left: 8px">重置</Button> -->
+            <Button @click="qxReset('updateValidate')" style="margin-left: 8px">取消</Button>
+        </FormItem>
+    </Form>
+       </div>
+
+    </div>
+</template>
+<script>
+import { getlistpower,savepower,delpower,updatepower} from 'api/user'
+export default {
+name:'menu',
+  data () {
+            return {
+            show:false,
+            shows:false,
+            data5: [
+                {
+                    title: '菜单管理',
+                    expand: true,
+                    render: (h, { root, node, data }) => {
+                        return h('span', {
+                            style: {
+                                display: 'inline-block',
+                                width: '100%'
+                            }
+                        }, [
+                            h('span', [
+                                h('Icon', {
+                                    props: {
+                                        type: 'ios-folder-outline'
+                                    },
+                                    style: {
+                                        marginRight: '8px'
+                                    }
+                                }),
+                                h('span', data.title)
+                            ]),
+                            h('span', {
+                                style: {
+                                    display: 'inline-block',
+                                    float: 'right',
+                                    marginRight: '32px'
+                                }
+                            }, [
+                                h('Button', {
+                                    props: Object.assign({}, this.buttonProps, {
+                                        icon: 'ios-add',
+                                        type: 'primary'
+                                    }),
+                                    style: {
+                                        width: '135px'
+                                    },
+                                    on: {
+                                        click: () => { this.append(data) }
+                                    }
+                                })
+                            ])
+                        ]);
+                    },
+                    children: [
+                    
+                    ]
+                }
+            ],
+            buttonProps: {
+                type: 'default',
+                size: 'small',
+            }
+        ,
+                formValidate: {
+                    powerName: '',
+                    powerCode: '',
+                    sort: '',
+                    powerUrl: '',
+                    powerIcon: '',
+                  
+                },
+                    updateValidate: {
+                    powerName: '',
+                    powerCode: '',
+                    sort: '',
+                    powerUrl: '',
+                    powerIcon: '',
+                  
+                },
+                dates:null,
+                childrens:null,
+                ruleValidate: {
+                    powerName: [
+                        { required: true, message: '请输入菜单名称', trigger: 'blur' }
+                    ],
+                    powerCode: [
+                         { required: true, message: '请输入功能代码', trigger: 'blur' },
+                    ],
+                    sort: [
+                       { required: true, message: '请输入排序', trigger: 'blur' },                
+                    ],
+                    powerUrl: [
+                        { required: true, message: '请输入菜单地址', trigger: 'blur' }
+                    ],
+                    powerIcon: [
+                        { required: true, message: '请输入菜单图标', trigger: 'blur' }
+                    ],
+                    
+                
+                }
+            }
+        },
+              methods: {
+            getlistpowers(){
+                getlistpower().then(res=>{
+                // console.log(res)
+                let reslist=[];
+                reslist=res.obj;
+                let crs=[];
+                let ejs=[];
+                reslist.forEach(er=>{
+                    if(!er.powerPid){
+                       crs.push(er)
+                   }else{
+                         ejs.push(er)
+                   }
+                })
+                   //一级菜单显示
+                 this.data5[0].children=crs;
+                this.data5.forEach(es => {
+                    for (let key in es.children) {
+                       es.children[key].title=es.children[key]['powerName']
+                       es.children[key].nodeKey=1;
+                       es.children[key].children=[];
+                    }
+                });
+                //二级菜单列表
+                ejs.forEach(re=>{
+                  this.data5.forEach(es => {
+                    for (let key in es.children) {  
+                    if(re.powerPid==es.children[key]['powerId']){
+                        es.children[key].children.push(re);
+                    }
+                    }
+                });     
+                })
+                //二级菜单显示
+                this.data5[0].children.forEach(res=>{
+                    for (let key in res.children) {
+                       res.children[key].title=res.children[key]['powerName']
+                       res.children[key].nodeKey=1;
+                       res.children[key].children=[];
+                    }
+                    
+                })
+            })
+            },
+
+            handleSubmit (name) {
+                this.$refs[name].validate((valid) => {
+                    if (valid & name=='formValidate') {
+                        let date={};
+                        date=this.formValidate;
+                            date.powerPid=this.dates.powerId;
+                        //    this.append()
+                        savepower(date).then(res=>{
+                           if(res.status==1){
+                               this.$Message.success('添加成功');
+                               
+                                this.handleReset(name)
+                                this.show=false;
+                                setTimeout(res=>{
+                                    this.getlistpowers()
+                                },1000)
+                           }
+                        })
+                    }else if(valid & name=='updateValidate'){
+                            let date={};
+                             date=this.updateValidate;
+                             console.log(date)
+                         updatepower(date).then(res=>{
+                           if(res.status==1){
+                                this.$Message.success('修改成功');
+                                this.handleReset(name)
+                                this.shows=false;
+                                this.updateValidate={};
+                                    setTimeout(res=>{
+                                    this.getlistpowers()
+                                },1000)
+                           }
+                         })   
+                    }
+                     else {
+                        this.$Message.error('提交失败');
+                    }
+                })
+            },
+            handleReset (name) {
+                console.log(name)
+                this.$refs[name].resetFields();
+            },
+             renderContent (h, { root, node, data }) {
+            return h('span', {
+                style: {
+                    display: 'inline-block',
+                    width: '100%'
+                }
+            }, [
+                h('span', [
+                    h('Icon', {
+                        props: {
+                            type: 'ios-paper-outline'
+                        },
+                        style: {
+                            marginRight: '8px'
+                        }
+                    }),
+                    h('span', data.title)
+                ]),
+                h('span', {
+                    style: {
+                        display: 'inline-block',
+                        float: 'right',
+                        marginRight: '32px'
+                    }
+                }, [
+                    h('Button', {
+                        props: Object.assign({}, this.buttonProps, {
+                            icon: 'ios-add'
+                        }),
+                        style: {
+                            marginRight: '8px'
+                        },
+                        on: {
+                            click: () => { this.append(data) }
+                        }
+                    }),
+                    h('Button', {
+                        props: Object.assign({}, this.buttonProps, {
+                            icon: 'ios-remove'
+                        }),
+                        style: {
+                            marginRight: '8px'
+                        },
+                        on: {
+                            click: () => { this.remove(root, node, data) }
+                       }
+                    }),
+                    h('Button', {
+                        props: Object.assign({}, this.buttonProps, {
+                            icon: 'ios-create'
+                        }),
+                        style: {
+                            marginRight: '8px'
+                        },
+                        on: {
+                            click: () => { this.openEditName(root, node, data) }
+                       }
+                    })
+                   
+                ])
+            ]);
+        },
+        append (data) {
+            console.log(data)
+            this.dates=data;
+            let children = data.children || [];
+            if(this.shows!=false){
+               this.shows=false;
+            }
+                 this.show=true;
+        },
+        remove (root, node, data) {
+            const parentKey = root.find(el => el === node).parent;
+            const parent = root.find(el => el.nodeKey === parentKey).node;
+            const index = parent.children.indexOf(data);
+            parent.children.splice(index, 1);
+        },
+        openEditName (root, node, data) {
+            if(this.show!=false){
+                this.show=false;
+            }
+            this.shows=true;
+            this.updateValidate.powerName=data.powerName;
+            this.updateValidate.powerCode=data.powerCode;
+            this.updateValidate.sort=data.sort;
+            this.updateValidate.powerUrl=data.powerUrl;
+            this.updateValidate.powerIcon=data.powerIcon;
+            this.updateValidate.powerId=data.powerId;
+        },
+        qxReset(name){
+            if(name=='updateValidate'){
+                  this.show=false;
+                 this.updateValidate={};
+            }else if(name=='formValidate'){
+                this.show=false;
+                 this.formValidate={};
+            }
+           
+        }
+    
+        },
+        created(){
+            this.getlistpowers()
+        }
+}
+</script>
+<style lang="less">
+ .menu{
+       width: 100%;
+      height: 100%;
+    
+      padding:12px;
+      display: flex;
+      .indicatorleft{
+      width: 30%;
+      height: 100%;
+        // background: #9999;
+        display: flex;
+        justify-content:space-between
+  }
+   .indicatorright{
+      width: 70%;
+       height: 100%;
+        //  background: #1999;
+         padding: 24px;
+  }
+ }
+</style>

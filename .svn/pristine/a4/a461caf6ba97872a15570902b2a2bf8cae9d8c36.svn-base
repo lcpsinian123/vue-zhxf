@@ -1,0 +1,26 @@
+/*
+ * @Author: your name
+ * @Date: 2019-09-03 10:19:47
+ * @LastEditTime: 2019-10-24 16:38:30
+ * @LastEditors: Please set LastEditors
+ * @Description: In User Settings Edit
+ * @FilePath: /d:\element UI\vue-xf\src\router\demo\index.js
+ */
+export default [
+  {
+    path: '',
+    name: 'demohome',
+    component: () => import('@/components/securityAssessment/indicatorSetting'),
+    meta: {
+      title: '首页'
+    }
+  },
+  {
+    path: 'about',
+    name: 'demoabout',
+    component: () => import('@/views/About'),
+    meta: {
+      title: '关于Demo'
+    }
+  }
+]

@@ -1,0 +1,26 @@
+<!--
+ * @Description: In User Settings Edit
+ * @Author: your name
+ * @Date: 2019-08-26 16:56:21
+ * @LastEditTime: 2019-10-22 13:13:45
+ * @LastEditors: Please set LastEditors
+ -->
+<template>
+  <div id="app">
+         <router-view />
+  </div>
+</template>
+<script>
+export default {
+}
+</script>
+<style lang="less" >
+#app {
+  color: @colorF;
+  width: 100%;
+  height: 100%;
+    // display: flex;
+    // flex-direction: column;
+    // flex: auto;
+}
+</style>

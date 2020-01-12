@@ -1,0 +1,636 @@
+<template>
+<div>
+    <div class="container">
+        <div class='leftTree'>
+            <Tree :data="treedata"></Tree>
+        </div>
+        <div class='rightTable'>
+            <div class="rightHead">
+                <Divider orientation="left">搜索查询</Divider>
+                <div class='searchMeun'>
+                    <span class="wdName_doc">
+                        文档名称&nbsp;:&nbsp;
+                    </span>
+                    <Input v-model="drawCategory.name" placeholder="输入文档名称" style="width: 10%" />
+                    <span class="wdName">
+                        类型&nbsp;:&nbsp;
+                    </span>
+                    <Select v-model="drawCategory.type" style="width:10%">
+                        <Option v-for="item in category" :value="item.value" :key="item.value">{{ item.label }}</Option>
+                    </Select>
+                    <span class="wdName">
+                        上传时间&nbsp;:&nbsp;
+                    </span>
+                    <DatePicker :value="startTime" format="yyyy年MM月dd日" type="date" placeholder="Select date" style="width: 10%" v-model="drawCategory.createDate"></DatePicker>
+                    <span class="wdName_doc">
+                        至&nbsp;:&nbsp;
+                    </span>
+                    <DatePicker :value="endTime" format="yyyy年MM月dd日" type="date" placeholder="Select date" style="width: 10%" v-model="drawCategory.endTime"></DatePicker>
+
+                    <span class="wdName">
+                        楼层&nbsp;:&nbsp;
+                    </span>
+                    <Select v-model="drawCategory.flGuid" style="width:10%">
+                        <Option v-for="item in floorLIst" :value="item.value" :key="item.value">{{ item.label }}</Option>
+                    </Select>
+
+                    <Button class='wdName' type="info" @click="getQuery">查询</Button>
+                </div>
+                <Divider></Divider>
+            </div>
+            <div class="Content">
+                <div class="Btn">
+                    <Button class='Btn_right' type="success" @click="addFlag = true">添加</Button>
+                    <Modal width="700" v-model="addFlag" title="添加图纸" @on-ok="getAdd">
+                        <div class="addDraw">
+                            <span>图纸名称 &nbsp; :&nbsp;&nbsp; </span>
+                            <Input v-model="floorNumVal.name" placeholder="输入文档名称" style="width: 230px;margin-right:30px;" />
+                            <span class="drawLeft">图纸类型 &nbsp; :&nbsp;&nbsp; </span>
+                            <Input v-model="floorNumVal.type" placeholder="输入类型" style="width: 230px" />
+
+                        </div>
+                        <div class="addDraw">
+                            <span>管理单位 &nbsp; :&nbsp;&nbsp; </span>
+                            <Input v-model="floorNumVal.realUnit" placeholder="输入文档名称" style="width: 230px;margin-right:30px;" />
+                            <span class="drawLeft">大楼地址 &nbsp; :&nbsp;&nbsp; </span>
+                            <Input v-model="floorNumVal.address" placeholder="输入文档名称" style="width: 230px" />
+
+                        </div>
+                        <div class="addDraw">
+                            <span>楼&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;号&nbsp; &nbsp;&nbsp; :&nbsp;&nbsp; </span>
+                            <Input v-model="floorNumVal.flGuid" placeholder="输入文档名称" style="width: 230px;margin-right:30px;" />
+                            <span class="drawLeft">楼&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;层 &nbsp;&nbsp;&nbsp; :&nbsp;&nbsp; </span>
+                            <Input v-model="floorNumVal.floorNum" placeholder="输入文档名称" style="width: 230px" />
+
+                        </div>
+                        <div class="addDraw">
+                            <span>上传文件 :&nbsp;&nbsp; </span>
+                            <Upload multiple type="drag" action="http://192.168.2.185:8080/zhxf/fireMdBase/createUploadFile" :before-upload="handleUpload">
+                                <div style="padding: 20px 0">
+                                    <Icon type="ios-cloud-upload" size="52" style="color: #3399ff"></Icon>
+                                    <p>请选择需要上传的文件... </p>
+                                </div>
+                            </Upload>
+
+                        </div>
+
+                    </Modal>
+                    <Button class='Btn_right' type="warning" @click="updateusers">编辑</Button>
+                    <Modal width="700" v-model="editFlag" title="编辑" @on-ok="getAlter" >
+                        <div class="addDraw">
+                            <span>图纸名称 &nbsp; :&nbsp;&nbsp; </span>
+                            <Input v-model="WordName.name" placeholder="输入文档名称" style="width: 230px;margin-right:30px;" />
+                            <span class="drawLeft">图纸类型 &nbsp; :&nbsp;&nbsp; </span>
+                            <Input v-model="WordName.type" placeholder="输入文档名称" style="width: 230px" />
+
+                        </div>
+                        <div class="addDraw">
+                            <span>管理单位 &nbsp; :&nbsp;&nbsp; </span>
+                            <Input v-model="WordName.realUnit" placeholder="输入文档名称" style="width: 230px;margin-right:30px;" />
+                            <span class="drawLeft">大楼地址 &nbsp; :&nbsp;&nbsp; </span>
+                            <Input v-model="WordName.address" placeholder="输入文档名称" style="width: 230px" />
+
+                        </div>
+                        <div class="addDraw">
+                            <span>楼&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;号&nbsp; &nbsp;&nbsp; :&nbsp;&nbsp; </span>
+                            <Input v-model="WordName.flGuid" placeholder="输入文档名称" style="width: 230px;margin-right:30px;" />
+                            <span class="drawLeft">楼&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;层 &nbsp;&nbsp;&nbsp; :&nbsp;&nbsp; </span>
+                            <Input v-model="WordName.floorNum" placeholder="输入文档名称" style="width: 230px" />
+
+                        </div>
+                    </Modal>
+                    <Button class='Btn_right' type="error" @click="deleteusers">批量删除</Button>
+                    <Button type="info">导出</Button>
+                </div>
+                <div class='tableBox'>
+                    <Table stripe border :columns="TableTitle" :data="TableData2"  @on-select='selectionchange'>
+
+                        <template slot-scope="{ row, index }" slot="action">
+                            <Button type="primary" ghost size="small" style="margin-right: 5px" @click="show(row)">下载</Button>
+                            <Button type="primary" ghost size="small" @click="remove(index)">预览</Button>
+                            
+                        </template>
+                    </Table>
+                      <Page :total="TableData2.length" :page-size="pageSize" show-total class="paging" ></Page>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+</template>
+
+<script>
+
+/////////增         改          删      查          传      分页
+import { addData,alterData,deleteData,queryData,upLoading,listData} from 'api/drawManage';
+
+export default {
+    data() {
+        return {
+            addFlag: false,
+            editFlag: false,
+            file: null,
+            loadingStatus: false,
+                // 初始化信息总条数
+                dataCount:0,
+                // 每页显示多少条
+                pageSize:10,
+            treedata: [{
+                title: '浦房集团',
+                expand: true,
+                children: [{
+                        title: '洋泾物业',
+                        expand: true,
+                        children: [{
+                                title: '博山路11弄',
+                                expand: true,
+                                children: [{
+                                    title: '27号'
+                                }]
+                            },
+                            {
+                                title: '博山路12弄',
+                                expand: true,
+                                children: [{
+                                    title: '27号'
+                                }]
+                            }
+                        ]
+                    },
+                    {
+                        title: '振南物业',
+                        expand: true,
+                        children: [{
+                                title: '博山路11弄',
+                                expand: true,
+                                children: [{
+                                    title: '27号'
+                                }]
+                            },
+                            {
+                                title: '博山路12弄',
+                                expand: true,
+                                children: [{
+                                    title: '27号'
+                                }]
+                            }
+                        ]
+                    },
+                    {
+                        title: '浦高小区',
+                        expand: true,
+                        children: [{
+                                title: '博山路11弄',
+                                expand: true,
+                                children: [{
+                                    title: '27号'
+                                }]
+                            },
+                            {
+                                title: '博山路12弄',
+                                expand: true,
+                                children: [{
+                                    title: '27号'
+                                }]
+                            }
+                        ]
+                    },
+                    {
+                        title: '浦东南路2362号',
+                        expand: true,
+                        children: [{
+                                title: '博山路11弄',
+                                expand: true,
+                                children: [{
+                                    title: '27号'
+                                }]
+                            },
+                            {
+                                title: '博山路12弄',
+                                expand: true,
+                                children: [{
+                                    title: '27号'
+                                }]
+                            }
+                        ]
+                    },
+                    {
+                        title: '南码头路44号',
+                        expand: true,
+                        children: [{
+                                title: '博山路11弄',
+                                expand: true,
+                                children: [{
+                                    title: '27号'
+                                }]
+                            },
+                            {
+                                title: '博山路12弄',
+                                expand: true,
+                                children: [{
+                                    title: '27号'
+                                }]
+                            }
+                        ]
+                    }
+                ]
+            }],
+            //查询页面
+            drawCategory:{
+                guid:'',
+                name:'',
+                type:'',
+                createDate:'',
+                flGuid:'',
+                userId:'',
+            },
+            //添加数据,双向绑定
+            floorNumVal:{
+                guid:'',
+                name:'',
+                type:'',
+                flGuid:'',
+                userId:'',
+                realUnit:'',
+                address:'',
+                floorNum:'',
+                uploadPerson:''
+            },
+            WordName: null,
+            WordName:{
+                guid:'',
+                name:'',
+                type:'',
+                flGuid:'',
+                userId:'',
+                createDate:'',
+                realUnit:'',
+
+                address:'',                
+                floorNum:'',
+                uploadPerson:''
+            },
+            startTime: null,
+            endTime: null,
+            
+            category: [{
+                    value: "平面图",
+                    label: "平面图"
+                }, {
+                    value: "总平图",
+                    label: "总平图"
+                },
+
+            ],
+            floorLIst: [{
+                    value: "1层",
+                    label: "1层"
+                }, {
+                    value: "2层",
+                    label: "2层"
+                }, {
+                    value: "3层",
+                    label: "3层"
+                }, {
+                    value: "4层",
+                    label: "4层"
+                }, {
+                    value: "5层",
+                    label: "5层"
+                }
+            ],
+            
+            TableTitle: [{
+                    type: 'selection',
+                    width: 60,
+                    align: 'center'
+                },
+                {
+                    title: '序号',
+                    width: 80,
+                    key: 'sortNum'
+                },
+                {
+                    title: '文档名称',
+                    key: 'name'
+                },
+                {
+                    title: '文档类型',
+                    width: 100,
+                    key: 'type'
+                },
+                {
+                    title: '上传时间',
+                    width: 130,
+                    key: 'createDate'
+                },
+                {
+                    title: '物业管理单位',
+                    width: 160,
+                    key: 'realUnit'
+                },
+                {
+                    title: '大楼地址',
+                    key: 'address'
+                },
+                {
+                    title: '楼号',
+                    width: 80,
+                    key: 'flGuid'
+                },
+                {
+                    title: '楼层',
+                    width: 80,
+                    key: 'floorNum'
+                },
+                {
+                    title: '上传人',
+                    width: 100,
+                    key: 'uploadPerson'
+                },
+                {
+                    title: '操作',
+                    key: 'action',
+                    slot: 'action',
+                    align: 'center'
+                }
+            ],
+            ajaxTableData2:[],
+            TableData2: [],
+            updatelist:[],
+            ids:[],
+            uploadVal:{
+                fileDiv:'fileDiv',
+                fileUrl:'fireDwBase',
+                objGuid:this.guid,
+                tabName:'FIRE_DW_BASE'
+            },
+            autoVal:{
+                pageNum:0,
+                pageSize:10
+            }
+                
+
+            
+
+        }
+    },
+    methods: {
+        show(index) {
+            console.log(index)
+            // this.$Modal.info({
+            //     title: 'User Info',
+            //     content: `Name：${this.data6[index].name}<br>Age：${this.data6[index].age}<br>Address：${this.data6[index].address}`
+            // })
+        },
+        remove(index) {
+            console.log(index)
+        },
+        handleUpload (file) {
+            this.file = file;
+            return false;
+        },
+        upload (fileUrl,objGuid,tabName) {
+
+            // upLoading({
+            //         fileDiv:"fileDiv",
+            //         fileUrl:fileUrl,
+            //         objGuid:objGuid,
+            //         tabName:tabName
+            //     }).then(res=>{
+            //     this.loadingStatus = true;
+            //     setTimeout(() => {
+            //         this.file = null;
+            //         this.loadingStatus = false;
+            //         this.$Message.success('上传成功')
+            //     }, 1000);
+            // })
+            this.$axios.post('http://192.168.2.185:8080/zhxf/fireMdBase/createUploadFile?=fileDiv'+fileDiv+'fileUrl'+fileUrl+'objGuid'+objGuid+'tabName'+tabName+'').then(res=>{
+                console.log(res)
+                if(res.status==1){
+                    this.$Message.success('上传成功')
+                    
+                }
+            })
+            
+        },
+        selectionchange(res){
+            if(res){
+                this.updatelist=res;
+            }
+       
+        },
+        //添加数据
+        getAdd(){
+            console.log(1)
+            addData(this.floorNumVal).then(res=>{
+                console.log(res)
+                if(res.status==1){
+                    this.upload(res.obj.fileUrl,res.obj.objGuid,res.obj.tabName)
+                    this.$Message.info('添加成功');
+                
+                }                      
+            })
+        },
+        //修改数据
+        getAlter(){
+            alterData(this.WordName).then(res=>{
+                if(res.status==1){
+                    this.$Message.success('添加成功');
+                    this.getdata(seletlist);
+                }    
+            })
+        },
+        //修改数据框的初始化数据渲染
+        updateusers(){
+            let list=this.updatelist;
+            console.log(list)
+            if(list.length!=1){
+                this.$Message.warning('请先选择一行数据数据')
+            }else{
+                this.editFlag=true;
+                //文档名称
+                this.WordName.name=list[0].name;
+                //文档类型
+                this.WordName.type=list[0].type;
+                //上传时间
+                // this.WordName.mobile=list[0].updataTime;
+                //物业管理单位
+                // this.WordName.email=list[0].realUnit;
+                //大楼地址
+                this.WordName.email=list[0].address;
+                //楼号
+                this.WordName.flGuid=list[0].flGuid;
+                //楼号再用
+                this.WordName.email=list[0].floorNum;
+                //生效日期
+                // this.WordName.email=list[0].uploadPerson;
+                // id
+                this.WordName.guid=list[0].guid
+
+                this.updatelist=''
+
+            }
+        },
+        //删除
+        deleteusers(){
+            for (const key in this.updatelist) {
+                this.ids.push(this.updatelist[key]['guid'])
+            }
+            // let id=this.ids.join(',');
+            //     id=id.replace(/\"/g, '');
+            //     console.log(id);
+            //     if(id==""){
+            //        this.$Message.warning('请先选择删除的数据')
+            //     }else{
+            //         deleteData(
+            //             {
+            //                 ids:id
+            //             }
+            //         ).then(res=>{
+            //             if(res.status==1){
+            //                 this.$Message.success('删除成功')
+            //                 this.handleListApproveHistory();
+            //                 this.ids=[];
+            //                 this.updatelist=[];
+            //             }
+            //         })
+            //    }
+            this.$axios.post('http://192.168.2.185:8080/zhxf/fireDwBase/delete?ids='+this.ids).then(res=>{
+                console.log(res)
+                if(res.status==1){
+                    this.$Message.success('删除成功')
+                    this.handleListApproveHistory();
+                    this.ids=[];
+                    this.updatelist=[];
+                }
+            })
+   
+        },
+        //查询
+        getQuery(){
+            console.log(22)
+            queryData(this.drawCategory).then(res=>{
+                if(res.status==1){
+                    this.$Message.info('查询成功');
+                    // this.handleListApproveHistory();
+                    
+                }                      
+            })
+        },
+
+
+        //页面初始
+        getdata(params){
+            // listData(
+            //    this.autoVal
+            // ).then(res=>{
+            //     console.log(res)
+            //     this.ajaxTableData2=res.data.obj.list;
+            //     console.log(res.data.obj)
+            //     this.dataCount = res.data.obj.total;
+            //     this.TableData2=this.ajaxTableData2;
+            //     // this.handleListApproveHistory()
+            // })
+            this.$axios.post('http://localhost:8020/syspower/fireDwBase/getList?pageNum='+params.pageNum+'&pageSize='+params.pageSize+'').then(res=>{
+                console.log(res)
+                this.ajaxTableData2=res.data.obj.list;
+                console.log(res.data.obj)
+                this.dataCount = res.data.obj.total;
+                this.TableData2=this.ajaxTableData2;
+            })
+        },
+
+
+         handleListApproveHistory(){
+            let seletlist={
+                userName:this.userName,
+            //    loginName:this.loginName,
+            //    mobile:this.mobile,
+                pageNum:0,
+                pageSize:10
+            };
+            this.getdata(seletlist);
+        },
+        // 分页
+        changepage(index){
+            let seletlist={
+                userName:this.userName,
+            //    loginName:this.loginName,
+            //    mobile:this.mobile,
+                pageNum:index,
+                pageSize:10
+            };
+            this.getdata(seletlist);
+        }     
+    },
+
+    created(){
+        this.handleListApproveHistory();
+    }
+}
+</script>
+
+<style lang="less" scoped>
+.container {
+   
+    display: flex;
+    height: 890px;
+
+    .leftTree {
+        width: 166px;
+        height: 100%;
+        border: 1px solid #ccc;
+    }
+
+    .rightTable {
+      width: 90%;
+        padding:3px;
+
+        .searchMeun {
+            width: 100%;
+
+            .wdName_doc {
+                margin-left: 10px;
+            }
+
+            .wdName {
+                margin-left: 30px;
+            }
+        }
+
+        .Content {
+            width: 100%;
+
+            .Btn {
+                .Btn_right {
+                    margin-right: 30px;
+                }
+
+                .addDraw {
+                    padding: 10px 0;
+
+                }
+            }
+
+            .tableBox {
+                width: 100%;
+                padding-top: 20px;
+
+                .ivu-table-tip {
+                    overflow-x: hidden;
+                }
+            }
+
+        }
+    }
+
+}
+</style><style>
+.addDraw {
+    padding: 10px 0;
+
+}
+</style>

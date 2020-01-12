@@ -1,0 +1,117 @@
+<!--
+ * @Description: In User Settings Edit
+ * @Author: your name
+ * @Date: 2019-09-05 18:32:51
+ * @LastEditTime: 2019-10-30 15:35:03
+ * @LastEditors: Please set LastEditors
+ -->
+<template>
+  <div class="login">
+     <div class="header">
+       <img src="../../assets/images/login/loginheader.png" >
+     </div>
+     <div class="content">
+         <div class="content-left">
+            <img src="../../assets/images/login/loginmap.png" >
+         </div>
+           <div class="content-right">
+              <div class="login-sr">
+                <Input v-model="loginName" prefix="ios-contact" size="large" placeholder="请输入用户名" style="width: 260px;height:70px;" />
+                <Input v-model="password"  type='password' prefix="ios-lock" size="large" placeholder="请输入密码" style="width: 260px;height:100px;" />
+
+                <Button type="primary" @click="loadData">登录</Button>
+          
+              </div>
+             
+         </div>
+     </div>
+  </div>
+</template>
+ <script>
+ import { login } from 'api/user'
+ export default {
+   data(){
+     return{
+     loginName:'admin',
+     password:'admin'
+   }},
+    methods:{
+        loadData() {
+      this.$axios.post('/syspower/user/login',{
+           loginName:this.loginName,
+            password:this.password
+      }).then(res => {
+          if (res.code === 200) {
+          }
+        })
+        .catch(err => {
+        })
+    },
+      login(){
+         if(this.password!='admin'){
+           this.$Message.error('密码错误')
+         }
+         else{
+         this.$Message.success('登录成功');
+                setTimeout(() => {     
+                     this.$router.push('/index'); 
+                }, 1000);
+         }
+        
+      }
+    }
+ }
+ </script>
+ <style lang="less">
+ .login{
+   background: url('../../assets/images/login/loginbgt.jpg');
+   width: 100%;
+   height: 100%;
+   background-size: 100% 100%;
+   .header{
+     width: 100%;
+     height: 30%;
+     display: flex;
+     justify-content: center;
+     align-items:flex-start;
+   }
+   .content{
+     width: 100%;
+     height: 45%;
+     display: flex;
+     justify-content: space-around;
+     align-items: center;
+     .content-left{
+        width: 30%;
+     }
+   .content-right{
+       width: 30%;
+       height: 100%;
+       background: url('../../assets/images/login/loginbk.png');
+       background-size: 100% 100%;
+       display: flex;
+       justify-content: center;
+       align-items: center;
+       .login-sr{
+           
+             display: flex;
+            flex-direction: column;
+            // justify-content: space-between;
+            height: 200px;
+           .login-sr /deep/ .ivu-input{
+                  background-color: rgba(24,133,255,0.5);
+                      border: 1px solid rgba(24,133,255,0.5);
+                    color: #fff;
+            }
+            .login-sr /deep/ .ivu-input-prefix i{
+              color:#fff;
+            }
+            .login-sr /deep/ .ivu-btn{
+              font-size: 14px;
+            }
+           
+       }
+   }
+   }
+ }
+ </style>

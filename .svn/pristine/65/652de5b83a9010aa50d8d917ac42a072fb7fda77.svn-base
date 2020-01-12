@@ -1,0 +1,455 @@
+<!--
+ * @Author: your name
+ * @Date: 2019-10-24 16:34:09
+ * @LastEditTime: 2019-11-16 13:56:30
+ * @LastEditors: Please set LastEditors
+ * @Description: In User Settings Edit
+ * @FilePath: \vue-zzxf\src\components\securityAssessment\indicatorSetting.vue
+ -->
+<template>
+<div class="indicator cententpadding">
+    <div class="indicatorleft">
+        <div class="tree-box">
+            <div class="zTreeDemoBackground left">
+                <ul id="treeDemo" class="ztree"></ul>
+            </div>
+        </div>
+        <!--  <Tree :data="data5" ref="data1" @on-toggle-expand='getnodes' @on-select-change="getCheckedNodes" :render="renderContent"></Tree> -->
+        <!-- <div>
+            <Button type="info">新增</Button>
+            <Button type="warning" style="margin-left: 8px">修改</Button>
+            <Button type="error" style="margin-left: 8px" >删除</Button>
+          </div> -->
+        <div class="abs-zone" v-if="editZoneDisplayBoolean">
+            <div class="box">
+                <Input placeholder="" style="width:200px" v-model="beforeSubmitNodeTitleString" />
+
+                <Button type="success" :style="{marginLeft:'5px'}" @click="submitNameEditFunc(1)">
+                    <Icon type="md-checkmark" />
+                </Button>
+                <Button type="error" :style="{marginLeft:'5px'}" @click="submitNameEditFunc(0)">
+                    <Icon type="md-close" />
+                </Button>
+            </div>
+        </div>
+    </div>
+    <div class='indicatorright'>
+        <Form ref="formValidate" :model="formValidate"  :label-width="80" v-if='show'>
+            <FormItem label="指标名称" prop="name">
+                <Input v-model="formValidate.name"></Input>
+            </FormItem>
+            <FormItem label="评估内容" prop="neirong">
+                <Input v-model="formValidate.neirong" type="textarea" :autosize="{minRows: 5,maxRows: 10}"></Input>
+            </FormItem>
+            <FormItem label="评估方法" prop="fangfa">
+                <Input v-model="formValidate.fangfa" type="textarea" :autosize="{minRows: 5,maxRows: 10}"></Input>
+            </FormItem>
+            <FormItem label="总分" prop="score">
+                <Input v-model="formValidate.score" type="number"></Input>
+            </FormItem>
+            <FormItem label="评分方法" prop="pfff">
+                <Select v-model="formValidate.pfff" placeholder="请选择">
+                    <Option value="beijing">主观评价</Option>
+                    <Option value="shanghai">客观拼价</Option>
+                </Select>
+            </FormItem>
+            <FormItem label="评分依据" prop="pfyj">
+                <Select v-model="formValidate.pfyj" placeholder="请选择">
+                    <Option value="beijing">火灾检测</Option>
+                    <Option value="shanghai">智慧用电</Option>
+                    <Option value="shenzhen">巡检维保</Option>
+                </Select>
+            </FormItem>
+            <FormItem>
+                <Button type="primary" @click="handleSubmit('formValidate')">提交</Button>
+                <Button @click="handleReset('formValidate')" style="margin-left: 8px">重置</Button>
+                <Button @click="qxReset()" style="margin-left: 8px">取消</Button>
+            </FormItem>
+        </Form>
+        <Form ref="formValidate" :model="updateAss"  :label-width="80" v-if='updateFlag'>
+            <FormItem label="指标名称" prop="name">
+                <Input v-model="updateAss.name"></Input>
+            </FormItem>
+            <FormItem label="评估内容" prop="neirong">
+                <Input v-model="updateAss.neirong" type="textarea" :autosize="{minRows: 5,maxRows: 10}"></Input>
+            </FormItem>
+            <FormItem label="评估方法" prop="fangfa">
+                <Input v-model="updateAss.fangfa" type="textarea" :autosize="{minRows: 5,maxRows: 10}"></Input>
+            </FormItem>
+            <FormItem label="总分" prop="score">
+                <Input v-model="updateAss.score" type="number"></Input>
+            </FormItem>
+            <FormItem label="评分方法" prop="pfff">
+                <Select v-model="updateAss.pfff" placeholder="请选择">
+                    <Option value="beijing">主观评价</Option>
+                    <Option value="shanghai">客观拼价</Option>
+                </Select>
+            </FormItem>
+            <FormItem label="评分依据" prop="pfyj">
+                <Select v-model="updateAss.pfyj" placeholder="请选择">
+                    <Option value="beijing">火灾检测</Option>
+                    <Option value="shanghai">智慧用电</Option>
+                    <Option value="shenzhen">巡检维保</Option>
+                </Select>
+            </FormItem>
+            <FormItem>
+                <Button type="primary" @click="handleSubmits('formValidate')">提交</Button>
+                <Button @click="handleReset('formValidate')" style="margin-left: 8px">重置</Button>
+                <Button @click="qxReset()" style="margin-left: 8px">取消</Button>
+            </FormItem>
+        </Form>
+    </div>
+</div>
+</template>
+
+<script>
+import {
+    addAssess,
+    getListAll,
+    getList,
+    deleteAssess,
+    updateAssess
+} from 'api/security'
+
+export default {
+    name: 'indicatorSetting',
+
+    data() {
+        return {
+            GUID: null,
+            root: null,
+            show: false,
+            updateFlag: false,
+
+            buttonProps: {
+                type: 'default',
+                size: 'small',
+            },
+            formValidate: {
+                name: '',
+                neirong: '',
+                fangfa: '',
+                score: '',
+                interest: [],
+                pfff: '',
+                pfyj: '',
+
+            },
+            formValidatenull: {
+                name: '',
+                neirong: '',
+                fangfa: '',
+                score: '',
+                interest: [],
+                pfff: '',
+                pfyj: '',
+
+            },
+            updateAss: {
+                name: '',
+                neirong: '',
+                fangfa: '',
+                score: '',
+                interest: [],
+                pfff: '',
+                pfyj: '',
+
+            },
+        
+            setting: {
+                view: {
+                    addHoverDom: this.addHoverDom,
+                    removeHoverDom: this.removeHoverDom,
+                    showLine: false,
+                    showIcon: true,
+                    // dblClickExpand:this.dblClickExpand
+                    addDiyDom: this.addDiyDom,
+
+                },
+                data: {
+                    keep: {
+                        parent: false,
+                        leaf: false
+                    },
+                    key: {
+                        name: "name"
+                    },
+                    simpleData: {
+                        enable: true,
+                        idKey: "guid",
+                        pIdKey: "mpid"
+                    }
+
+                },
+                check: {
+                    enable: false
+                },
+                edit: {
+                    drag: {
+                        isCopy: false,
+                        isMove: false
+                    },
+                    enable: true,
+                    showRenameBtn: true,
+                },
+                callback: {
+                    onClick: this.onClick,
+                    onRemove: this.onRemove,
+                    onAsyncSuccess: this.zTreeOnAsyncSuccess,
+                    beforeEditName: this.beforeEditName
+                    // beforeDrop: zTreeBeforeDrop
+                }
+            },
+            zNodes: []
+        }
+    },
+    created() {
+        this.getAssessList()
+    },
+    mounted() {
+
+        // 初始化结构树
+
+    },
+    methods: {
+
+        onClick(event, treeId, treeNode, clickFlag) {
+            // console.log(treeNode)
+            // this.addDiyDom(treeId,treeNode)
+        },
+        onRemove(event, treeId, treeNode) {
+            console.log(treeNode)
+            if(treeNode.mpid =='0'){
+                this.$Message.error('无法删除此数据');
+                return false 
+            }else{
+                 this.delAssess(treeNode.guid)
+            }
+            // this.delAssess(treeNode.guid)
+        },
+        beforeEditName(treeId, treeNode) {
+            this.updateFlag = true;
+            this.show = false;
+            this.updateAss.name = treeNode.name
+            this.updateAss.neirong = treeNode.content
+            this.updateAss.pfff = treeNode.grade
+            this.updateAss.fangfa = treeNode.standard
+            this.updateAss.score = treeNode.totalPoint
+            return !treeNode.isParent;
+
+        },
+        zTreeOnAsyncSuccess() {
+
+        },
+
+        handleSubmit(name) {
+
+            this.addset(this.GUID, this.formValidate)
+            this.$refs[name].validate((valid) => {
+
+                if (valid) {
+                    this.$Message.success('提交成功');
+                } else {
+                    this.$Message.error('提交失败');
+                }
+            })
+        },
+        handleSubmits() {
+            this.editAssess(this.GUID, this.updateAss)
+        },
+        handleReset(name) {
+            this.$refs[name].resetFields();
+        },
+        getCheckedNodes(date) {
+
+            // console.log(date[0].title)
+            this.formValidate.name = date[0].title;
+        },
+        getnodes(data) {
+            if (data.expand) {
+                getListAll({
+                    mpid: data.guid
+                }).then(res => {
+                    console.log(res)
+                })
+            }
+        },
+
+        append(data) {
+            const children = data.children || [];
+            this.show = true;
+            this.GUID = data.guid
+            this.updateFlag = false;
+            // children.push({
+            //     title: '指标1',
+            //     expand: true
+            // });
+            // this.$set(data, 'children', children);
+        },
+        remove(root, node, data) {
+
+            this.delAssess(data.guid)
+            const parentKey = root.find(el => el === node).parent;
+            const parent = root.find(el => el.nodeKey === parentKey).node;
+            const index = parent.children.indexOf(data);
+            // parent.children.splice(index, 1);
+        },
+
+        qxReset() {
+            this.show = false;
+        },
+        // 点击添加按钮
+        addBtns(id) {
+            // this.show = true;
+            this.GUID = data.guid
+        },
+        // 添加
+        addset(id, obj) {
+            addAssess({
+                content: obj.neirong, //考核内容
+                creatrTime: '', //创建时间
+                name: obj.name, // 指标名称
+                totalPoint: obj.score, //分值
+                standard: obj.fangfa, //考核标准
+                grade: obj.pfff, //评分方法
+                mpid: id
+            }).then(res => {
+                if (res.status == 1) {
+                    this.$Message.info('添加成功');
+
+                    this.getAssessList()
+                }
+            })
+        },
+        // 查询指标设置
+        getAssessList() {
+            getListAll({}).then(res => {
+                if (res.status == 1) {
+                    this.zNodes = res.obj
+
+                    $.fn.zTree.init($("#treeDemo"), this.setting, res.obj);
+                    var treeObj = $.fn.zTree.getZTreeObj("treeDemo");
+                    console.log(treeObj)
+                    // newNode = treeObj.addNodes(newNode,-1, this.zNodes);
+                    // var nodes = treeObj.transformToArray(treeObj.getNodes());
+                    // for (var i = 0, l = nodes.length; i < l; i++) {
+                    //     if (nodes[i].isParent) {
+                    //         treeObj.setChkDisabled(nodes[i], true);
+                    //     }
+                    // }
+
+                }
+
+            })
+        },
+        // 删除
+        delAssess(id) { 
+            deleteAssess(id).then(res => {
+                console.log(res)
+                if (res.status == 1) {
+                    this.$Message.info('删除成功!');
+                    this.getAssessList()
+                }
+            })
+        },
+        //编辑
+        editAssess(id, obj) {
+            updateAssess({
+                content: obj.neirong, //考核内容
+                creatrTime: '', //创建时间
+                name: obj.name, // 指标名称
+                totalPoint: obj.score, //分值
+                standard: obj.fangfa, //考核标准
+                grade: obj.pfff, //评分方法
+                guid: id
+            }).then(res => {
+                if (res.status == '1') {
+                    this.getAssessList()
+                }
+            })
+        },
+        // 在节点后面添加元素
+        addDiyDom: function (treeId, treeNode) {
+            console.log(treeNode)
+            // if (treeNode.mpid == null || treeNode.mpid.length < 12) {
+            //     var aObj = $("#" + treeNode.tId + '_a');
+            //     var editStr = "<span id='diyBtn_" + treeNode.id + "'>(" + '+' + ")</span>";
+            //     aObj.after(editStr);
+            //     // 显示省略号
+            //     var spantxt = $("#" + treeNode.tId + "_span").html();
+            //     if (spantxt.length > 12) {
+            //         spantxt = spantxt.substring(0, 12) + "...";
+            //         $("#" + treeNode.tId + "_span").html(spantxt);
+            //     }
+            // }
+            // console.log(treeNode)
+
+        },
+
+        addHoverDom(treeId, treeNode) {                   
+                var id = treeNode.guid;
+                var that = this
+                var sObj = $("#" + treeNode.tId + "_span");
+                if (treeNode.editNameFlag || $("#addBtn_" + treeNode.tId).length > 0) return;
+                var addStr = "<span class='button add' id='addBtn_" + treeNode.tId +
+                    "' title='add node' onfocus='this.blur();'></span>";
+                sObj.after(addStr);
+                var btn = $("#addBtn_" + treeNode.tId);
+                if (btn) {
+
+                    btn.bind("click", function () {
+                        that.GUID = treeNode.guid
+                        that.updateFlag = false;
+                        that.show = true
+
+                        var zTree = $.fn.zTree.getZTreeObj("tree");
+                        //  $("#mpid").val(treeNode.id);
+
+                        //  //添加子节点时，获取父节点下最后一个子节点
+                        //  var sortid=1;
+                        //  if(treeNode.children&&treeNode.children.length>0)
+                        //  	sortid=treeNode.children[treeNode.children.length-1].sortid+1;
+                        //  $("#sortid").val(sortid);
+
+                        return false;
+                    });
+                }
+            
+            // this.GUID=treeNode.guid
+
+        },
+        removeHoverDom(treeId, treeNode) {
+
+        },
+        //  dblClickExpand(treeId,treeNode){
+        //      console.log(treeNode)
+        //  }
+
+    }
+}
+</script>
+
+<style lang="less" scoped>
+.indicator {
+    width: 100%;
+    height: 100%;
+
+    padding: 12px;
+    display: flex;
+
+    .indicatorleft {
+        width: 30%;
+        height: 100%;
+        // background: #9999;
+        display: flex;
+        justify-content: space-between
+    }
+
+    .indicatorright {
+        width: 70%;
+        height: 100%;
+        //  background: #1999;
+        padding: 24px;
+    }
+}
+</style>

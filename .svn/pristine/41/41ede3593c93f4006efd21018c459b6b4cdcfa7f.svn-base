@@ -1,0 +1,686 @@
+<template>
+<div class="container">
+    <div class='leftTree'>
+        <Tree :data="treedata"></Tree>
+    </div>
+    <div class='rightTable'>
+        <div class="rightHead">
+            <Divider orientation="left">搜索查询</Divider>
+            <div class='searchMeun'>
+                <span class="wdName_doc">
+                    文档名称&nbsp;:&nbsp;
+                </span>
+                <Input v-model="drawCategory.name" placeholder="输入文档名称" style="width: 10%" />
+                <span class="wdName">
+                    类型&nbsp;:&nbsp;
+                </span>
+                <Select v-model="drawCategory.type" style="width:10%" clearable>
+                    <Option v-for="item in wddictionaries" :value="item.VALUE" :key="item.VALUE">{{ item.LABEL }}</Option>
+                </Select>
+                <span class="wdName">
+                    时间&nbsp;:&nbsp;
+                </span>
+                <DatePicker :value="drawCategory.startTime" format="yyyy-MM-dd HH:mm:ss" type="date" placeholder="开始时间" style="width: 10%" @on-change="handleChanges"></DatePicker>
+                <span class="wdName_doc">
+                    至&nbsp;:&nbsp;
+                </span>
+                <DatePicker :value="drawCategory.endTime" format="yyyy-MM-dd HH:mm:ss" type="date" placeholder="结束时间" style="width: 10%" @on-change="handleChangess"></DatePicker>
+
+                <!-- <span class="wdName">
+                        是否启用&nbsp;:&nbsp;
+                    </span>
+                    <Select v-model="drawCategory.isUse" style="width: 10%" clearable>
+                        <Option v-for="item in floorLIst" :value="item.value" :key="item.value">{{ item.label }}</Option>
+                    </Select> -->
+
+                <Button class='wdName' type="info" @click="getQuery">查询</Button>
+            </div>
+            <Divider></Divider>
+        </div>
+        <div class="Content">
+            <div class="Btn">
+                <Button class='Btn_right' type="success" @click="addxfda()">添加</Button>
+                <Modal width="700" v-model="addFlag" title="添加文档" @on-ok="getAdd" ref="floorNum">
+                    <div class="addDraw">
+                        <span>文档名称 &nbsp;:&nbsp;&nbsp; </span>
+                        <Input v-model="floorNum.name" placeholder="" style="width: 230px;margin-right:30px;" />
+                        <span class="drawLeft">文档类型 &nbsp;:&nbsp;&nbsp; </span>
+                        <Select v-model="floorNum.type" style="width:230px">
+                            <Option v-for="item in wddictionaries" :value="item.VALUE" :key="item.VALUE">{{ item.LABEL }}</Option>
+                        </Select>
+
+                    </div>
+                    <div class="addDraw">
+                        <span>物业信息 &nbsp;:&nbsp;&nbsp; </span>
+                        <Select v-model="floorNum.ppid" style="width:230px;margin-right:30px;" @on-change='wychange' clearable>
+                            <Option v-for="item in this.wylist" :value="item.ppid" :key="item.ppid">{{ item.ppname }}</Option>
+                        </Select>
+                        <span>单位信息 &nbsp;:&nbsp;&nbsp; </span>
+                        <Select v-model="floorNum.cpid" style="width:230px;" @on-change='dwchange' clearable>
+                            <Option v-for="item in this.dwlist" :value="item.cpid" :key="item.cpid">{{ item.cpname }}</Option>
+                        </Select>
+                    </div>
+                    <div class="addDraw">
+                        <span>建筑信息 &nbsp;:&nbsp;&nbsp; </span>
+                        <Select v-model="floorNum.bdid" style="width:230px;margin-right:30px;" @on-change='jzchange' clearable>
+                            <Option v-for="item in this.jzwlist" :value="item.bdid" :key="item.bdid">{{ item.note }}</Option>
+                        </Select>
+                        <span>楼层信息 &nbsp;:&nbsp;&nbsp; </span>
+                        <Select v-model="floorNum.flid" style="width:230px;" clearable>
+                            <Option v-for="item in this.lclist" :value="item.flid" :key="item.flid">{{ item.flname }}</Option>
+                        </Select>
+
+                    </div>
+                    <div class="addDraw">
+
+                        <span class="drawLeft">是否在用 &nbsp;:&nbsp;&nbsp; </span>
+                        <Select v-model="floorNum.isUse" style="width:230px;margin-right:30px;">
+                            <Option v-for="item in floorLIst" :value="item.value" :key="item.value">{{ item.label }}</Option>
+                        </Select>
+                        <span>生效日期 &nbsp;:&nbsp;&nbsp;&nbsp;</span>
+                        <DatePicker :value="floorNum.createDate" @on-change="handleChange" format="yyyy-MM-dd HH:mm:ss" type="date" placeholder="请输入日期" style="width: 230px"></DatePicker>
+
+                    </div>
+                    <div class="addDraw">
+
+                    </div>
+                    <div class="addDraw" style="display:flex">
+                        <span>上传文件 &nbsp;:&nbsp;&nbsp; </span>
+                        <div>
+                            <Upload :before-upload="handleUpload" multiple action='#'>
+                                <Button icon="ios-cloud-upload-outline" style="width: 230px">选择文件</Button>
+                            </Upload>
+                            <div v-if="file !== null">已选择文件: {{ file.name }} </div>
+                        </div>
+                    </div>
+
+                </Modal>
+                <Button class='Btn_right' type="warning" @click="updateusers">编辑</Button>
+                <Modal width="700" v-model="editFlag" title="编辑" @on-ok="getAlter">
+                    <div class="addDraw">
+
+                        <span>文档名称 &nbsp;:&nbsp;&nbsp; </span>
+                        <Input v-model="WordName.name" placeholder="输入文档名称" style="width: 230px;margin-right:30px;" />
+                        <span class="drawLeft">文档类型 &nbsp;:&nbsp;&nbsp; </span>
+                        <Select v-model="WordName.type" style="width:230px">
+                            <Option v-for="item in wddictionaries" :value="item.VALUE" :key="item.VALUE">{{ item.LABEL }}</Option>
+                        </Select>
+
+                    </div>
+                    <div class="addDraw">
+                        <span>物业信息 &nbsp;:&nbsp;&nbsp; </span>
+                        <Select v-model="WordName.ppid" style="width:230px;margin-right:30px;" @on-change='wychange' clearable>
+                            <Option v-for="item in this.wylist" :value="item.ppid" :key="item.ppid">{{ item.ppname }}</Option>
+                        </Select>
+                        <span>单位信息 &nbsp;:&nbsp;&nbsp; </span>
+                        <Select v-model="WordName.cpid" style="width:230px;" @on-change='dwchange' clearable>
+                            <Option v-for="item in this.dwlist" :value="item.cpid" :key="item.cpid">{{ item.cpname }}</Option>
+                        </Select>
+                    </div>
+                    <div class="addDraw">
+                        <span>建筑信息 &nbsp;:&nbsp;&nbsp; </span>
+                        <Select v-model="WordName.bdid" style="width:230px;margin-right:30px;" @on-change='jzchange' clearable>
+                            <Option v-for="item in this.jzwlist" :value="item.bdid" :key="item.bdid">{{ item.note }}</Option>
+                        </Select>
+                        <span>楼层信息 &nbsp;:&nbsp;&nbsp; </span>
+                        <Select v-model="WordName.flid" style="width:230px;" clearable>
+                            <Option v-for="item in this.lclist" :value="item.flid" :key="item.flid">{{ item.flname }}</Option>
+                        </Select>
+
+                    </div>
+
+                </Modal>
+                <Poptip confirm title="确定删除吗" @on-ok="getDelete">
+                    <Button type="error" class='Btn_right'>批量删除</Button>
+                </Poptip>
+                <Button type="info">导出</Button>
+            </div>
+            <div class='tableBox'>
+
+                <Table stripe border :columns="TableTitle" :data="TableData1" @on-select='selectionchange' @on-select-cancel='cancelSeclect'>
+
+                    <template slot-scope="{ row, index }" slot="action">
+                        <Button type="primary" ghost size="small" style="margin-right: 5px" @click="down(row)">下载</Button>
+                        <Button type="primary" ghost size="small" @click="remove(index)">预览</Button>
+                    </template>
+                </Table>
+                <Page :total="dataCount" :page-size="pageSize" show-total class="paging" current.sync="current"></Page>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+</template>
+
+<script>
+/////////增         改          删      查          初始    上传
+import {
+    addData,
+    alterData,
+    deleteData,
+    queryData,
+    listData,
+    upLoading,
+    wddictionaries,
+    wyjc,
+    dwjc,
+    jzujc,
+    lcjc
+} from 'api/docManage';
+
+export default {
+    data() {
+        return {
+            addFlag: false,
+            editFlag: false,
+            // 初始化信息总条数
+            dataCount: 0,
+            // 每页显示多少条
+            pageSize: 10,
+            ajaxHistoryData: [],
+            file: null,
+            historyData: [],
+            ids: [],
+            updatelist: [],
+            treedata: [{
+                title: '浦房集团',
+                expand: true,
+                children: [{
+                        title: '洋泾物业',
+                        expand: true,
+                        children: [{
+                                title: '博山路11弄',
+                                expand: true,
+                                children: [{
+                                    title: '27号'
+                                }]
+                            },
+                            {
+                                title: '博山路12弄',
+                                expand: true,
+                                children: [{
+                                    title: '27号'
+                                }]
+                            }
+                        ]
+                    },
+                    {
+                        title: '振南物业',
+                        expand: true,
+                        children: [{
+                                title: '博山路11弄',
+                                expand: true,
+                                children: [{
+                                    title: '27号'
+                                }]
+                            },
+                            {
+                                title: '博山路12弄',
+                                expand: true,
+                                children: [{
+                                    title: '27号'
+                                }]
+                            }
+                        ]
+                    },
+                    {
+                        title: '浦高小区',
+                        expand: true,
+                        children: [{
+                                title: '博山路11弄',
+                                expand: true,
+                                children: [{
+                                    title: '27号'
+                                }]
+                            },
+                            {
+                                title: '博山路12弄',
+                                expand: true,
+                                children: [{
+                                    title: '27号'
+                                }]
+                            }
+                        ]
+                    },
+                    {
+                        title: '浦东南路2362号',
+                        expand: true,
+                        children: [{
+                                title: '博山路11弄',
+                                expand: true,
+                                children: [{
+                                    title: '27号'
+                                }]
+                            },
+                            {
+                                title: '博山路12弄',
+                                expand: true,
+                                children: [{
+                                    title: '27号'
+                                }]
+                            }
+                        ]
+                    },
+                    {
+                        title: '南码头路44号',
+                        expand: true,
+                        children: [{
+                                title: '博山路11弄',
+                                expand: true,
+                                children: [{
+                                    title: '27号'
+                                }]
+                            },
+                            {
+                                title: '博山路12弄',
+                                expand: true,
+                                children: [{
+                                    title: '27号'
+                                }]
+                            }
+                        ]
+                    }
+                ]
+            }],
+            // floorNum: null,
+            //添加数据模块的双向绑定
+            floorNum: {
+                guid: '',
+                name: '',
+                type: '',
+                createDate: '',
+                flid: '',
+                ppid: '',
+                cpid: '',
+                bdid: '',
+
+                isUse: '',
+            },
+
+            // WordName: null,
+            //修改数据
+            WordName: {
+                name: '',
+                type: '',
+                createDate: '',
+                site: '',
+                flid: '',
+                ppid: '',
+                cpid: '',
+                bdid: '',
+                isUse: '',
+            },
+            result1: null,
+            startTime: '',
+            endTime: '',
+            drawCategory: {
+                name: '',
+                type: '',
+                startTime: '',
+                endTime: '',
+                isUse: '',
+            },
+            floorLIst: [{
+                value: "1",
+                label: "启用"
+            }, {
+                value: "0",
+                label: "不启用"
+            }],
+            TableTitle: [{
+                    type: 'selection',
+                    width: 60,
+                    align: 'center',
+                    key: 'guid'
+                },
+                {
+                    title: '文档名称',
+                    key: 'name'
+                },
+                {
+                    title: '文档类型',
+
+                    key: 'type',
+                    render: (h, params) => {
+                        let status = params.row.type; //0:空闲  1:游戏  2:未上线
+                        if (status == 1) {
+                            return h('span', '消防预案')
+                        };
+                        if (status == 2) {
+                            return h('span', '规章制度')
+                        };
+                        if (status == 3) {
+                            return h('span', '法律法规')
+                        };
+                        if (status == 4) {
+                            return h('span', '合同文书')
+                        };
+                        if (status == 5) {
+                            return h('span', '演练记录')
+                        };
+                        if (status == 6) {
+                            return h('span', '消防培训')
+                        };
+
+                    }
+                },
+                {
+                    title: '上传时间',
+
+                    key: 'createDate'
+                },
+                {
+                    title: '物业管理单位',
+
+                    key: 'realUnit'
+                },
+                {
+                    title: '大楼地址',
+                    key: 'address'
+                },
+                {
+                    title: '是否在用',
+
+                    key: 'isUse',
+                    render: (h, params) => {
+                        let status = params.row.isUse; //0:空闲  1:游戏  2:未上线
+                        if (status == 0) {
+                            return h('span', '未启用')
+                        };
+                        if (status == 1) {
+                            return h('span', '启用')
+                        };
+                    }
+                },
+
+                {
+                    title: '操作',
+                    key: 'action',
+                    slot: 'action',
+
+                }
+            ],
+            ajaxTableData1: [],
+            TableData1: [],
+            wddictionaries: [],
+            wylist: [],
+            dwlist: [],
+            jzwlist: [],
+            lclist: [],
+            var: null,
+        }
+    },
+    methods: {
+        down(index) {
+            window.open('/syspower/fireMdBase/downloadByObjGuid?objGuid=' + index.guid + '')
+        },
+        remove(index) {
+            console.log(index)
+        },
+        selectionchange(res) {
+            if (res) {
+                this.updatelist = res;
+            }
+
+        },
+        handleChange(data) {
+            this.floorNum.createDate = data;
+
+        },
+        handleChanges(data) {
+            this.drawCategory.startTime = data;
+        },
+        handleChangess(data) {
+            this.drawCategory.endTime = data;
+        },
+        // 取消选中
+        cancelSeclect(selection) {
+
+            this.updatelist = selection
+
+        },
+        handleUpload(file) {
+            this.file = file;
+            return false;
+        },
+        //查询
+        addxfda() {
+            this.addFlag = true;
+
+        },
+        getQuery() {
+            this.handleListApproveHistory();
+        },
+        //物业选择器
+        wychange(val) {
+
+            console.log(val, 'aaa')
+            //    setTimeout(res=>{
+            dwjc({
+                ppid: val
+            }).then(res => {
+                this.dwlist = res.obj;
+            })
+            //    },1000)
+
+        },
+
+        //单位选择器val
+        dwchange(val) {
+
+            jzujc({
+                cpid: val
+            }).then(res => {
+                this.jzwlist = res.obj;
+            })
+        },
+        //建筑选择器
+        jzchange(val) {
+            lcjc({
+                bdid: val
+            }).then(res => {
+                this.lclist = res.obj
+            })
+        },
+        //页面初始
+        getdata(params) {
+            this.$axios.post('/syspower/fireAhBase/getList?pageNum=' + params.pageNum + '&pageSize=' + params.pageSize + '', {
+                name: this.drawCategory.name,
+                type: this.drawCategory.type,
+                startTime: this.drawCategory.startTime,
+                endTime: this.drawCategory.endTime
+            }).then(res => {
+                this.ajaxTableData1 = res.data.obj.list;
+                this.dataCount = res.data.obj.total;
+                this.TableData1 = this.ajaxTableData1;
+            })
+        },
+        //添加数据
+        getAdd() {
+            addData(this.floorNum).then(res => {
+                if (res.status == 1) {
+                    console.log(res)
+                    // 创建FormData对象
+                    let param = new FormData()
+                    // 将得到的文件流添加到FormData对象
+                    param.append('fileDiv', this.file)
+                    param.append('fileUrl', res.obj.fileUrl)
+                    param.append('objGuid', res.obj.objGuid)
+                    param.append('tabName', res.obj.tabName)
+                    upLoading(param, {
+                        headers: {
+                            'Content-Type': 'multipart/form-data'
+                        }
+                    }).then(res => {
+                        if (res.status == 1) {
+                            this.file = null;
+                        }
+                    })
+                    this.$Message.success('添加成功');
+                    this.floorNum = {};
+                    this.handleListApproveHistory()
+                } else {
+                    this.$Message.error('添加失败');
+                }
+            })
+            //   console.log(this.setlist)
+        },
+        //修改数据
+        getAlter() {
+            alterData(this.WordName).then(res => {
+                if (res.status == 1) {
+                    this.$Message.success('修改成功');
+                    this.handleListApproveHistory();
+                    this.updatelist = [];
+                }
+            })
+        },
+        //修改数据框的初始化数据渲染
+        updateusers() {
+            let list = this.updatelist;
+            console.log(list)
+            if (list.length != 1) {
+                this.$Message.warning('请先选择一行数据数据')
+            } else {
+                this.editFlag = true;
+                //文档名称
+                this.WordName.name = list[0].name;
+                //文档类型
+                this.WordName.type = list[0].type;
+                //上传时间
+                // this.WordName.mobile=list[0].updataTime;
+                //物业管理单位
+                // this.WordName.email=list[0].realUnit;
+                //大楼地址
+                this.WordName.email = list[0].address;
+                //楼号
+                this.WordName.ppid = list[0].ppid;
+                this.wychange(this.WordName.ppid)
+                this.WordName.cpid = list[0].cpid;
+                this.dwchange(this.WordName.cpid)
+                this.WordName.bdid = list[0].bdid;
+                this.jzchange(this.WordName.bdid)
+                //楼号再用
+                this.WordName.flid = list[0].flid;
+                this.WordName.email = list[0].floorNum;
+                //生效日期
+                // this.WordName.email=list[0].uploadPerson;
+                // id
+                this.WordName.guid = list[0].guid
+            }
+        },
+
+        //删除数据
+        getDelete() {
+            if (this.updatelist.length == 0) {
+                this.$Message.success('请先选择一条数据')
+            } else {
+                for (const key in this.updatelist) {
+                    this.ids.push(this.updatelist[key]['guid'])
+                }
+                let id = this.ids.join(',');
+                this.$axios.post('/syspower/fireAhBase/delete?ids=' + id + '').then(res => {
+                    if (res.data.status == 1) {
+                        this.$Message.success('删除成功')
+                        this.handleListApproveHistory();
+                        this.ids = [];
+                        this.updatelist = [];
+                    }
+                })
+            }
+
+        },
+        handleListApproveHistory() {
+            let seletlist = {
+                pageNum: 0,
+                pageSize: 10
+            };
+            this.getdata(seletlist);
+        },
+        // 分页
+        changepage(index) {
+            let seletlist = {
+                pageNum: index,
+                pageSize: 10
+            };
+            this.getdata(seletlist);
+        },
+        dictionarie() {
+            wddictionaries().then(res => {
+                this.wddictionaries = res.obj
+            })
+            wyjc({}).then(res => {
+                this.wylist = res.obj
+            })
+        }
+    },
+
+    created() {
+        this.handleListApproveHistory();
+        this.dictionarie();
+    }
+}
+</script>
+
+<style lang="less" scoped>
+.container {
+
+    display: flex;
+    height: 100%;
+
+    .leftTree {
+        width: 166px;
+        height: 100%;
+        border: 1px solid #ccc;
+    }
+
+    .rightTable {
+        width: 90%;
+        padding: 3px;
+
+        .searchMeun {
+            width: 100%;
+
+            .wdName_doc {
+                margin-left: 10px;
+            }
+
+            .wdName {
+                margin-left: 30px;
+            }
+        }
+
+        .Content {
+            width: 100%;
+
+            .Btn {
+                .Btn_right {
+                    margin-right: 30px;
+                }
+
+                .addDraw {
+                    padding: 10px 0;
+
+                }
+            }
+
+            .tableBox {
+                width: 100%;
+                padding-top: 20px;
+
+                .ivu-table-tip {
+                    overflow-x: hidden;
+                }
+            }
+
+        }
+    }
+
+}
+</style><style>
+.addDraw {
+    padding: 10px 0;
+
+}
+</style>

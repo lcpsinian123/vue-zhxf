@@ -1,0 +1,358 @@
+@charset "UTF-8";
+
+//-----------------------------------------------------	
+// common.less, 全局通用样式
+//-----------------------------------------------------	
+.page-bg-gray {
+  position: relative;
+  height: 100%;
+  width: 100%;
+  background-color: @colorF;
+}
+
+.top{
+  margin-top: 10px;
+}
+.listshow{
+  width: 100%;
+  height: 30px;
+  font-size: 14px;
+  line-height: 30px;
+  text-align: center;
+  background: rgba(35,119,233,0.14);
+}
+.scroll-content {
+//自定义滚动 间隔时间和方向
+position: relative;
+transition: top 0.825s; //向上移动
+}
+.body {
+width: 100%;
+height: 100%;
+overflow-y: auto;
+//   position: absolute;
+
+}
+.huadongdiv{
+  width: 100%;
+  height: 30px;
+  font-size: 14px;
+  line-height: 30px;
+  text-align: center;
+}
+.huadongdiv:nth-child(even){
+  background: rgba(35,119,233,0.14);
+}
+
+.sousuo{
+  width: 100%;
+  height: 100px;
+  background: #fff;
+  // border: 1px solid #e8eaec;
+  border-top:0px;
+  display: flex;
+  align-items: center;
+  
+.pgzt{
+  // width: 300px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-left: 10px;
+  span{
+      width: 110px;
+  }
+}
+.pgsj{
+  padding-left: 24px;
+}
+.btn{
+  padding-left: 24px;
+}
+}
+.btnclass{
+  line-height: 50px;
+  button{
+      width: 88px;
+      margin-left: 20px;
+  }
+}
+.tablediv{
+  margin-top: 20px;
+  background:#fff;
+  min-height: 73%;
+}
+
+.coldiv{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  span{
+      width: 140px;
+  }
+  input{
+      width: 200px;
+  }
+}
+.addDraw {
+padding: 10px 0;
+
+}
+.abs-zone{
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top:0;
+  left: 0;
+  background: rgba(255,255,255,.8);
+  z-index: 1;
+  .box{
+      position:absolute;
+      width: 100%;
+      top:50%;
+      left: 0;
+      margin-top: 10px;
+      text-align: center;
+  }
+}
+.paging{
+  float:right;
+  margin-top:10px;
+}
+.ivu-table th {
+  height: 40px;
+  white-space: nowrap;
+  overflow: hidden;
+  background-color: #f2f7fd;
+  // color: #fff;
+}
+.ivu-table-stripe .ivu-table-body tr:nth-child(2n) td, .ivu-table-stripe .ivu-table-fixed-body tr:nth-child(2n) td {
+  background-color: #f3f8fe;
+}
+.addheader {
+  background: #223476;
+  height: 40px;
+  line-height: 40px;
+  color: #fff;
+  // padding-left: 30px;
+}
+.sousuo1{
+  background: #fff;
+  box-shadow: 0px 2px 6px -2px; 
+
+  // margin-top:20px;
+
+}
+.sousuo2{
+  background: #fff;
+  box-shadow: 0px 2px 6px -2px; 
+
+}
+.cententpadding{
+  padding: 20px 20px;
+}
+.modediv{
+  width: 100%;
+
+  height:235px;
+  .modetitle{
+      width: 100%;
+      display: flex;
+      align-items: center;
+      .titlelogo{
+          width:4px;
+          height:18px;
+          background:rgb(60, 143, 255);
+          margin-top: 5px;
+          margin-left: 10px;
+      }
+      .titlename{
+          color:rgb(60, 143, 255); 
+           margin-left: 10px;
+           margin-top: 7px;
+           font-size:15px;
+           font-weight:400;
+      }
+  }
+}
+.echartsdiv{
+  width:100%;
+  height: 210px;
+}
+.rollScreen_container {
+  display: inline-block;
+  position: relative;
+  overflow: hidden;
+}
+.rollScreen_list {
+  transition: 1s linear;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+.rollScreen_list_unanim {
+  transition: none;
+}
+.rollScreen_once {
+  list-style: none;
+}
+
+.ivu-btn-ghost.ivu-btn-primary:hover {
+  color: #fff;
+  background: #57a3f3;
+}
+.containers {
+  width: 100%;
+  height: 100%;
+  // padding: 0 3px;
+  background-color: #edf5f7;
+.rightHead {
+  height: 100%;
+  width:100%;
+  overflow: hidden;
+  .searchMeun {
+      position: relative;
+      border-top: none;
+      height: 80px;
+      line-height: 80px;
+      display: flex;
+      align-items: center;
+      .wdName {
+        margin-left: 20px;
+      }
+      .wdName_text1{
+        width: 4%;
+        text-align: right;
+        // padding-left: 20px;
+      }
+      .wdName_text2{
+        width: 5.5%;
+        text-align: right;
+      }
+      .wdName_text{
+        width: 6.5%;
+        text-align: right;
+        // padding-left: 20px;
+      }
+  }
+
+  .tableBox {
+      background: #fff;
+      margin-top: 20px;
+      // min-height: 620px;
+      height: calc(100% - 100px);
+      overflow: auto;
+
+      .btnbox {
+          height: 60px;
+          line-height: 60px;
+          padding-left: 20px;
+
+          .btns {
+              margin-right: 20px;
+          }
+      }
+
+      .mediaList {
+          width: 100%;
+
+          display: flex;
+          flex-wrap: wrap;
+
+          /deep/ .ivu-card-body {
+              padding: 0;
+              height: 70px;
+
+          }
+
+          .mediaInfo {
+              height: 100%;
+              padding: 10px;
+              width: 33%;
+
+              .powerRoom {
+                  display: flex;
+                  height: 100%;
+                  line-height: 60px;
+                  background: #0183ff;
+                  color: #fff;
+
+                  .imgbox {
+                      flex: 1;
+                      font-size: 30px;
+
+                      >i {
+                          width: 30px;
+                          height: 30px;
+                          background-color: #fff;
+                          color: #0183ff;
+                          border-radius: 15px;
+                      }
+                  }
+
+                  .dec {
+                      flex: 5;
+                      height: 70px;
+                      line-height:20px;
+                      text-align: left;
+                      display: flex;
+                      flex-direction: column;
+                      justify-content: center;
+                      .title {
+                          font-size: 16px;
+                      }
+                  }
+
+              }
+          }
+
+          .wendu {
+              background: #f8f9fb;
+              display: flex;
+              flex-wrap: wrap;
+
+              .dianliu {
+                  width: 50%;
+                  height: 50px;
+                  font-size: 12px;
+                  text-align: center;
+                  border-bottom: 1px solid #f0f3f8;
+                  border-right: 1px solid #f0f3f8;
+                  border-right: 1px solid #f0f3f8;
+
+              
+              }
+          }
+      }
+
+  }
+}
+}
+ .ivu-tabs-bar{
+  background: #fff;
+  margin-bottom: 0px;
+}  
+ .ivu-tabs{
+  height: 100%;
+}
+ .ivu-tabs .ivu-tabs-content-animated{
+  height: 100%;
+}
+ .ivu-modal-header {
+  padding: 0;
+  height: 40px;
+  background: #223476;
+  text-align: center;
+  color: #fff;
+  line-height: 40px;
+  font-size: 20px;
+}
+ .ivu-modal-close{
+  top:4px;
+}
+ .ivu-modal{
+  top:20px;
+}
+.ivu-modal-header p, .ivu-modal-header-inner{
+  color:#fff;
+}

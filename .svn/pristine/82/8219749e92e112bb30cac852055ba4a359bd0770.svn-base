@@ -1,0 +1,1289 @@
+<!--
+ * @Author: your name
+ * @Date: 2019-11-14 14:10:59
+ * @LastEditTime: 2019-11-14 20:05:43
+ * @LastEditors: Please set LastEditors
+ * @Description: In User Settings Edit
+ * @FilePath: \vue-zzxf\src\components\maintenance\mainrouter.vue
+ -->
+<template>
+<div class='containers cententpadding'>
+    <Tabs name="name22">
+        <TabPane label="实时监控" tab="name22">
+            <div class="rightHead">
+
+                <div class='sousuo1'>
+                    <div style='height:40px;line-height:40px; padding-left:20px;font-size:16px; border-bottom:1px solid #eee;'>搜索查询 </div>
+                    <div class='searchMeun'>
+                        <span class="wdName_doc">
+                            区域&nbsp;:&nbsp;
+                        </span>
+                        <Select v-model="WY" style="width:200px" @on-change='wychange'>
+                            <Option v-for="item in wy" :value="item.ppid" :key="item.ppid">{{ item.ppname }}</Option>
+                        </Select>
+                        <span class="wdName">
+                            连接状态&nbsp;:&nbsp;
+                        </span>
+                      <Select v-model="WY" style="width:200px" @on-change='wychange'>
+                            <Option v-for="item in wy" :value="item.ppid" :key="item.ppid">{{ item.ppname }}</Option>
+                        </Select>
+                        <span class="wdName_doc">
+                            &nbsp;至&nbsp;:&nbsp;
+                        </span>
+                        <DatePicker :value="this.endTime" format="yyyy-MM-dd HH:mm:ss" type="date" placeholder="结束时间" style="width: 10%"></DatePicker>
+
+                        <Button class='wdName' type="info">查询</Button>
+
+                        <!-- <Button class='wdName' @click="add = true" type="success">添加</Button> -->
+                        <!-- <Button class='wdName' @click="add = true" type="error">删除</Button> -->
+                        <Modal width="900" id="add" v-model="add">
+                            <div slot="header" class="addheader">
+                                巡检点位信息
+                            </div>
+                            <div class="addcontent">
+                                <div class="top">
+                                    <Select v-model="floorNum" style="width:170px;margin-right:15px;">
+                                        <Option v-for="item in period" :value="item.value" :key="item.value">{{ item.label }}</Option>
+                                    </Select>
+                                    <Select v-model="floorNum" style="width:170px;margin-right:15px;">
+                                        <Option v-for="item in period" :value="item.value" :key="item.value">{{ item.label }}</Option>
+                                    </Select>
+
+                                    <Select v-model="floorNum" style="width:170px;margin-right:15px;">
+                                        <Option v-for="item in period" :value="item.value" :key="item.value">{{ item.label }}</Option>
+                                    </Select>
+
+                                    <Select v-model="floorNum" style="width:170px;margin-right:30px;">
+                                        <Option v-for="item in period" :value="item.value" :key="item.value">{{ item.label }}</Option>
+                                    </Select>
+                                    <Button class='wdName' type="info">查询</Button>
+                                </div>
+                                <div class="top flexdiv">
+                                    <div class="flexdivs">
+                                        <div class="divspan"> 点位列表</div>
+                                    </div>
+                                    <div class="flexdivs">
+                                        <div class="divspan">已选点位</div>
+                                    </div>
+                                    <div class="flexdivs">
+                                        <div class="divspan">路由信息</div>
+                                        <div class="top" style="padding-left:15px;">
+                                            <span>&nbsp;&nbsp;路由名称&nbsp;&nbsp;</span>
+                                            <Input v-model="XMLXBH" placeholder="" style="width:150px" />
+                                        </div>
+                                        <div class="top" style="padding-left:15px;">
+                                            <span>&nbsp;&nbsp;激活标识&nbsp;&nbsp;</span>
+                                            <Checkbox v-model="XMLXBH"></Checkbox>
+                                        </div>
+                                        <div class="top" style="padding-left:15px;">
+                                            <span>&nbsp;&nbsp;描述 &nbsp;&nbsp;</span>
+                                            <Input v-model="XMLXBH" placeholder="" style="width:175px" type="textarea" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </Modal>
+                    </div>
+                </div>
+
+                <div class='tableBox'>
+                    <div class='mediaList'>
+                        <div class='mediaInfo' @click='getPowerInfo'>
+                            <Card>
+                                <div class='powerRoom' style="text-align:center">
+                                    <div class='imgbox'>
+                                        <Icon type="ios-flash" />
+                                    </div>
+                                    <div class='dec'>
+                                        <p class='title'> 1F1-2#强电间ALZ1-2</p>
+                                        <p class='sbID'> 设备Id: 123445423 <span style='margin:0 10px;'>连接状态:&nbsp; 在线&nbsp; </span> <span>运行状态:
+                                                <span class='sbStatus'>
+                                                    <Icon type="md-checkmark-circle" />
+                                                    正常
+                                                </span>
+                                            </span></p>
+
+                                    </div>
+                                </div>
+                            </Card>
+                            <div class='wendu'>
+                                <div class='dianliu'>
+                                    <p> 压力_121212_00/</p>
+                                    <p> <span> 0.38Mpa</span></p>
+                                </div>
+                                <div class='dianliu'>
+                                    <p>电量__121212_00/</p>
+                                    <p> <span> 99%</span></p>
+                                </div>
+                                <div class='dianliu'>
+                                    <p> 压力_121212_00/</p>
+                                    <p> <span> 0.38Mpa</span></p>
+                                </div>
+                                <div class='dianliu'>
+                                    <p> 电量_121212_00/</p>
+                                    <p> <span> 99%</span></p>
+                                </div>
+                                <div class='dianliu'>
+                                    <p> 压力_121212_00/</p>
+                                    <p> <span> 0.38Mpa</span></p>
+                                </div>
+                                <div class='dianliu'>
+                                    <p> 电量_121212_00/</p>
+                                    <p> <span> 99%</span></p>
+                                </div>
+                                <div class='dianliu'>
+                                    <p> 压力_121212_00/</p>
+                                    <p> <span> 0.38Mpa</span></p>
+                                </div>
+                                <div class='dianliu'>
+                                    <p> 电量_121212_00/</p>
+                                    <p> <span> 99%</span></p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class='mediaInfo' @click='getPowerInfo'>
+                            <Card>
+                                <div class='powerRoom' style="text-align:center">
+                                    <div class='imgbox'>
+                                        <Icon type="ios-flash" />
+                                    </div>
+                                    <div class='dec'>
+                                        <p class='title'> 1F1-2#强电间ALZ1-2</p>
+                                        <p class='sbID'> 设备Id: 123445423 <span style='margin:0 10px;'>连接状态:&nbsp; 在线&nbsp; </span> <span>运行状态:
+                                                <span class='sbStatus'>
+                                                    <Icon type="md-checkmark-circle" />
+                                                    正常
+                                                </span>
+                                            </span></p>
+
+                                    </div>
+                                </div>
+                            </Card>
+                            <div class='wendu'>
+                                <div class='dianliu'>
+                                    <p> 温度_121212_00/</p>
+                                    <p> <span> 29℃</span></p>
+                                </div>
+                                <div class='dianliu'>
+                                    <p> 温度_121212_00/</p>
+                                    <p> <span> 29℃</span></p>
+                                </div>
+                                <div class='dianliu'>
+                                    <p> 温度_121212_00/</p>
+                                    <p> <span> 29℃</span></p>
+                                </div>
+                                <div class='dianliu'>
+                                    <p> 温度_121212_00/</p>
+                                    <p> <span> 29℃</span></p>
+                                </div>
+                                <div class='dianliu'>
+                                    <p> 温度_121212_00/</p>
+                                    <p> <span> 29℃</span></p>
+                                </div>
+                                <div class='dianliu'>
+                                    <p> 温度_121212_00/</p>
+                                    <p> <span> 29℃</span></p>
+                                </div>
+                                <div class='dianliu'>
+                                    <p> 温度_121212_00/</p>
+                                    <p> <span> 29℃</span></p>
+                                </div>
+                                <div class='dianliu'>
+                                    <p> 温度_121212_00/</p>
+                                    <p> <span> 29℃</span></p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class='mediaInfo' @click='getPowerInfo'>
+                            <Card>
+                                <div class='powerRoom' style="text-align:center">
+                                    <div class='imgbox'>
+                                        <Icon type="ios-flash" />
+                                    </div>
+                                    <div class='dec'>
+                                        <p class='title'> 1F1-2#强电间ALZ1-2</p>
+                                        <p class='sbID'> 设备Id: 123445423 <span style='margin:0 10px;'>连接状态:&nbsp; 在线&nbsp; </span> <span>运行状态:
+                                                <span class='sbStatus'>
+                                                    <Icon type="md-checkmark-circle" />
+                                                    正常
+                                                </span>
+                                            </span></p>
+
+                                    </div>
+                                </div>
+                            </Card>
+                            <div class='wendu'>
+                                <div class='dianliu'>
+                                    <p> 温度_121212_00/</p>
+                                    <p> <span> 29℃</span></p>
+                                </div>
+                                <div class='dianliu'>
+                                    <p> 温度_121212_00/</p>
+                                    <p> <span> 29℃</span></p>
+                                </div>
+                                <div class='dianliu'>
+                                    <p> 温度_121212_00/</p>
+                                    <p> <span> 29℃</span></p>
+                                </div>
+                                <div class='dianliu'>
+                                    <p> 温度_121212_00/</p>
+                                    <p> <span> 29℃</span></p>
+                                </div>
+                                <div class='dianliu'>
+                                    <p> 温度_121212_00/</p>
+                                    <p> <span> 29℃</span></p>
+                                </div>
+                                <div class='dianliu'>
+                                    <p> 温度_121212_00/</p>
+                                    <p> <span> 29℃</span></p>
+                                </div>
+                                <div class='dianliu'>
+                                    <p> 温度_121212_00/</p>
+                                    <p> <span> 29℃</span></p>
+                                </div>
+                                <div class='dianliu'>
+                                    <p> 温度_121212_00/</p>
+                                    <p> <span> 29℃</span></p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class='mediaInfo' @click='getPowerInfo'>
+                            <Card>
+                                <div class='powerRoom' style="text-align:center">
+                                    <div class='imgbox'>
+                                        <Icon type="ios-flash" />
+                                    </div>
+                                    <div class='dec'>
+                                        <p class='title'> 1F1-2#强电间ALZ1-2</p>
+                                        <p class='sbID'> 设备Id: 123445423 <span style='margin:0 10px;'>连接状态:&nbsp; 在线&nbsp; </span> <span>运行状态:
+                                                <span class='sbStatus'>
+                                                    <Icon type="md-checkmark-circle" />
+                                                    正常
+                                                </span>
+                                            </span></p>
+
+                                    </div>
+                                </div>
+                            </Card>
+                            <div class='wendu'>
+                                <div class='dianliu'>
+                                    <p> 温度_121212_00/</p>
+                                    <p> <span> 29℃</span></p>
+                                </div>
+                                <div class='dianliu'>
+                                    <p> 温度_121212_00/</p>
+                                    <p> <span> 29℃</span></p>
+                                </div>
+                                <div class='dianliu'>
+                                    <p> 温度_121212_00/</p>
+                                    <p> <span> 29℃</span></p>
+                                </div>
+                                <div class='dianliu'>
+                                    <p> 温度_121212_00/</p>
+                                    <p> <span> 29℃</span></p>
+                                </div>
+                                <div class='dianliu'>
+                                    <p> 温度_121212_00/</p>
+                                    <p> <span> 29℃</span></p>
+                                </div>
+                                <div class='dianliu'>
+                                    <p> 温度_121212_00/</p>
+                                    <p> <span> 29℃</span></p>
+                                </div>
+                                <div class='dianliu'>
+                                    <p> 温度_121212_00/</p>
+                                    <p> <span> 29℃</span></p>
+                                </div>
+                                <div class='dianliu'>
+                                    <p> 温度_121212_00/</p>
+                                    <p> <span> 29℃</span></p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class='mediaInfo' @click='getPowerInfo'>
+                            <Card>
+                                <div class='powerRoom' style="text-align:center">
+                                    <div class='imgbox'>
+                                        <Icon type="ios-flash" />
+                                    </div>
+                                    <div class='dec'>
+                                        <p class='title'> 1F1-2#强电间ALZ1-2</p>
+                                        <p class='sbID'> 设备Id: 123445423 <span style='margin:0 10px;'>连接状态:&nbsp; 在线&nbsp; </span> <span>运行状态:
+                                                <span class='sbStatus'>
+                                                    <Icon type="md-checkmark-circle" />
+                                                    正常
+                                                </span>
+                                            </span></p>
+
+                                    </div>
+                                </div>
+                            </Card>
+                            <div class='wendu'>
+                                <div class='dianliu'>
+                                    <p> 温度_121212_00/</p>
+                                    <p> <span> 29℃</span></p>
+                                </div>
+                                <div class='dianliu'>
+                                    <p> 温度_121212_00/</p>
+                                    <p> <span> 29℃</span></p>
+                                </div>
+                                <div class='dianliu'>
+                                    <p> 温度_121212_00/</p>
+                                    <p> <span> 29℃</span></p>
+                                </div>
+                                <div class='dianliu'>
+                                    <p> 温度_121212_00/</p>
+                                    <p> <span> 29℃</span></p>
+                                </div>
+                                <div class='dianliu'>
+                                    <p> 温度_121212_00/</p>
+                                    <p> <span> 29℃</span></p>
+                                </div>
+                                <div class='dianliu'>
+                                    <p> 温度_121212_00/</p>
+                                    <p> <span> 29℃</span></p>
+                                </div>
+                                <div class='dianliu'>
+                                    <p> 温度_121212_00/</p>
+                                    <p> <span> 29℃</span></p>
+                                </div>
+                                <div class='dianliu'>
+                                    <p> 温度_121212_00/</p>
+                                    <p> <span> 29℃</span></p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class='mediaInfo' @click='getPowerInfo'>
+                            <Card>
+                                <div class='powerRoom' style="text-align:center">
+                                    <div class='imgbox'>
+                                        <Icon type="ios-flash" />
+                                    </div>
+                                    <div class='dec'>
+                                        <p class='title'> 1F1-2#强电间ALZ1-2</p>
+                                        <p class='sbID'> 设备Id: 123445423 <span style='margin:0 10px;'>连接状态:&nbsp; 在线&nbsp; </span> <span>运行状态:
+                                                <span class='sbStatus'>
+                                                    <Icon type="md-checkmark-circle" />
+                                                    正常
+                                                </span>
+                                            </span></p>
+
+                                    </div>
+                                </div>
+                            </Card>
+                            <div class='wendu'>
+                                <div class='dianliu'>
+                                    <p> 温度_121212_00/</p>
+                                    <p> <span> 29℃</span></p>
+                                </div>
+                                <div class='dianliu'>
+                                    <p> 温度_121212_00/</p>
+                                    <p> <span> 29℃</span></p>
+                                </div>
+                                <div class='dianliu'>
+                                    <p> 温度_121212_00/</p>
+                                    <p> <span> 29℃</span></p>
+                                </div>
+                                <div class='dianliu'>
+                                    <p> 温度_121212_00/</p>
+                                    <p> <span> 29℃</span></p>
+                                </div>
+                                <div class='dianliu'>
+                                    <p> 温度_121212_00/</p>
+                                    <p> <span> 29℃</span></p>
+                                </div>
+                                <div class='dianliu'>
+                                    <p> 温度_121212_00/</p>
+                                    <p> <span> 29℃</span></p>
+                                </div>
+                                <div class='dianliu'>
+                                    <p> 温度_121212_00/</p>
+                                    <p> <span> 29℃</span></p>
+                                </div>
+                                <div class='dianliu'>
+                                    <p> 温度_121212_00/</p>
+                                    <p> <span> 29℃</span></p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class='mediaInfo' @click='getPowerInfo'>
+                            <Card>
+                                <div class='powerRoom' style="text-align:center">
+                                    <div class='imgbox'>
+                                        <Icon type="ios-flash" />
+                                    </div>
+                                    <div class='dec'>
+                                        <p class='title'> 1F1-2#强电间ALZ1-2</p>
+                                        <p class='sbID'> 设备Id: 123445423 <span style='margin:0 10px;'>连接状态:&nbsp; 在线&nbsp; </span> <span>运行状态:
+                                                <span class='sbStatus'>
+                                                    <Icon type="md-checkmark-circle" />
+                                                    正常
+                                                </span>
+                                            </span></p>
+
+                                    </div>
+                                </div>
+                            </Card>
+                            <div class='wendu'>
+                                <div class='dianliu'>
+                                    <p> 温度_121212_00/</p>
+                                    <p> <span> 29℃</span></p>
+                                </div>
+                                <div class='dianliu'>
+                                    <p> 温度_121212_00/</p>
+                                    <p> <span> 29℃</span></p>
+                                </div>
+                                <div class='dianliu'>
+                                    <p> 温度_121212_00/</p>
+                                    <p> <span> 29℃</span></p>
+                                </div>
+                                <div class='dianliu'>
+                                    <p> 温度_121212_00/</p>
+                                    <p> <span> 29℃</span></p>
+                                </div>
+                                <div class='dianliu'>
+                                    <p> 温度_121212_00/</p>
+                                    <p> <span> 29℃</span></p>
+                                </div>
+                                <div class='dianliu'>
+                                    <p> 温度_121212_00/</p>
+                                    <p> <span> 29℃</span></p>
+                                </div>
+                                <div class='dianliu'>
+                                    <p> 温度_121212_00/</p>
+                                    <p> <span> 29℃</span></p>
+                                </div>
+                                <div class='dianliu'>
+                                    <p> 温度_121212_00/</p>
+                                    <p> <span> 29℃</span></p>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!--   <Page :total="TableData.length" :page-size="pageSize" show-total class="paging"></Page> -->
+                </div>
+
+            </div>
+            <Modal width="1200" id='powerxxId' v-model="powerflag">
+                <div slot="header" class="headers">
+                    巡检内容列表
+                </div>
+                <div class="seaechType">
+                    <div class='title'>
+                        <span>基础信息</span>
+                    </div>
+                    <div class='sbcontent'>
+                        <div class='sbmc'>
+                            <p>设备名称:&nbsp;&nbsp; 4F影院照明用电柜</p>
+                            <p>所属单位:&nbsp;&nbsp; 华都天元广场 </p>
+                            <p>安装位置:&nbsp;&nbsp; 主楼4楼4F影院照明用电柜</p>
+                        </div>
+                        <div class='sbzt'>
+                            <p>状态:&nbsp;&nbsp; 正常</p>
+                            <p>所属单位:&nbsp;&nbsp; M201</p>
+                        </div>
+                        <div class='sbid'>
+                            <p>设备品牌:&nbsp;&nbsp; 上海金盾</p>
+                            <p>设备ID:&nbsp;&nbsp; 190760D288</p>
+                        </div>
+                    </div>
+                    <div class='dataprot'>
+                        <Tabs name="name2222">
+                            <p style='line-height:20px;padding-top: 8px;' slot="extra">
+                            <span  size="small" >今日</span>
+                             <span  style='margin:0 20px;' size="small" slot="extra">本周</span>
+                             <span  size="small" slot="extra">本月</span>
+                            </p>
+                             
+                            <TabPane label="数据趋势分析" tab="name2222">
+                        
+                                <div class='YDXQ'>
+                                    <div id='electricity'></div>
+                                    <div id='temperature'></div>
+                                </div>
+                            </TabPane>
+                            <TabPane label="历史报警时间" tab="name2222">标签二的内容</TabPane>
+                        </Tabs>
+                    </div>
+                </div>
+
+            </Modal>
+        </TabPane>
+        <!--  报警事件 -------------------------------------->
+        <TabPane label="报警事件" tab="name22">
+            <div class="rightHead">
+
+                <div class='navpst'>
+                    <div class='currentp'>当前位置&nbsp;:</div>
+                    <Breadcrumb separator=">">
+
+                        <BreadcrumbItem to="/power">{{$route.name}}</BreadcrumbItem>
+
+                    </Breadcrumb>
+                </div>
+                <div class='sousuo1'>
+                    <div style='height:40px;line-height:40px; padding-left:20px;font-size:16px; border-bottom:1px solid #eee;'>搜索查询 </div>
+                    <div class='searchMeun'>
+                        <span class="wdName_doc">
+                            区域&nbsp;:&nbsp;
+                        </span>
+                        <Select v-model="WY" style="width:200px" @on-change='wychange'>
+                            <Option v-for="item in wy" :value="item.ppid" :key="item.ppid">{{ item.ppname }}</Option>
+                        </Select><Select v-model="WY" style="width:200px" @on-change='wychange'>
+                            <Option v-for="item in wy" :value="item.ppid" :key="item.ppid">{{ item.ppname }}</Option>
+                        </Select><Select v-model="WY" style="width:200px" @on-change='wychange'>
+                            <Option v-for="item in wy" :value="item.ppid" :key="item.ppid">{{ item.ppname }}</Option>
+                        </Select>
+                        <span class="wdName">
+                            时间&nbsp;:&nbsp;
+                        </span>
+                        <DatePicker style='width:200px' type="date" placeholder="开始时间..." v-model="startDate"></DatePicker>
+                        <span>
+                            至&nbsp;&nbsp;
+                        </span>
+                        <DatePicker style='width:200px' type="date" placeholder="结束时间..." v-model="endDate"></DatePicker>
+                        <Button class='wdName' type="primary">查询</Button>
+
+                        <Button class='wdName' type="primary">导出</Button>
+
+                        <Modal width="700" id="add" v-model="add">
+                            <div slot="header" class="addheader">
+                                添加
+                            </div>
+                            <div class="addcontent">
+                                <div class="top">
+                                    <span class="XMLXBH">项目类型编号&nbsp;&nbsp;: </span>
+                                    <Input v-model="XMLXBH" placeholder="输入项目类型编号" style="width: 30%;margin-right:30px;" />
+                                    <span class="XMLXBH">项目类型名称&nbsp;&nbsp;: </span>
+                                    <Input v-model="XMLXBH" placeholder="输入项目类型名称" style="width: 30%" />
+                                </div>
+                                <div class="top">
+                                    <span class="XMLXBH">设备操作规范&nbsp;&nbsp;: </span>
+                                    <Input v-model="XMLXBH" style="width: 30%;margin-right:30px;" />
+                                    <span class="XMLXBH">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;备&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;注&nbsp;&nbsp;&nbsp;&nbsp;: </span>
+                                    <Input v-model="XMLXBH" style="width: 30%" />
+                                </div>
+                            </div>
+                        </Modal>
+                    </div>
+                </div>
+
+                <div class='tableBox'>
+                    <div class='topTJ'>
+                        <div class='left'>
+                            <div id='event'></div>
+                        </div>
+                    </div>
+                    <div class='bottomTJ'>
+                        <Table stripe border :columns="TableTitle" :data="TableData">
+
+                            <template slot-scope="{ row, index }" slot="action">
+
+                                <Modal width="700" v-model="xjnr">
+                                    <div slot="header" class="">
+                                        巡检内容列表
+                                    </div>
+                                    <div class="seaechType">
+                                        <span> 巡检类别&nbsp;&nbsp;: &nbsp;&nbsp;&nbsp;</span>
+                                        <Select v-model="floorNum" style="width:120px">
+                                            <Option v-for="item in period" :value="item.value" :key="item.value">{{ item.label }}</Option>
+                                        </Select>
+                                    </div>
+                                    <Table stripe border :columns="patrolTitle" :data="patrolcontent">
+                                        <template slot="action">
+                                            <Button type="warning" ghost size="small" @click="xjnr = true">删除</Button>
+                                        </template>
+
+                                    </Table>
+                                </Modal>
+                                <Button type="primary" ghost size="small" style="margin:0 10px" @click="updata=true">修改</Button>
+                                <Modal width="700" id="updata" v-model="updata">
+                                    <div slot="header" class="addheader">
+                                        修改
+                                    </div>
+                                    <div class="addcontent">
+                                        <div class="top">
+                                            <span class="XMLXBH">项目类型编号&nbsp;&nbsp;: </span>
+                                            <Input v-model="XMLXBH" placeholder="输入项目类型编号" style="width: 30%;margin-right:30px;" />
+                                            <span class="XMLXBH">项目类型名称&nbsp;&nbsp;: </span>
+                                            <Input v-model="XMLXBH" placeholder="输入项目类型名称" style="width: 30%" />
+                                        </div>
+                                        <div class="top">
+                                            <span class="XMLXBH">设备操作规范&nbsp;&nbsp;: </span>
+                                            <Input v-model="XMLXBH" style="width: 30%;margin-right:30px;" />
+                                            <span class="XMLXBH">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;备&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;注&nbsp;&nbsp;&nbsp;&nbsp;: </span>
+                                            <Input v-model="XMLXBH" style="width: 30%" />
+                                        </div>
+                                    </div>
+                                </Modal>
+                                <Button type="warning" ghost size="small" @click="remove(index)">删除</Button>
+
+                            </template>
+                        </Table>
+                    </div>
+
+                    <!--  <Page :total="TableData.length" :page-size="pageSize" show-total class="paging"></Page> -->
+                </div>
+
+            </div>
+        </TabPane>
+        <!--  数据浏览 -------------------------------------->
+        <TabPane label="数据浏览" tab="name22">
+            <div class="rightHead">
+
+                <div class='navpst'>
+                    <div class='currentp'>当前位置&nbsp;:</div>
+                    <Breadcrumb separator=">">
+
+                        <BreadcrumbItem to="/power">{{$route.name}}</BreadcrumbItem>
+
+                    </Breadcrumb>
+                </div>
+                <div class='sousuo1'>
+                    <div style='height:40px;line-height:40px; padding-left:20px;font-size:16px; border-bottom:1px solid #eee;'>搜索查询 </div>
+                    <div class='searchMeun'>
+                        <span class="wdName_doc">
+                            区域&nbsp;:&nbsp;
+                        </span>
+                        <Select v-model="WY" style="width:200px" @on-change='wychange'>
+                            <Option v-for="item in wy" :value="item.ppid" :key="item.ppid">{{ item.ppname }}</Option>
+                        </Select><Select v-model="WY" style="width:200px" @on-change='wychange'>
+                            <Option v-for="item in wy" :value="item.ppid" :key="item.ppid">{{ item.ppname }}</Option>
+                        </Select>
+                        <span class="wdName">
+                            时间&nbsp;:&nbsp;
+                        </span>
+                        <DatePicker style='width:200px' type="date" placeholder="开始时间..." v-model="startDate"></DatePicker>
+                        <span>
+                            至&nbsp;&nbsp;
+                        </span>
+                        <DatePicker style='width:200px' type="date" placeholder="结束时间..." v-model="endDate"></DatePicker>
+                        <Button class='wdName' type="primary">查询</Button>
+
+                        <Button class='wdName' type="primary">导出</Button>
+
+                        <Modal width="700" id="add" v-model="add">
+                            <div slot="header" class="addheader">
+                                添加
+                            </div>
+                            <div class="addcontent">
+                                <div class="top">
+                                    <span class="XMLXBH">项目类型编号&nbsp;&nbsp;: </span>
+                                    <Input v-model="XMLXBH" placeholder="输入项目类型编号" style="width: 30%;margin-right:30px;" />
+                                    <span class="XMLXBH">项目类型名称&nbsp;&nbsp;: </span>
+                                    <Input v-model="XMLXBH" placeholder="输入项目类型名称" style="width: 30%" />
+                                </div>
+                                <div class="top">
+                                    <span class="XMLXBH">设备操作规范&nbsp;&nbsp;: </span>
+                                    <Input v-model="XMLXBH" style="width: 30%;margin-right:30px;" />
+                                    <span class="XMLXBH">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;备&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;注&nbsp;&nbsp;&nbsp;&nbsp;: </span>
+                                    <Input v-model="XMLXBH" style="width: 30%" />
+                                </div>
+                            </div>
+                        </Modal>
+                    </div>
+                </div>
+
+                <div class='tableBox'>
+                    <div class='topTJ'>
+                        <div class='left'>
+                            <div id='event'></div>
+                        </div>
+                    </div>
+                    <div class='bottomTJ'>
+                        <Table stripe border :columns="TableTitle" :data="TableData">
+
+                            <template slot-scope="{ row, index }" slot="action">
+
+                                <Modal width="700" v-model="xjnr">
+                                    <div slot="header" class="">
+                                        {{this.powerTitle}}
+                                    </div>
+                                    <div class="seaechType">
+                                        <span> 巡检类别&nbsp;&nbsp;: &nbsp;&nbsp;&nbsp;</span>
+                                        <Select v-model="floorNum" style="width:120px">
+                                            <Option v-for="item in period" :value="item.value" :key="item.value">{{ item.label }}</Option>
+                                        </Select>
+                                    </div>
+                                    <Table stripe border :columns="patrolTitle" :data="patrolcontent">
+                                        <template slot="action">
+                                            <Button type="warning" ghost size="small" @click="xjnr = true">删除</Button>
+                                        </template>
+
+                                    </Table>
+                                </Modal>
+                                <Button type="primary" ghost size="small" style="margin:0 10px" @click="updata=true">修改</Button>
+                                <Modal width="700" id="updata" v-model="updata">
+                                    <div slot="header" class="addheader">
+                                        修改
+                                    </div>
+                                    <div class="addcontent">
+                                        <div class="top">
+                                            <span class="XMLXBH">项目类型编号&nbsp;&nbsp;: </span>
+                                            <Input v-model="XMLXBH" placeholder="输入项目类型编号" style="width: 30%;margin-right:30px;" />
+                                            <span class="XMLXBH">项目类型名称&nbsp;&nbsp;: </span>
+                                            <Input v-model="XMLXBH" placeholder="输入项目类型名称" style="width: 30%" />
+                                        </div>
+                                        <div class="top">
+                                            <span class="XMLXBH">设备操作规范&nbsp;&nbsp;: </span>
+                                            <Input v-model="XMLXBH" style="width: 30%;margin-right:30px;" />
+                                            <span class="XMLXBH">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;备&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;注&nbsp;&nbsp;&nbsp;&nbsp;: </span>
+                                            <Input v-model="XMLXBH" style="width: 30%" />
+                                        </div>
+                                    </div>
+                                </Modal>
+                                <Button type="warning" ghost size="small" @click="remove(index)">删除</Button>
+
+                            </template>
+                        </Table>
+                    </div>
+
+                    <!--  <Page :total="TableData.length" :page-size="pageSize" show-total class="paging"></Page> -->
+                </div>
+
+            </div>
+        </TabPane>
+    </Tabs>
+
+</div>
+</template>
+
+<script>
+var echarts = require('echarts');
+export default {
+    name: 'maindian',
+    data() {
+        return {
+            powerflag: false,
+            powerTitle: '4F影院照片用电柜',
+            startTime: '',
+            endTime: "",
+            // 初始化信息总条数
+            dataCount: 0,
+            // 每页显示多少条
+            pageSize: 10,
+            floorNum: null,
+            XMLXBH: null,
+            xjnr: false,
+            add: false,
+            updata: false,
+            WordName: null,
+            drawCategory: null,
+            period: [{
+                    value: "all",
+                    label: '全部'
+                },
+                {
+                    value: "year",
+                    label: '每年巡检'
+                },
+                {
+                    value: "month",
+                    label: '每月巡检'
+                },
+                {
+                    value: "day",
+                    label: '每日巡检'
+                }
+
+            ],
+            TableTitle: [{
+                    type: 'selection',
+                    width: 60,
+                    align: 'center'
+                }, {
+                    title: '首次报警事件',
+                    width: 80,
+                    align: 'center',
+                    key: 'sortNum'
+                },
+
+                {
+                    title: '事件类型',
+                    align: 'center',
+                    key: 'docCategory'
+                },
+                {
+                    title: '设备名称',
+                    align: 'center',
+                    key: 'updataTime'
+                },
+                {
+                    title: '编码',
+                    align: 'center',
+                    key: 'realUnit'
+                },
+                {
+                    title: '最新报警时间',
+                    align: 'center',
+                    key: 'realUnit'
+                },
+
+                {
+                    title: '报警次数',
+                    align: 'center',
+                    key: 'realUnit'
+                },
+
+                {
+                    title: '报警持续时长',
+                    align: 'center',
+                    key: 'realUnit'
+                },
+
+                {
+                    title: '处理状态',
+                    align: 'center',
+                    key: 'realUnit'
+                },
+
+                {
+                    title: '联动详情',
+                    align: 'center',
+                    key: 'realUnit'
+                },
+                {
+                    title: '操作',
+                    key: 'action',
+                    slot: 'action',
+                    align: 'center'
+                }
+            ],
+            TableData: [
+
+            ],
+            patrolTitle: [{
+                    title: '巡检内容',
+                    align: 'center',
+                    key: 'patrolCon'
+                },
+
+                {
+                    title: '操作类型',
+                    align: 'center',
+                    key: 'actionType'
+                },
+                {
+                    title: '最大值',
+                    align: 'center',
+                    key: 'max'
+                },
+                {
+                    title: '最小值',
+                    align: 'center',
+                    key: 'min'
+                },
+                {
+                    title: '数据类型',
+                    align: 'center',
+                    key: 'datasType'
+                },
+                {
+                    title: '操作',
+                    key: 'action',
+                    slot: 'action',
+                    align: 'center'
+                }
+            ],
+            patrolcontent: [{
+                    patrolCon: "压力不足",
+                    actionType: '选择设备',
+                    max: '99',
+                    min: '1',
+                    datasType: "消防安全",
+
+                },
+                {
+                    patrolCon: "瓶体腐蚀",
+                    actionType: '选择设备',
+                    max: '9',
+                    min: '1',
+                    datasType: "消防安全",
+
+                }
+            ],
+
+        }
+    },
+    created() {
+
+    },
+    mounted() {
+        this.initdianliu();
+        this.initwendu();
+    },
+    methods: {
+        getPowerInfo() {
+            this.powerflag = true
+        },
+        initdianliu(){
+                 var myChart = echarts.init(document.getElementById('electricity'));
+            myChart.setOption({
+                title: {
+                    text: '电流趋势变化图',
+
+                },
+                // tooltip: {
+                //     trigger: 'axis'
+                // },
+                legend: {
+                    data: ['剩余电流', 'A相电流', 'B相电流', 'C相电流'],
+                    right:'top'
+                },
+                grid: {
+                    left: '3%',
+                    right: '4%',
+                    bottom: '3%',
+                    containLabel: true
+                },
+                // toolbox: {
+                //     feature: {
+                //         saveAsImage: {}
+                //     }
+                // },
+                xAxis: {
+                    type: 'category',
+                    boundaryGap: false,
+                    data: ['周一', '周二', '周三', '周四', '周五', '周六', '周日']
+                },
+                yAxis: {
+                    type: 'value',
+                    splitLine: {
+                        show: false,
+                    }
+                },
+                series: [{
+                        name: '剩余电流',
+                        type: 'line',
+                        // stack: '总量',
+                        data: [120, 132, 101, 134, 90, 230]
+                    },
+                    {
+                        name: 'A相电流',
+                        type: 'line',
+                        // stack: '总量',
+                        data: [220, 182, 191, 234, 290, 330]
+                    },
+                    {
+                        name: 'B相电流',
+                        type: 'line',
+                        // stack: '总量',
+                        data: [150, 232, 201, 154, 190, 330]
+                    },
+                    {
+                        name: 'C相电流',
+                        type: 'line',
+                        // stack: '总量',
+                        data: [320, 332, 301, 334, 390, 33]
+                    },
+
+                ]
+            });
+        },
+        initwendu(){
+             var myChart = echarts.init(document.getElementById('temperature'));
+            myChart.setOption({
+                title: {
+                    text: '温度趋势变化图',
+
+                },
+                // tooltip: {
+                //     trigger: 'axis'
+                // },
+                legend: {
+                    data: ['剩余电流', 'A相电流', 'B相电流', 'C相电流'],
+                    right:'top'
+                },
+                grid: {
+                    left: '3%',
+                    right: '4%',
+                    bottom: '3%',
+                    containLabel: true
+                },
+                // toolbox: {
+                //     feature: {
+                //         saveAsImage: {}
+                //     }
+                // },
+                xAxis: {
+                    type: 'category',
+                    boundaryGap: false,
+                    data: ['周一', '周二', '周三', '周四', '周五', '周六', '周日']
+                },
+                yAxis: {
+                    type: 'value',
+                    splitLine: {
+                        show: false,
+                    }
+                },
+                series: [{
+                        name: '剩余电流',
+                        type: 'line',
+                        // stack: '总量',
+                        data: [120, 132, 101, 134, 90, 230]
+                    },
+                    {
+                        name:  'A相电流',
+                        type: 'line',
+                        // stack: '总量',
+                        data: [220, 182, 191, 234, 290, 330]
+                    },
+                    {
+                        name:  'B相电流',
+                        type: 'line',
+                        // stack: '总量',
+                        data: [150, 232, 201, 154, 190, 330]
+                    },
+                    {
+                        name: 'C相电流',
+                        type: 'line',
+                        // stack: '总量',
+                        data: [320, 332, 301, 334, 390, 33]
+                    },
+
+                ]
+            });
+
+        }
+    },
+
+}
+</script>
+
+<style lang="less" scoped>
+.containers {
+    width: 100%;
+    height: 100%;
+    // padding: 0 3px;
+    background-color: #edf5f7;
+
+    .rightHead {
+        .searchMeun {
+            padding: 0 20px;
+            position: relative;
+            // top: -27px;
+            height: 50px;
+            // border: 1px solid #e8eaec;
+            border-top: none;
+            height: 80px;
+            line-height: 80px;
+
+            .wdName {
+                margin-left: 50px;
+            }
+        }
+
+        .tableBox {
+            background: #fff;
+            margin-top: 20px;
+            // min-height: 620px;
+            height: 610px;
+            overflow: auto;
+
+            .mediaList {
+                width: 100%;
+
+                display: flex;
+                flex-wrap: wrap;
+
+                /deep/ .ivu-card-body {
+                    padding: 0;
+                    height: 80px;
+
+                }
+
+                .mediaInfo {
+                    height: 100%;
+                    padding: 10px;
+                    width: 33%;
+
+                    .powerRoom {
+                        display: flex;
+                        height: 100%;
+                        line-height: 60px;
+                        background: #0183ff;
+                        color: #fff;
+
+                        .imgbox {
+                            flex: 1;
+                            font-size: 30px;
+
+                            >i {
+                                width: 30px;
+                                height: 30px;
+                                background-color: #fff;
+                                color: #0183ff;
+                                border-radius: 15px;
+                            }
+                        }
+
+                        .dec {
+                            flex: 3;
+                            height: 80px;
+                            line-height: 36px;
+                            text-align: left;
+
+                            .title {
+                                font-size: 18px;
+                            }
+                        }
+
+                    }
+                }
+
+                .wendu {
+                    background: #f8f9fb;
+                    display: flex;
+                    flex-wrap: wrap;
+
+                    .dianliu {
+                        width: 50%;
+                        height: 50px;
+
+                        text-align: center;
+                        border-bottom: 1px solid #f0f3f8;
+                        border-right: 1px solid #f0f3f8;
+                        border-right: 1px solid #f0f3f8;
+
+                        >P {
+                            line-height: px;
+
+                            >span {
+                                font-size: 18px;
+                            }
+                        }
+                    }
+                }
+            }
+
+        }
+    }
+
+}
+
+#add /deep/ .ivu-modal-header,
+#updata /deep/ .ivu-modal-header {
+    padding: 0;
+}
+
+#add /deep/ .ivu-modal-close,
+#updata /deep/ .ivu-modal-close {
+    top: 3px;
+}
+
+.flexdiv {
+    display: flex;
+    justify-content: space-between;
+
+    .flexdivs {
+        width: 270px;
+        height: 500px;
+    }
+
+    .divspan {
+        width: 100%;
+        height: 30px;
+        font-size: 16px;
+        background: #cccccc;
+        line-height: 30px;
+        padding-left: 20px;
+
+        span {
+            width: 10px;
+            height: 20px;
+            background: blue
+        }
+    }
+}
+
+.sousuo1 {
+    background: #fff;
+    box-shadow: 0px 2px 3px -2px;
+
+    margin-top: 20px;
+    background: #fff;
+}
+
+.navpst {
+    height: 60px;
+    line-height: 60px;
+    padding-left: 20px;
+    display: flex;
+    background-color: #fff;
+    box-shadow: 0px 2px 3px -2px;
+}
+
+.navpst .currentp {
+    margin-right: 10px;
+}
+
+.navpst .ivu-breadcrumb-item-link {
+    color: #2456bb;
+}
+</style>
+<style lang='less'>
+    #powerxxId{
+      /deep/  .ivu-modal-header{
+            padding:0;
+            height:40px;
+            background:#223476;
+            text-align:center;
+            color:#fff; 
+            line-height:40px;
+            font-size:20px;
+        }
+        
+        .seaechType{
+        
+            .title{
+                height:20px;
+                padding-left:20px;
+                font-size:16px;
+                border-left:2px solid #339efd;
+            }
+            .sbcontent{
+                display:flex;
+                margin-top:15px;
+                border-bottom:1px solid #ccc;
+                height:160px;
+                .sbmc{
+                    flex:1;
+                    text-align:left;
+                    >p{
+                        height:40px;
+                        line-height:40px;
+                    }
+                }
+                .sbzt{
+                    flex:1;
+                    text-align:left;
+                    >p{
+                        height:40px;
+                        line-height:40px;
+                    }
+                }
+                .sbid{
+                    flex:1;
+                    text-align:left;
+                    >p{
+                        height:40px;
+                        line-height:40px;
+                    }
+                }
+            }
+            .YDXQ{
+                width:100%;
+                #electricity{
+                    height:240px;
+                    width:1100px;
+                }
+                #temperature{
+                    width:1100px;
+                    height:240px;
+                }
+            }
+        }
+    }
+</style>

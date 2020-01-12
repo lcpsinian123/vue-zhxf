@@ -1,0 +1,444 @@
+<template>
+<div class='container'>
+
+    <div class="rightHead">
+
+        <div class='navpst'>
+            <div class='currentp'>当前位置&nbsp;:</div>
+            <Breadcrumb separator=">">
+
+                <BreadcrumbItem to="/assessmentTask">{{$route.name}}</BreadcrumbItem>
+
+            </Breadcrumb>
+        </div>
+        <div class='sousuo1'>
+            <div style='height:40px;line-height:40px; padding-left:20px;font-size:16px; border-bottom:1px solid #eee;'>搜索查询 </div>
+            <div class='searchMeun'>
+                <span class="wdName_doc">
+                    隐患处理&nbsp;:&nbsp;
+                </span>
+                <Select v-model="drawCategory" style="width: 10%">
+                    <Option v-for="item in drawCategory" :value="item.value" :key="item.value">{{ item.label }}</Option>
+                </Select>
+                <span class="wdName">
+                    隐患来源&nbsp;:&nbsp;
+                </span>
+                <Select v-model="drawCategory" style="width: 10%">
+                    <Option v-for="item in drawCategory" :value="item.value" :key="item.value">{{ item.label }}</Option>
+                </Select>
+                <span class="wdName">
+                    处理状态&nbsp;:&nbsp;
+                </span>
+                <Select v-model="drawCategory" style="width: 10%">
+                    <Option v-for="item in drawCategory" :value="item.value" :key="item.value">{{ item.label }}</Option>
+                </Select>
+                <span class="wdName">
+                    时间:&nbsp;:&nbsp;
+                </span>
+                <DatePicker style='width:200px' type="date" placeholder="开始时间..." v-model="startDate"></DatePicker>
+                <span>
+                    至&nbsp;&nbsp;
+                </span>
+                <DatePicker style='width:200px' type="date" placeholder="结束时间..." v-model="endDate"></DatePicker>
+                <Button class='wdName' type="info">查询</Button>
+
+            </div>
+        </div>
+
+        <div class='tableBox'>
+            <div class='btn'>
+                <Button @click="add = true" type="primary">添加</Button>
+                <Button style='margin:0 50px;' ghost type="primary">批量删除</Button>
+                <Button type="primary" ghost>导出</Button>
+            </div>
+            <Table stripe border :columns="TableTitle" :data="TableData">
+
+                <template slot-scope="{ row, index }" slot="action">
+                    <Button type="primary" ghost size="small" @click="add = true">详情</Button>
+
+                    <Modal width="700" v-model="xjnr">
+                        <div slot="header" class="">
+                            巡检内容列表
+                        </div>
+                        <div class="seaechType">
+                            <span> 巡检类别&nbsp;&nbsp;: &nbsp;&nbsp;&nbsp;</span>
+                            <Select v-model="floorNum" style="width:120px">
+                                <Option v-for="item in period" :value="item.value" :key="item.value">{{ item.label }}</Option>
+                            </Select>
+                        </div>
+                        <Table stripe border :columns="patrolTitle" :data="patrolcontent">
+                            <template slot="action">
+                                <Button type="warning" ghost size="small" @click="xjnr = true">删除</Button>
+                            </template>
+
+                        </Table>
+                    </Modal>
+                    <Button type="primary" ghost size="small" style="margin:0 10px" @click="add=true">编辑</Button>
+                    <Modal width="700" id="updata" v-model="updata">
+                        <div slot="header" class="addheader">
+                            修改
+                        </div>
+                        <div class="addcontent">
+                            <div class="top">
+                                <span class="XMLXBH">项目类型编号&nbsp;&nbsp;: </span>
+                                <Input v-model="XMLXBH" placeholder="输入项目类型编号" style="width: 30%;margin-right:30px;" />
+                                <span class="XMLXBH">项目类型名称&nbsp;&nbsp;: </span>
+                                <Input v-model="XMLXBH" placeholder="输入项目类型名称" style="width: 30%" />
+                            </div>
+                            <div class="top">
+                                <span class="XMLXBH">设备操作规范&nbsp;&nbsp;: </span>
+                                <Input v-model="XMLXBH" style="width: 30%;margin-right:30px;" />
+                                <span class="XMLXBH">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;备&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;注&nbsp;&nbsp;&nbsp;&nbsp;: </span>
+                                <Input v-model="XMLXBH" style="width: 30%" />
+                            </div>
+                        </div>
+                    </Modal>
+                    <!--  <Button type="warning" ghost size="small" @click="remove(index)">删除</Button> -->
+
+                </template>
+            </Table>
+            <Page :total="TableData.length" :page-size="pageSize" show-total class="paging"></Page>
+        </div>
+        <Modal width="700" id="add" v-model="add">
+            <div slot="header" class="addheader">
+                隐患详情
+            </div>
+            <!--  <div class="addcontent">
+                    <div class="top">
+                        <span class="XMLXBH">隐患生成时间&nbsp;&nbsp;: </span>
+                        <Input v-model="XMLXBH" placeholder="" style="width: 30%;margin-right:30px;" />
+                        <span class="XMLXBH">项目类型名称&nbsp;&nbsp;: </span>
+                        <Input v-model="XMLXBH" placeholder="" style="width: 30%" />
+                    </div>
+                    <div class="top">
+                        <span class="XMLXBH">隐患来源&nbsp;&nbsp;: </span>
+                        <Input v-model="XMLXBH" style="width: 30%;margin-right:30px;" />
+                        <span class="XMLXBH">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;备&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;注&nbsp;&nbsp;&nbsp;&nbsp;: </span>
+                        <Input v-model="XMLXBH" style="width: 30%" />
+                    </div>
+                </div> -->
+            <Form ref="formValidate" :model="formValidate" :label-width="120">
+                <div class='modelbox'>
+                    <div class='leftH'>
+                        <FormItem label="隐患生成时间:" prop="name">
+                            <Input v-model="formValidate.name" placeholder=""></Input>
+                        </FormItem>
+                        <FormItem label="隐患来源" prop="city">
+                            <Select v-model="formValidate.city" placeholder="">
+                                <Option value="beijing">New York</Option>
+                                <Option value="shanghai">London</Option>
+                                <Option value="shenzhen">Sydney</Option>
+                            </Select>
+                        </FormItem>
+                        <FormItem label="严重程度:" prop="name">
+                            <Input v-model="formValidate.name" placeholder=""></Input>
+                        </FormItem>
+                        <FormItem label="持续时间:" prop="name">
+                            <Input v-model="formValidate.name" placeholder=""></Input>
+                        </FormItem>
+                        <FormItem label="限制整改时间:" prop="name">
+                            <Input v-model="formValidate.name" placeholder=""></Input>
+                        </FormItem>
+                        <FormItem label="问题照片:" prop="name">
+                            <div class='imgs'>
+                                <img src='' />
+                            </div>
+                        </FormItem>
+                    </div>
+                    <div class='rightH'>
+                        <FormItem label="设备名称" prop="city">
+                            <Select v-model="formValidate.city" placeholder="">
+                                <Option value="beijing">New York</Option>
+                                <Option value="shanghai">London</Option>
+                                <Option value="shenzhen">Sydney</Option>
+                            </Select>
+                        </FormItem>
+                        <FormItem label="问题内容类型" prop="city">
+                            <Select v-model="formValidate.city" placeholder="">
+                                <Option value="beijing">New York</Option>
+                                <Option value="shanghai">London</Option>
+                                <Option value="shenzhen">Sydney</Option>
+                            </Select>
+                        </FormItem>
+                        <FormItem label="问题描述" prop="city">
+                            <Input v-model="dec" type="textarea" :autosize="{minRows: 2,maxRows: 5}" placeholder="描述..." />
+                        </FormItem>
+                    </div>
+
+                </div>
+                <Divider />
+                <div class='bottom'>
+                    <FormItem style='width:50%' label="隐患生成时间:" prop="name">
+                        <Input v-model="formValidate.name" placeholder=""></Input>
+                    </FormItem>
+                    <FormItem label="问题照片:" prop="name">
+                        <div class='imgs'>
+                            <img src='' />
+                        </div>
+
+                    </FormItem>
+                </div>
+
+            </Form>
+
+        </Modal>
+
+    </div>
+</div>
+</template>
+
+<script>
+export default {
+    data() {
+        return {
+            // 初始化信息总条数
+            dataCount: 0,
+            // 每页显示多少条
+            pageSize: 10,
+            floorNum: null,
+            XMLXBH: null,
+            xjnr: false,
+            add: false,
+            updata: false,
+            WordName: null,
+            drawCategory: null,
+            period: [{
+                    value: "all",
+                    label: '全部'
+                },
+                {
+                    value: "year",
+                    label: '每年巡检'
+                },
+                {
+                    value: "month",
+                    label: '每月巡检'
+                },
+                {
+                    value: "day",
+                    label: '每日巡检'
+                }
+
+            ],
+            TableTitle: [{
+                    title: '编号',
+                    width: 80,
+                    key: 'sortNum'
+                },
+
+                {
+                    title: '项目类型名称',
+                    align: 'center',
+                    key: 'docCategory'
+                },
+                {
+                    title: '设备操作规范',
+                    align: 'center',
+                    key: 'updataTime'
+                },
+                {
+                    title: '备注',
+                    align: 'center',
+                    key: 'realUnit'
+                },
+                {
+                    title: '操作',
+                    key: 'action',
+                    slot: 'action',
+                    align: 'center'
+                }
+            ],
+            TableData: [{
+                    sortNum: 1,
+
+                    docCategory: '平面图',
+                    updataTime: '2019-04-10',
+                    realUnit: "振南物业",
+
+                },
+                {
+                    sortNum: 2,
+
+                    docCategory: '平面图',
+                    updataTime: '2019-04-10',
+                    realUnit: "振南物业",
+
+                }
+
+            ],
+            patrolTitle: [{
+                    title: '巡检内容',
+                    align: 'center',
+                    key: 'patrolCon'
+                },
+
+                {
+                    title: '操作类型',
+                    align: 'center',
+                    key: 'actionType'
+                },
+                {
+                    title: '最大值',
+                    align: 'center',
+                    key: 'max'
+                },
+                {
+                    title: '最小值',
+                    align: 'center',
+                    key: 'min'
+                },
+                {
+                    title: '数据类型',
+                    align: 'center',
+                    key: 'datasType'
+                },
+                {
+                    title: '操作',
+                    key: 'action',
+                    slot: 'action',
+                    align: 'center'
+                }
+            ],
+            patrolcontent: [{
+                    patrolCon: "压力不足",
+                    actionType: '选择设备',
+                    max: '99',
+                    min: '1',
+                    datasType: "消防安全",
+
+                },
+                {
+                    patrolCon: "瓶体腐蚀",
+                    actionType: '选择设备',
+                    max: '9',
+                    min: '1',
+                    datasType: "消防安全",
+
+                }
+            ],
+            formValidate: {
+                name: '',
+                mail: '',
+                city: '',
+                gender: '',
+                interest: [],
+                date: '',
+                time: '',
+                desc: ''
+            },
+            dec: "",
+        }
+    },
+}
+</script>
+
+<style lang="less" scoped>
+.container {
+    background-color: #edf5f7;
+    width: 100%;
+    height:100%;
+    padding: 0 3px;
+
+    .rightHead {
+
+        .searchMeun {
+            padding: 0 20px;
+            position: relative;
+            // top: 30px;
+
+            // border: 1px solid #e8eaec;
+            border-top: none;
+            height: 80px;
+            line-height: 80px;
+
+            .wdName {
+                margin-left: 50px;
+            }
+        }
+
+        .tableBox {
+            background-color: #fff;
+            margin-top: 30px;
+
+            .btn {
+                height: 60px;
+                line-height: 60px;
+                padding-left: 30px;
+            }
+        }
+
+        #add {
+            .modelbox {
+                width: 100%;
+                display: flex;
+            }
+        }
+    }
+}
+</style><style>
+.seaechType {
+    width: 100%;
+    height: 40px;
+    text-align: right;
+}
+
+#add .ivu-modal-header,
+#updata .ivu-modal-header {
+    padding: 0;
+}
+
+#add .ivu-modal-close,
+#updata .ivu-modal-close {
+    top: 3px;
+}
+
+.addheader {
+    background: #394959;
+    height: 40px;
+    line-height: 40px;
+    color: #fff;
+    padding-left: 30px;
+}
+
+#add .modelbox {
+    display: flex;
+}
+
+#add .modelbox .leftH {
+    flex: 1;
+}
+
+#add .modelbox .rightH {
+    flex: 1;
+}
+
+#add .imgs {
+    width: 100px;
+    height: 100px;
+}
+
+.sousuo1 {
+    background: #fff;
+    box-shadow: 0px 2px 6px -2px;
+
+    margin-top: 20px;
+    background: #fff;
+}
+
+.navpst {
+    height: 60px;
+    line-height: 60px;
+    padding-left: 20px;
+    display: flex;
+    background-color: #fff;
+    box-shadow: 0px 2px 6px -2px;
+}
+
+.navpst .currentp {
+    margin-right: 10px;
+}
+
+.navpst .ivu-breadcrumb-item-link {
+    color: #2456bb;
+}
+</style>

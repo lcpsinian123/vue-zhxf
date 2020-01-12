@@ -1,0 +1,419 @@
+<template>
+<div>
+    <div class="container">
+        <div class='leftTree'>
+            <Tree :data="treedata"></Tree>
+        </div>
+        <div class='rightTable'>
+            <div class="rightHead">
+                <Divider orientation="left">搜索查询</Divider>
+                <div class='searchMeun'>
+                    <span class="wdName_doc">
+                        文档名称&nbsp;:&nbsp;
+                    </span>
+                    <Input v-model="WordName" placeholder="输入文档名称" style="width: 200px" />
+                    <span class="wdName">
+                        类型&nbsp;:&nbsp;
+                    </span>
+                    <Select v-model="drawCategory" style="width:200px">
+                        <Option v-for="item in category" :value="item.value" :key="item.value">{{ item.label }}</Option>
+                    </Select>
+                    <span class="wdName">
+                        上传时间&nbsp;:&nbsp;
+                    </span>
+                    <DatePicker :value="startTime" format="yyyy年MM月dd日" type="date" placeholder="Select date" style="width: 200px"></DatePicker>
+                    <span class="wdName_doc">
+                        至&nbsp;:&nbsp;
+                    </span>
+                    <DatePicker :value="endTime" format="yyyy年MM月dd日" type="date" placeholder="Select date" style="width: 200px"></DatePicker>
+
+                    <span class="wdName">
+                        是否启用&nbsp;:&nbsp;
+                    </span>
+                    <Select v-model="floorNum" style="width:100px">
+                        <Option v-for="item in floorLIst" :value="item.value" :key="item.value">{{ item.label }}</Option>
+                    </Select>
+
+                    <Button class='wdName' type="info">查询</Button>
+                </div>
+                <Divider></Divider>
+            </div>
+            <div class="Content">
+                <div class="Btn">
+                    <Button class='Btn_right' type="success" @click="addFlag = true">添加</Button>
+                    <Modal width="700" v-model="addFlag" title="添加文档" @on-ok="ok" @on-cancel="cancel">
+                        <div class="addDraw">
+                            <span>文档名称 &nbsp; :&nbsp;&nbsp; </span>
+                            <Input v-model="WordName" placeholder="" style="width: 230px;margin-right:30px;" />
+                            <span class="drawLeft">文档类型 &nbsp; :&nbsp;&nbsp; </span>
+                            <Select v-model="floorNum" style="width:230px">
+                                <Option v-for="item in floorLIst" :value="item.value" :key="item.value">{{ item.label }}</Option>
+                            </Select>
+
+                        </div>
+                        <div class="addDraw">
+                            <span>管理单位 &nbsp; :&nbsp;&nbsp; </span>
+                           <Select v-model="floorNum" style="width:230px;margin-right:30px;">
+                                <Option v-for="item in floorLIst" :value="item.value" :key="item.value">{{ item.label }}</Option>
+                            </Select>
+                            <span class="drawLeft">大楼地址 &nbsp; :&nbsp;&nbsp; </span>
+                            <Select v-model="floorNum" style="width:230px;">
+                                <Option v-for="item in floorLIst" :value="item.value" :key="item.value">{{ item.label }}</Option>
+                            </Select>
+
+                        </div>
+                        <div class="addDraw">
+                            <span>楼&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;号&nbsp; &nbsp;&nbsp; :&nbsp;&nbsp; </span>
+                            <Input v-model="WordName" placeholder="" style="width: 230px;margin-right:30px;" />
+                            <span class="drawLeft">是否在用&nbsp; :&nbsp;&nbsp;  </span>
+                            <Select v-model="floorNum" style="width:230px;">
+                                <Option v-for="item in floorLIst" :value="item.value" :key="item.value">{{ item.label }}</Option>
+                            </Select>
+
+                        </div>
+                        <div class="addDraw">
+                            <span>生效日期 &nbsp; :&nbsp;&nbsp;&nbsp;</span>
+                            <DatePicker :value="startTime" format="yyyy年MM月dd日" type="date" placeholder="Select date" style="width: 230px"></DatePicker>
+
+                        </div>
+                        <div class="addDraw">
+                            <span>上传文件 :&nbsp;&nbsp; </span>
+                            <Upload multiple type="drag" action="//jsonplaceholder.typicode.com/posts/">
+                                <div style="padding: 20px 0">
+                                    <Icon type="ios-cloud-upload" size="52" style="color: #3399ff"></Icon>
+                                    <p>请选择需要上传的文件... </p>
+                                </div>
+                            </Upload>
+
+                        </div>
+
+                    </Modal>
+                    <Button class='Btn_right' type="warning" @click="editFlag = true">编辑</Button>
+                    <Modal width="700" v-model="editFlag" title="编辑" @on-ok="ok" @on-cancel="cancel">
+                        <div class="addDraw">
+                            <span>图纸名称 &nbsp; :&nbsp;&nbsp; </span>
+                            <Input v-model="WordName" placeholder="输入文档名称" style="width: 230px;margin-right:30px;" />
+                            <span class="drawLeft">图纸类型 &nbsp; :&nbsp;&nbsp; </span>
+                            <Input v-model="WordName" placeholder="输入文档名称" style="width: 230px" />
+
+                        </div>
+                        <div class="addDraw">
+                            <span>管理单位 &nbsp; :&nbsp;&nbsp; </span>
+                            <Input v-model="WordName" placeholder="输入文档名称" style="width: 230px;margin-right:30px;" />
+                            <span class="drawLeft">大楼地址 &nbsp; :&nbsp;&nbsp; </span>
+                            <Input v-model="WordName" placeholder="输入文档名称" style="width: 230px" />
+
+                        </div>
+                        <div class="addDraw">
+                            <span>楼&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;号&nbsp; &nbsp;&nbsp; :&nbsp;&nbsp; </span>
+                            <Input v-model="WordName" placeholder="输入文档名称" style="width: 230px;margin-right:30px;" />
+                            <span class="drawLeft">楼&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;层 &nbsp;&nbsp;&nbsp; :&nbsp;&nbsp; </span>
+                            <Input v-model="WordName" placeholder="输入文档名称" style="width: 230px" />
+
+                        </div>
+                    </Modal>
+                    <Button class='Btn_right' type="error">批量删除</Button>
+                    <Button type="info">导出</Button>
+                </div>
+                <div class='tableBox'>
+                    <Table stripe border :columns="TableTitle" :data="TableData">
+
+                        <template slot-scope="{ row, index }" slot="action">
+                            <Button type="primary" ghost size="small" style="margin-right: 5px" @click="show(row)">下载</Button>
+                            <Button type="primary" ghost size="small" @click="remove(index)">预览</Button>
+                        </template>
+                    </Table>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+</template>
+
+<script>
+export default {
+    data() {
+        return {
+            addFlag: false,
+            editFlag: false,
+            treedata: [{
+                title: '浦房集团',
+                expand: true,
+                children: [{
+                        title: '洋泾物业',
+                        expand: true,
+                        children: [{
+                                title: '博山路11弄',
+                                expand: true,
+                                children: [{
+                                    title: '27号'
+                                }]
+                            },
+                            {
+                                title: '博山路12弄',
+                                expand: true,
+                                children: [{
+                                    title: '27号'
+                                }]
+                            }
+                        ]
+                    },
+                    {
+                        title: '振南物业',
+                        expand: true,
+                        children: [{
+                                title: '博山路11弄',
+                                expand: true,
+                                children: [{
+                                    title: '27号'
+                                }]
+                            },
+                            {
+                                title: '博山路12弄',
+                                expand: true,
+                                children: [{
+                                    title: '27号'
+                                }]
+                            }
+                        ]
+                    },
+                    {
+                        title: '浦高小区',
+                        expand: true,
+                        children: [{
+                                title: '博山路11弄',
+                                expand: true,
+                                children: [{
+                                    title: '27号'
+                                }]
+                            },
+                            {
+                                title: '博山路12弄',
+                                expand: true,
+                                children: [{
+                                    title: '27号'
+                                }]
+                            }
+                        ]
+                    },
+                    {
+                        title: '浦东南路2362号',
+                        expand: true,
+                        children: [{
+                                title: '博山路11弄',
+                                expand: true,
+                                children: [{
+                                    title: '27号'
+                                }]
+                            },
+                            {
+                                title: '博山路12弄',
+                                expand: true,
+                                children: [{
+                                    title: '27号'
+                                }]
+                            }
+                        ]
+                    },
+                    {
+                        title: '南码头路44号',
+                        expand: true,
+                        children: [{
+                                title: '博山路11弄',
+                                expand: true,
+                                children: [{
+                                    title: '27号'
+                                }]
+                            },
+                            {
+                                title: '博山路12弄',
+                                expand: true,
+                                children: [{
+                                    title: '27号'
+                                }]
+                            }
+                        ]
+                    }
+                ]
+            }],
+            WordName: null,
+            startTime: null,
+            endTime: null,
+            drawCategory: null,
+            category: [{
+                    value: "平面图",
+                    label: "平面图"
+                }, {
+                    value: "总平图",
+                    label: "总平图"
+                },
+
+            ],
+            floorLIst: [{
+                value: "open",
+                label: "启用"
+            }, {
+                value: "close",
+                label: "不启用"
+            }],
+            floorNum: null,
+            TableTitle: [{
+                    type: 'selection',
+                    width: 60,
+                    align: 'center'
+                },
+                {
+                    title: '序号',
+                    width: 80,
+                    key: 'sortNum'
+                },
+                {
+                    title: '文档名称',
+                    key: 'docName'
+                },
+                {
+                    title: '文档类型',
+                    width: 100,
+                    key: 'docCategory'
+                },
+                {
+                    title: '上传时间',
+                    width: 130,
+                    key: 'updataTime'
+                },
+                {
+                    title: '物业管理单位',
+                    width: 160,
+                    key: 'realUnit'
+                },
+                {
+                    title: '大楼地址',
+                    key: 'address'
+                },
+                {
+                    title: '楼号',
+                    width: 80,
+                    key: 'buildNum'
+                },
+                {
+                    title: '是否在用',
+                    width: 120,
+                    key: 'floorNum'
+                },
+                {
+                    title: '生效日期',
+                    width: 130,
+                    key: 'uploadPerson'
+                },
+                {
+                    title: '操作',
+                    key: 'action',
+                    slot: 'action',
+                    align: 'center'
+                }
+            ],
+            TableData: [{
+                    sortNum: 1,
+                    docName: "F18层消防物联网平面系统图",
+                    docCategory: '平面图',
+                    updataTime: '2019-04-10',
+                    realUnit: "振南物业",
+                    address: '博山路11弄21号',
+                    buildNum: '',
+                    floorNum: "是",
+                    uploadPerson: "2019-10-22",
+                },
+                {
+                    sortNum: 2,
+                    docName: "F16层消防物联网平面系统图",
+                    docCategory: '平面图',
+                    updataTime: '2019-04-10',
+                    realUnit: "振南物业",
+                    address: '博山路11弄21号',
+                    buildNum: '',
+                    floorNum: "否",
+                    uploadPerson: "2019-10-22",
+                }
+
+            ],
+
+        }
+    },
+    methods: {
+        show(index) {
+            console.log(index)
+            // this.$Modal.info({
+            //     title: 'User Info',
+            //     content: `Name：${this.data6[index].name}<br>Age：${this.data6[index].age}<br>Address：${this.data6[index].address}`
+            // })
+        },
+        remove(index) {
+            console.log(index)
+        }
+    }
+}
+</script>
+
+<style lang="less" scoped>
+.container {
+    width: 1698px;
+    display: flex;
+    height: 890px;
+
+    .leftTree {
+        width: 166px;
+        height: 100%;
+        border: 1px solid #ccc;
+    }
+
+    .rightTable {
+        flex: 1;
+        padding: 3px;
+
+        .searchMeun {
+            width: 100%;
+
+            .wdName_doc {
+                margin-left: 10px;
+            }
+
+            .wdName {
+                margin-left: 50px;
+            }
+        }
+
+        .Content {
+            width: 100%;
+
+            .Btn {
+                .Btn_right {
+                    margin-right: 30px;
+                }
+
+                .addDraw {
+                    padding: 10px 0;
+
+                }
+            }
+
+            .tableBox {
+                width: 1526px;
+                padding-top: 20px;
+
+                .ivu-table-tip {
+                    overflow-x: hidden;
+                }
+            }
+
+        }
+    }
+
+}
+</style><style>
+.addDraw {
+    padding: 10px 0;
+
+}
+</style>

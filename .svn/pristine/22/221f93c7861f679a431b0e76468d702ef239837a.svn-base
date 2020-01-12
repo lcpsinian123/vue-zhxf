@@ -1,0 +1,327 @@
+<!--
+ * @Author: your name
+ * @Date: 2019-10-30 16:58:17
+ * @LastEditTime: 2019-11-05 14:15:04
+ * @LastEditors: Please set LastEditors
+ * @Description: In User Settings Edit
+ * @FilePath: \vue-zzxf\src\components\user\user.vue
+ -->
+<template>
+    <div class="menu">
+       <div class="indicatorleft">
+          <Tree :data="data5" ref="data1" @on-select-change="getCheckedNodes" :render="renderContent" ></Tree>
+          <!-- <div>
+            <Button type="info">新增</Button>
+            <Button type="warning" style="margin-left: 8px">修改</Button>
+            <Button type="error" style="margin-left: 8px" >删除</Button>
+          </div> -->
+               <div class="abs-zone" v-if="editZoneDisplayBoolean">
+            <div class="box">
+                <Input placeholder="Enter something..." style="width:200px" v-model="beforeSubmitNodeTitleString" />
+
+                <Button type="success" :style="{marginLeft:'5px'}" @click="submitNameEditFunc(1)">
+                    <Icon type="md-checkmark" />
+                </Button>
+                <Button type="error" :style="{marginLeft:'5px'}" @click="submitNameEditFunc(0)">
+                    <Icon type="md-close" />
+                </Button>
+            </div>
+        </div>
+       </div >
+       <div class='indicatorright' >
+           <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="80" v-if='show'>
+        <FormItem label="菜单名称" prop="name">
+            <Input v-model="formValidate.name" ></Input>
+        </FormItem>
+        <FormItem label="功能代码" prop="neirong">
+            <Input v-model="formValidate.neirong" ></Input>
+        </FormItem>
+        <FormItem label="排序" prop="fangfa">
+             <Input v-model="formValidate.fangfa" ></Input>
+        </FormItem>
+        <FormItem label="菜单地址" prop="score">
+            <Input v-model="formValidate.score"  ></Input>
+        </FormItem>
+        <FormItem label="菜单图标" prop="pfff">
+            <Input v-model="formValidate.pfff" >
+                
+            </Input>
+        </FormItem>
+        <FormItem>
+            <Button type="primary" @click="handleSubmit('formValidate')">提交</Button>
+            <Button @click="handleReset('formValidate')" style="margin-left: 8px">重置</Button>
+            <Button @click="qxReset()" style="margin-left: 8px">取消</Button>
+        </FormItem>
+    </Form>
+       </div>
+
+    </div>
+</template>
+<script>
+export default {
+name:'menu',
+  data () {
+            return {
+                root:null,
+            editZoneDisplayBoolean:false,
+            beforeSubmitNodeTitleString:'',
+            edit_root:null,
+            edit_node:null,
+            edit_data:null,
+            show:false,
+            data5: [
+                {
+                    title: 'parent 1',
+                    expand: true,
+                    render: (h, { root, node, data }) => {
+                        return h('span', {
+                            style: {
+                                display: 'inline-block',
+                                width: '100%'
+                            }
+                        }, [
+                            h('span', [
+                                h('Icon', {
+                                    props: {
+                                        type: 'ios-folder-outline'
+                                    },
+                                    style: {
+                                        marginRight: '8px'
+                                    }
+                                }),
+                                h('span', data.title)
+                            ]),
+                            h('span', {
+                                style: {
+                                    display: 'inline-block',
+                                    float: 'right',
+                                    marginRight: '32px'
+                                }
+                            }, [
+                                h('Button', {
+                                    props: Object.assign({}, this.buttonProps, {
+                                        icon: 'ios-add',
+                                        type: 'primary'
+                                    }),
+                                    style: {
+                                        width: '135px'
+                                    },
+                                    on: {
+                                        click: () => { this.append(data) }
+                                    }
+                                })
+                            ])
+                        ]);
+                    },
+                    children: [
+                        {
+                            title: 'child 1-1',
+                            expand: true,
+                            children: [
+                                {
+                                    title: 'leaf 1-1-1',
+                                    expand: true
+                                },
+                                {
+                                    title: 'leaf 1-1-2',
+                                    expand: true
+                                }
+                            ]
+                        },
+                        {
+                            title: 'child 1-2',
+                            expand: true,
+                            children: [
+                                {
+                                    title: 'leaf 1-2-1',
+                                    expand: true
+                                },
+                                {
+                                    title: 'leaf 1-2-2',
+                                    expand: true
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ],
+            buttonProps: {
+                type: 'default',
+                size: 'small',
+            }
+        ,
+                formValidate: {
+                    name: '',
+                    neirong: '',
+                    fangfa: '',
+                    score: '',
+                    interest: [],
+                    pfff: '',
+                    pfyj: '',
+                   
+                },
+                dates:null,
+                childrens:null,
+                ruleValidate: {
+                    name: [
+                        { required: true, message: '请输入菜单名称', trigger: 'blur' }
+                    ],
+                    neirong: [
+                         { required: true, message: '请输入功能代码', trigger: 'blur' },
+                    ],
+                    fangfa: [
+                       { required: true, message: '请输入排序', trigger: 'blur' },                
+                    ],
+                    score: [
+                        { required: true, message: '请输入菜单地址', trigger: 'blur' }
+                    ],
+                    pfff: [
+                        { required: true, message: '请输入菜单图标', trigger: 'blur' }
+                    ],
+                    
+                
+                }
+            }
+        },
+              methods: {
+            handleSubmit (name) {
+                this.$refs[name].validate((valid) => {
+                    if (valid) {
+                        this.$Message.success('提交成功');
+                        this.qxReset()
+                    } else {
+                        this.$Message.error('提交失败');
+                    }
+                })
+            },
+            handleReset (name) {
+                this.$refs[name].resetFields();
+            },
+            getCheckedNodes(date){
+                // console.log(date[0].title)
+                this.formValidate.name=date[0].title;
+            },
+             renderContent (h, { root, node, data }) {
+            return h('span', {
+                style: {
+                    display: 'inline-block',
+                    width: '100%'
+                }
+            }, [
+                h('span', [
+                    h('Icon', {
+                        props: {
+                            type: 'ios-paper-outline'
+                        },
+                        style: {
+                            marginRight: '8px'
+                        }
+                    }),
+                    h('span', data.title)
+                ]),
+                h('span', {
+                    style: {
+                        display: 'inline-block',
+                        float: 'right',
+                        marginRight: '32px'
+                    }
+                }, [
+                    h('Button', {
+                        props: Object.assign({}, this.buttonProps, {
+                            icon: 'ios-add'
+                        }),
+                        style: {
+                            marginRight: '8px'
+                        },
+                        on: {
+                            click: () => { this.append(data) }
+                        }
+                    }),
+                    h('Button', {
+                        props: Object.assign({}, this.buttonProps, {
+                            icon: 'ios-remove'
+                        }),
+                        style: {
+                            marginRight: '8px'
+                        },
+                        on: {
+                            click: () => { this.remove(root, node, data) }
+                       }
+                    }),
+                    h('Button', {
+                        props: Object.assign({}, this.buttonProps, {
+                            icon: 'ios-create'
+                        }),
+                        style: {
+                            marginRight: '8px'
+                        },
+                        on: {
+                            click: () => { this.openEditName(root, node, data) }
+                       }
+                    })
+                   
+                ])
+            ]);
+        },
+        append (data) {
+            this.dates=data;
+            this.childrens = data.children || [];
+             this.show=true;
+            // children.push({
+            //     title: formValidate.name,
+            //     expand: true
+            // });
+            // this.$set(data, 'children', children);
+        },
+        remove (root, node, data) {
+            const parentKey = root.find(el => el === node).parent;
+            const parent = root.find(el => el.nodeKey === parentKey).node;
+            const index = parent.children.indexOf(data);
+            parent.children.splice(index, 1);
+        },
+        openEditName (root, node, data) {
+            this.editZoneDisplayBoolean = true
+            this.edit_root = root
+            this.edit_node = node
+            this.edit_data = data
+            this.beforeSubmitNodeTitleString = this.edit_node.node.title
+        },
+        submitNameEditFunc(x){
+            if (!x) {
+                this.editZoneDisplayBoolean = false
+                return
+            } else {
+                this.edit_node.node.title = this.beforeSubmitNodeTitleString
+                this.editZoneDisplayBoolean = false
+                return
+            }
+        },
+        qxReset(){
+            this.show=false;
+        }
+    
+        }
+}
+</script>
+<style lang="less">
+ .menu{
+       width: 100%;
+      height: 100%;
+    
+      padding:12px;
+      display: flex;
+      .indicatorleft{
+      width: 30%;
+      height: 100%;
+        // background: #9999;
+        display: flex;
+        justify-content:space-between
+  }
+   .indicatorright{
+      width: 70%;
+       height: 100%;
+        //  background: #1999;
+         padding: 24px;
+  }
+ }
+</style>

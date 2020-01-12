@@ -1,0 +1,21 @@
+<!--
+ * @Author: your name
+ * @Date: 2019-10-24 16:34:09
+ * @LastEditTime: 2019-10-24 16:38:55
+ * @LastEditors: Please set LastEditors
+ * @Description: In User Settings Edit
+ * @FilePath: \vue-zzxf\src\components\securityAssessment\indicatorSetting.vue
+ -->
+<template>
+    <div>
+       <h1>指标设置</h1>     
+    </div>
+</template>
+<script>
+export default {
+ name:'indicatorSetting'
+}
+</script>
+<style lang="less" scoped>
+
+</style>

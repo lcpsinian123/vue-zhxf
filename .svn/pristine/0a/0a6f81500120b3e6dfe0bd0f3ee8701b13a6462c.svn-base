@@ -1,0 +1,499 @@
+<!--
+ * @Author: your name
+ * @Date: 2019-10-25 15:37:31
+ * @LastEditTime: 2019-11-08 10:56:17
+ * @LastEditors: Please set LastEditors
+ * @Description: In User Settings Edit
+ * @FilePath: \vue-zzxf\src\components\securityAssessment\assessmentTask.vue
+ -->
+<template>
+<div class="assessmenttask">
+    <div class='navpst'>
+        <div class='currentp'>当前位置&nbsp;:</div>
+        <Breadcrumb separator=">">
+
+            <BreadcrumbItem to="/assessmentTask">{{$route.name}}</BreadcrumbItem>
+
+        </Breadcrumb>
+    </div>
+    <div class='sousuo1'>
+        <div style='height:40px;line-height:40px; padding-left:20px;font-size:16px; border-bottom:1px solid #eee;'>搜索查询 </div>
+        <div class="sousuo">
+            <div class="pgzt">
+                <span>评估状态：</span>
+                <Select v-model='status' placeholder="请选择">
+                    <Option value="1">已完成</Option>
+                    <Option value="0">未完成</Option>
+                    <Option value="">全部</Option>
+                </Select>
+            </div>
+            <div class="pgsj">
+                <span>评估时间：</span>
+                <DatePicker v-model='SEstartTime' type="date" placeholder="开始时间"></DatePicker>
+                —
+                <DatePicker v-model='SEendTime' type="date" placeholder="结束时间"></DatePicker>
+            </div>
+            <div class="btn">
+                <Button @click='getTaskList' type="primary">查询</Button>
+            </div>
+        </div>
+    </div>
+  
+   
+    <div class="tablediv">
+     <div class="btnclass">
+        <Button type="primary" @click="addNewTask">添加</Button>
+        <Button ghost type="primary" @click="openEdit">编辑</Button>
+        <Button ghost type="primary" @click='deleteTasks'>批量删除</Button>
+        <Button ghost type="primary">导出</Button>
+    </div>
+        <Table @on-select='seclectTrue' @on-select-cancel='cancelSeclect' stripe border :columns="TableTitle" :data="TableData">
+            <template slot-scope="{ row, index }" slot="sortNum">
+                <span>{{index+1}}</span>
+            </template>
+            <template slot-scope="{ row, index }" slot="isScore">
+                <span v-if="row.isScore=='1'">已评估</span>
+                <span v-if="row.isScore=='0'">未评估</span>
+            </template>
+            <template slot-scope="{ row, index }" slot="endDate">
+                <span> {{ getTime(row.endDate) }}</span>
+            </template>
+
+            <template slot-scope="{ row, index }" slot="action">
+                <Button v-if="row.issuedStarts=='0'" type="primary" @click='downfile(row)' ghost size="small" style="margin-right: 5px">下&nbsp;&nbsp;发</Button>
+                <Button v-if="row.issuedStarts=='1'" type="primary" @click='downfile(row)' disabled ghost size="small" style="margin-right: 5px">已下发</Button>
+                <Button type="primary" @click='detailInfo(row)' ghost size="small">详情</Button>
+            </template>
+        </Table>
+        <Page :total="TableData.length" :page-size="pageSize" show-total class="paging"></Page>
+    </div>
+    <Modal v-model="modal1" width="700" title="添加计划" @on-ok="ok" @on-cancel="cancel">
+        <div class="addDraw">
+            <span>评估名称 &nbsp; :&nbsp;&nbsp; </span>
+            <Input v-model='Taskname' placeholder="输入评估名称" style="width: 230px;margin-right:30px;" />
+            <span class="drawLeft">评估截止时间 &nbsp; :&nbsp;&nbsp; </span>
+            <DatePicker v-model='endTime' type="date" placeholder="输入截止时间"></DatePicker>
+
+        </div>
+        <div class="addDraw">
+            <span>评估单位 &nbsp; :&nbsp;&nbsp; </span>
+            <Select v-model="unit" multiple style="width:230px;margin-right:30px;">
+                <Option v-for="item in cityList1" :value="item.value" :key="item.value">{{ item.label }}</Option>
+            </Select>
+            <span class="drawLeft">评估标准 &nbsp; :&nbsp;&nbsp;</span>
+            <Select v-model="floorNum" style="width:230px">
+                <Option v-for="item in floorLIst" :value="item.value" :key="item.value">{{ item.label }}</Option>
+            </Select>
+        </div>
+        <div class="addDraw">
+            <span>上传文件 :&nbsp;&nbsp; </span>
+            <Upload multiple type="drag" action="//jsonplaceholder.typicode.com/posts/">
+                <div style="padding: 20px 0">
+                    <Icon type="ios-cloud-upload" size="52" style="color: #3399ff"></Icon>
+                    <p>请选择需要上传的文件... </p>
+                </div>
+            </Upload>
+
+        </div>
+    </Modal>
+    <Modal v-model="editFlag" width="700" title="编辑" @on-ok="updateSeclect" @on-cancel="cancelEdit">
+        <div class="addDraw">
+            <span>评估名称 &nbsp; :&nbsp;&nbsp; </span>
+            <Input v-model='updateName' placeholder="输入评估名称" style="width: 230px;margin-right:30px;" />
+            <span class="drawLeft">评估截止时间 &nbsp; :&nbsp;&nbsp; </span>
+            <DatePicker v-model='updateEndTime' type="date" placeholder="输入截止时间"></DatePicker>
+
+        </div>
+        <div class="addDraw">
+            <span>评估单位 &nbsp; :&nbsp;&nbsp; </span>
+            <Select v-model="updateUnit" multiple style="width:230px;margin-right:30px;">
+                <Option v-for="item in cityList" :value="item.value" :key="item.value">{{ item.label }}</Option>
+            </Select>
+            <span class="drawLeft">评估标准 &nbsp; :&nbsp;&nbsp;</span>
+            <Select v-model="updateBZ" style="width:230px">
+                <Option v-for="item in floorLIst" :value="item.value" :key="item.value">{{ item.label }}</Option>
+            </Select>
+        </div>
+
+    </Modal>
+    <Modal v-model="detailflag" width="700" title="详情">
+        <div class="addDraw">
+            <span>评估名称 &nbsp; :&nbsp;&nbsp; </span>
+            <Input disabled v-model='detailName' placeholder="输入评估名称" style="width: 230px;margin-right:30px;" />
+            <span class="drawLeft">评估截止时间 &nbsp; :&nbsp;&nbsp; </span>
+            <DatePicker disabled v-model='detailEndTime' type="date" placeholder="输入截止时间"></DatePicker>
+
+        </div>
+        <div class="addDraw">
+            <span>评估单位 &nbsp; :&nbsp;&nbsp; </span>
+            <Select disabled v-model="datailcode" multiple style="width:230px;margin-right:30px;">
+                <Option v-for="item in cityList" :value="item.value" :key="item.value">{{ item.label }}</Option>
+            </Select>
+            <span class="drawLeft">评估标准 &nbsp; :&nbsp;&nbsp;</span>
+            <Select disabled v-model="updateBZ" style="width:230px">
+                <Option v-for="item in floorLIst" :value="item.value" :key="item.value">{{ item.label }}</Option>
+            </Select>
+        </div>
+
+    </Modal>
+</div>
+</template>
+
+<script>
+import {
+    addTask,
+    getTaskList,
+    getTaskListAll,
+    deleteTask,
+    updateTask,
+    getListAll,
+    getAssessBz, // 标准 
+    downAssFile, //下发
+} from 'api/security'
+// import { initTime } from 'libs/tools' 
+export default {
+    name: 'assessmentTask',
+    data() {
+        return {
+            status: null,
+            detailflag: false,
+            detailName: '',
+            detailEndTime: '',
+            datailcode: "",
+            seclectFlag: false, // 判断是否有选中
+            updateName: 111, // 更新名称
+            updateEndTime: null, // 结束时间
+            Taskname: null, // 新增任务名
+            endTime: null, //新增- 截至时间
+            modal1: false,
+            editFlag: false,
+            updateGuid: null,
+            updateUnit: null,
+            updateBZ: null,
+            delIds: '',
+            unit: [],
+            unit1: [],
+            SEstartTime: null,
+            SEendTime: null,
+            // 初始化信息总条数
+            dataCount: 0,
+            // 每页显示多少条
+            pageSize: 10,
+            pageNum: 1,
+            floorNum: '',
+            floorLIst: [{
+                value: "open",
+                label: "启用"
+            }, {
+                value: "close",
+                label: "不启用"
+            }],
+            cityList: [{
+                    value: 1,
+                    label: '北京圣世信通物业'
+                },
+                {
+                    value: 2,
+                    label: '北京港中旅物业'
+                }
+            ],
+            cityList1: [{
+                    value: 1,
+                    label: '北京圣世信通物业'
+                },
+                {
+                    value: 2,
+                    label: '北京港中旅物业'
+                }
+            ],
+            TableTitle: [{
+                    type: 'selection',
+                    width: 60,
+
+                    align: 'center'
+                },
+                {
+                    title: '序号',
+                    width: 100,
+                    key: 'sortNum',
+                    slot: 'sortNum'
+                },
+                {
+                    title: '评估名称',
+
+                    key: 'name'
+                },
+                {
+                    title: '评估截止时间',
+                    slot: 'endDate',
+                    key: 'endDate'
+                },
+                {
+                    title: '评估单位',
+
+                    key: 'objName'
+                },
+                {
+                    title: '评估标准',
+
+                    key: 'rootName'
+                },
+                {
+                    title: '状态',
+                    key: 'isScore',
+                    slot: 'isScore',
+                },
+                {
+                    title: '操作',
+                    key: 'action',
+                    slot: 'action',
+                    align: 'center'
+                }
+            ],
+            TableData: [
+
+            ],
+            seclectList: [],
+        }
+    },
+    created() {
+        this.getTaskList()
+    },
+    mounted() {
+        // this.getTaskList()
+    },
+    methods: {
+        // 详情
+        detailInfo(data) {
+            console.log(data)
+            this.detailflag = true;
+            this.detailName = data.name;
+            this.detailEndTime = data.endDate
+            this.datailcode = Number(data.objId)
+
+        },
+        updateSeclect() {
+            this.editTask()
+        },
+        ok() {
+            this.addTasks()
+
+        },
+        cancel() {
+            this.$Message.info('取消成功');
+        },
+        cancelEdit() {
+            this.$Message.info('取消成功');
+        },
+        // 获取任务列表
+        getTaskList() {
+            var obj = {
+                pageNum: this.pageNum,
+                pageSize: this.pageSize,
+                status: this.status,
+                endTime: this.SEendTime || null,
+                startTime: this.SEstartTime || null,
+            }
+
+            getTaskList(obj, {
+
+                pageNum: this.pageNum,
+                pageSize: this.pageSize,
+
+                isScore: this.status,
+                startTime: this.SEstartTime || null,
+                endTime: this.SEenTime || null
+
+            }).then(res => {
+                console.log(res)
+                if (res.status === '1') {
+                    this.TableData = res.obj.list
+                    console.log(this.TableData)
+                }
+            })
+
+            getAssessBz({}).then(res => {
+                console.log(res)
+
+                if (res.status == 1) {
+                    var asslist = res.obj
+
+                    // yj.forEach((em,i)=>{
+                    //     newobj.value=em.name
+                    //     newobj.label=em.name
+                    //     titleList.push(newobj)
+
+                    // })
+
+                    var titleList = []
+                    for (var i = 0; i < asslist.length; i++) {
+
+                        var newobj = {}
+                        newobj.value = asslist[i]['guid']
+                        newobj.label = asslist[i]['name']
+                        titleList.push(newobj)
+                    }
+
+                    this.floorLIst = titleList
+                }
+            })
+        },
+        addNewTask() {
+            this.modal1 = true;
+
+        },
+        // 增加
+        addTasks() {
+            let unitID = this.unit.join()
+
+            addTask({
+                endDate: this.endTime,
+                name: this.Taskname,
+                objId: unitID,
+                rootGuid: this.floorNum
+            }).then(res => {
+
+                if (res.status == 1) {
+                    this.getTaskList()
+                    this.$Message.info('添加成功');
+                }
+            })
+        },
+        //打开编辑
+        openEdit() {
+            let list = this.seclectList
+            // this.updateUnit=2
+            this.updateBZ = null
+
+            if (list.length != 1) {
+                this.$Message.warning('请先选择一行数据数据')
+            } else {
+                this.editFlag = true;
+                this.updateName = list[0].name // 名称
+                this.updateEndTime = list[0].endDate // 时间
+                this.updateGuid = list[0].guid // 标准id
+                this.updateUnit = Number(list[0].objId) // 单位名称
+                console.log(this.updateUnit)
+            }
+            console.log()
+        },
+        //  编辑
+        editTask() {
+
+            updateTask({
+                endDate: this.updateEndTime,
+                guid: this.updateGuid,
+                name: this.updateName,
+                rootGuid: this.updateBZ // 指标id
+
+            }).then(res => {
+                if (res.status == 1) {
+                    this.getTaskList()
+                    this.$Message.warning("修改成功")
+                }
+            })
+        },
+        //  删除
+        deleteTasks() {
+            let list = this.seclectList
+
+            var idArr = []
+            for (let i = 0; i < list.length; i++) {
+                var ids = list[i].guid
+                idArr.push(ids)
+            }
+
+            this.delIds = idArr.join()
+            console.log(this.delIds)
+
+            deleteTask(
+
+                this.delIds
+
+            ).then(res => {
+                if (res.status == 1) {
+                    this.$Message.warning("删除成功")
+                    this.getTaskList()
+                }
+                console.log(res)
+            })
+        },
+        // 下发
+        downfile(data) {
+            console.log(data)
+            downAssFile({
+                guid: data.guid,
+                issuedStarts: 1
+            }).then(res => {
+                if (res.status == 1) {
+
+                    this.$Message.warning("下发成功!")
+                    this.getTaskList()
+                }
+            })
+        },
+        // 选中
+        seclectTrue(selection, row) {
+            console.log(selection)
+
+            if (selection) {
+                this.seclectList = selection
+            }
+
+        },
+        // 取消选中
+        cancelSeclect(selection) {
+
+            this.seclectList = selection
+
+        },
+        //  格式化时间
+        getTime: function (time) {
+            var date = new Date(time)
+            var Y = date.getFullYear() + '-'
+            var M = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1) + '-'
+            var D = (date.getDate() < 10 ? '0' + date.getDate() : date.getDate()) + ' '
+            var h = (date.getHours() < 10 ? '0' + date.getHours() : date.getHours()) + ':'
+            var m = (date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes()) + ':'
+            var s = (date.getSeconds() < 10 ? '0' + date.getSeconds() : date.getSeconds())
+            return Y + M + D + h + m + s
+        }
+        // getTime(time){
+        //     // return initTime(time)
+        // }
+
+    }
+}
+</script>
+
+<style lang="less" scoped>
+.assessmenttask {
+    width: 100%;
+    height: 100%;
+    background-color: #edf5f7;
+}
+.sousuo1{
+    background: #fff;
+    box-shadow: 0px 2px 3px -2px;
+ 
+    margin-top:20px;
+     background: #fff;
+}
+.navpst {
+    height: 60px;
+    line-height: 60px;
+    padding-left: 20px;
+    display: flex;
+    background-color: #fff;
+    box-shadow: 0px 2px 3px -2px;
+}
+
+.navpst .currentp {
+    margin-right: 10px;
+}
+
+.navpst .ivu-breadcrumb-item-link {
+    color: #2456bb;
+}
+
+</style>

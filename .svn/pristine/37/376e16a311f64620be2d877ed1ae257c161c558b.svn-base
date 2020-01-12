@@ -1,0 +1,249 @@
+<!--
+ * @Author: your name
+ * @Date: 2019-10-28 10:57:42
+ * @LastEditTime: 2019-11-11 18:38:06
+ * @LastEditors: Please set LastEditors
+ * @Description: In User Settings Edit
+ * @FilePath: \vue-zzxf\src\components\securityAssessment\selfAssessment.vue
+ -->
+<template>
+<div class="slef">
+    <Divider orientation="left">搜索查询</Divider>
+    <div class="sousuo">
+        <div class="pgzt">
+            <span>评估状态：</span>
+            <Select placeholder="请选择">
+                <Option value="yiwanc">已完成</Option>
+                <Option value="weiwanc">未完成</Option>
+            </Select>
+        </div>
+        <div class="pgsj">
+            <span>评估时间：</span>
+            <DatePicker type="date" placeholder="开始时间"></DatePicker>
+            —
+            <DatePicker type="date" placeholder="结束时间"></DatePicker>
+        </div>
+        <div class="btn">
+            <Button type="primary">查询</Button>
+            <Button type="primary" style="padding:0px 20px;margin-left:20px;">导出</Button>
+        </div>
+    </div>
+    <div class="tablediv">
+        <Table stripe border :columns="TableTitle" :data="TableData">
+            <template slot-scope="{ row, index }" slot="sortNum">
+                <span>{{index+1}}</span>
+            </template>
+            <template slot-scope="{ row, index }" slot="assessDate">
+                <span>{{ getTime(row.assessDate) }} </span>
+            </template>
+            <template slot-scope="{ row, index }" slot="endDate">
+                <span>{{ getTime(row.endDate) }} </span>
+            </template>
+            <template slot-scope="{ row, index }" slot="isScore">
+                <span v-if="row.isScore=='1'">是</span>
+                <span v-if="row.isScore=='0'">否</span>
+            </template>
+            <template slot-scope="{ row, index }" slot="action">
+                <Button type="success" ghost size="small" style="margin-right: 5px">详情</Button>
+                <Button type="warning" ghost size="small" @click='assessflag=true'>评估</Button>
+
+            </template>
+
+        </Table>
+        <Page :total="TableData.length" :page-size="pageSize" show-total class="paging"></Page>
+
+        <Modal v-model="assessflag" width="700" title="添加计划" @on-ok="ok" @on-cancel="cancel">
+            <div class="tree-box">
+                <div class="zTreeDemoBackground left">
+                    <ul id="treeDemo" class="ztree"></ul>
+                </div>
+            </div>
+        </Modal>
+    </div>
+</div>
+</template>
+
+<script>
+import {
+    addTask,
+    getTaskList,
+    getTaskListAll,
+    deleteTask,
+    updateTask,
+    getListAll
+} from 'api/security';
+
+export default {
+    name: 'selfAssessment',
+    data() {
+        return {
+            assessflag: false,
+            TableTitle: [{
+                    title: '序号',
+                    width: 80,
+                    key: 'sortNum',
+                    slot: 'sortNum'
+                },
+                {
+                    title: '评估名称',
+                    width: 300,
+                    key: 'name'
+                },
+                {
+                    title: '评估截止时间',
+                    slot: 'endDate',
+                    key: 'endDate'
+                },
+                {
+                    title: '评估时间',
+                    slot: "assessDate",
+                    key: 'assessDate'
+                },
+                {
+                    title: '评分',
+
+                    key: 'totalScore'
+                },
+                {
+                    title: '评估单位',
+
+                    key: 'objName'
+                },
+                {
+                    title: '评估人',
+
+                    key: 'userGuid'
+                },
+                {
+                    title: '状态',
+                    slot: 'isScore',
+                    key: 'isScore'
+                },
+                {
+                    title: '操作',
+                    key: 'action',
+                    slot: 'action',
+                    align: 'center'
+                }
+            ],
+            TableData: [{
+                    sortNum: 1,
+                    guid: '',
+                    isScore: 1,
+                    name: "2019年2月22日消防安全评估",
+                    endDate: '2019-04-10',
+                    assessDate: '2019-04-11',
+                    totalScore: '100',
+                    objId: 1,
+                    objName: '振南物业',
+                    userGuid: '李湘',
+
+                },
+
+            ],
+         setting: {
+                view: {
+                    addHoverDom: this.addHoverDom,
+                    removeHoverDom: this.removeHoverDom,
+                    showLine: false,
+                    showIcon: true,
+                    // dblClickExpand:this.dblClickExpand
+                    // addDiyDom: this.addDiyDom,
+                  
+                },
+                data: {
+                    keep: {
+                        parent: false,
+                        leaf: false
+                    },
+                    key: {
+                        name: "name"
+                    },
+                    simpleData: {
+                        enable: true,
+                        idKey: "guid",
+                        pIdKey: "mpid"
+                    }
+
+                },
+                check: {
+                    enable: true
+                },
+                edit: {
+                    drag: {
+                        isCopy: false,
+                        isMove: false
+                    },
+                    enable: true,
+                    showRenameBtn: false
+                },
+                // async: {
+                //     enable: true, //开启异步加载  
+                //     //如果设置为 true，请务必设置 setting.async 内的其它参数。  
+                //     //如果需要根节点也异步加载，初始化时 treeNodes 参数设置为 null 即可  
+
+                //     url: objArc.httpUrl + "scoreType/queryAll", //设置异步获取节点的 URL 地址  
+                //     autoParam: ["code"] //设置父节点数据需要自动提交的参数  
+                // },
+                callback: {
+                    onClick: this.onClick,
+                    onRemove: this.onRemove,
+                    onRightClick:this.rightClick,
+                    onAsyncSuccess: this.zTreeOnAsyncSuccess,
+                    beforeEditName:this.beforeEditName
+                    // beforeDrop: zTreeBeforeDrop
+                }
+            },
+
+            zNodes: [],
+            // 初始化信息总条数
+            dataCount: 0,
+            // 每页显示多少条
+            pageSize: 10,
+        }
+    },
+    created() {
+        this.getselfAss()
+    },
+    methods: {
+        // 获取信息列表
+        getselfAss() {
+            getTaskList(1, 10).then(res => {
+                
+                if (res.status == '1') {
+                    this.TableData = res.obj.list
+                }
+            })
+            getListAll({}).then(res=>{
+                console.log(res)
+                if (res.status == '1') {
+                    
+                    this.zNodes=res.obj
+                    $.fn.zTree.init($("#treeDemo"), this.setting, this.zNodes);
+                }
+            })
+        },
+        //  格式化时间
+        getTime: function (time) {
+            var date = new Date(time)
+            var Y = date.getFullYear() + '-'
+            var M = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1) + '-'
+            var D = (date.getDate() < 10 ? '0' + date.getDate() : date.getDate()) + ' '
+            var h = (date.getHours() < 10 ? '0' + date.getHours() : date.getHours()) + ':'
+            var m = (date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes()) + ':'
+            var s = (date.getSeconds() < 10 ? '0' + date.getSeconds() : date.getSeconds())
+            return Y + M + D + h + m + s
+        }
+    },
+
+}
+</script>
+
+<style lang="less" scoped>
+.slef {
+    width: 100%;
+    height: 100%;
+    padding: 24px;
+
+}
+</style>

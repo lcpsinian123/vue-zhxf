@@ -1,0 +1,133 @@
+<!--
+ * @Author: your name
+ * @Date: 2019-10-28 10:57:42
+ * @LastEditTime: 2019-11-08 11:02:27
+ * @LastEditors: Please set LastEditors
+ * @Description: In User Settings Edit
+ * @FilePath: \vue-zzxf\src\components\securityAssessment\selfAssessment.vue
+ -->
+<template>
+    <div class="slef">
+         <Divider orientation="left">搜索查询</Divider>
+        <div class="sousuo">
+                <div class="pgzt">
+                <span>评估状态：</span>
+                 <Select placeholder="请选择">
+                <Option value="yiwanc">已完成</Option>
+                <Option value="weiwanc">未完成</Option>
+                 </Select>
+            </div>
+                <div class="pgsj">
+                <span>评估时间：</span>
+                 <DatePicker type="date" placeholder="开始时间" ></DatePicker>
+                 —
+                <DatePicker type="date" placeholder="结束时间" ></DatePicker>
+            </div>
+            <div class="btn">
+                 <Button type="primary">查询</Button>
+                  <Button type="primary" style="padding:0px 20px;margin-left:20px;">导出</Button>
+            </div>
+        </div>
+               <div class="tablediv">
+              <Table stripe border :columns="TableTitle" :data="TableData">
+
+                        <template slot-scope="{ row, index }" slot="action">
+                            <Button type="success" ghost size="small" style="margin-right: 5px" >详情</Button>
+                            <Button type="warning" ghost size="small" >评估</Button>
+                        </template>
+                    </Table>
+                         <Page :total="TableData.length" :page-size="pageSize" show-total class="paging" ></Page>
+         </div>
+    </div>
+</template>
+<script>
+export default {
+name:'selfAssessment',
+data() {
+    return {
+           TableTitle: [
+                {
+                    title: '序号',
+                     width: 80,
+                    key: 'sortNum'
+                },
+                {
+                    title: '评估名称',
+                      width:300,
+                    key: 'docName'
+                },
+                {
+                    title: '评估截止时间',
+                 
+                    key: 'updataTime'
+                },
+                {
+                    title: '评估时间',
+                   
+                    key: 'startTime'
+                },
+                {
+                    title: '评分',
+                   
+                    key: 'score'
+                },
+                {
+                    title: '评估单位',
+                   
+                    key: 'realUnit'
+                },
+                {
+                    title: '评估人',
+                   
+                    key: 'pgpeople'
+                },
+                {
+                    title: '状态',
+                    key: 'floorNum'
+                },
+                {
+                    title: '操作',
+                    key: 'action',
+                    slot: 'action',
+                    align: 'center'
+                }
+            ],
+            TableData: [{
+                    sortNum: 1,
+                    docName: "2019年2月22日消防安全评估",
+                    updataTime: '2019-04-10',
+                    startTime:'2019-04-10',
+                    score:'100',
+                    realUnit: "振南物业",
+                    pgpeople: '李湘',
+                    floorNum: "是",
+                
+                },
+                {
+                    sortNum: 2,
+                    docName: "2019年2月22日消防安全评估",
+                    updataTime: '2019-04-10',
+                       startTime:'2019-04-10',
+                    score:'100',
+                    realUnit: "振南物业",
+                    pgpeople: '李湘',
+                    floorNum: "否",
+                }
+
+            ],
+               // 初始化信息总条数
+                dataCount:0,
+                // 每页显示多少条
+                pageSize:10,
+    }
+},
+}
+</script>
+<style lang="less" scoped>
+.slef{
+     width: 100%;
+    height: 100%;
+    padding: 24px;
+   
+}
+</style>

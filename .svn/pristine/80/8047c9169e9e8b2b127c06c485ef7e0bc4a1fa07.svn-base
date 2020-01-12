@@ -1,0 +1,163 @@
+<!--
+ * @Author: your name
+ * @Date: 2019-10-24 16:34:09
+ * @LastEditTime: 2019-10-25 17:55:05
+ * @LastEditors: Please set LastEditors
+ * @Description: In User Settings Edit
+ * @FilePath: \vue-zzxf\src\components\securityAssessment\indicatorSetting.vue
+ -->
+<template>
+    <div class="indicator">
+       <div class="indicatorleft">
+          <Tree :data="data1"></Tree>
+          <div>
+            <Button type="info">新增</Button>
+            <Button type="warning" style="margin-left: 8px">修改</Button>
+            <Button type="error" style="margin-left: 8px" >删除</Button>
+          </div>
+       </div >
+       <div class='indicatorright'>
+           <Form ref="formValidate" :model="formValidate" :rules="ruleValidate" :label-width="80">
+        <FormItem label="指标名称" prop="name">
+            <Input v-model="formValidate.name" ></Input>
+        </FormItem>
+        <FormItem label="评估内容" prop="neirong">
+            <Input v-model="formValidate.neirong" type="textarea" :autosize="{minRows: 5,maxRows: 10}" ></Input>
+        </FormItem>
+        <FormItem label="评估方法" prop="fangfa">
+             <Input v-model="formValidate.fangfa" type="textarea" :autosize="{minRows: 5,maxRows: 10}"></Input>
+        </FormItem>
+        <FormItem label="总分" prop="score">
+            <Input v-model="formValidate.score"  type="number"></Input>
+        </FormItem>
+        <FormItem label="评分方法" prop="pfff">
+            <Select v-model="formValidate.pfff" placeholder="请选择">
+                <Option value="beijing">主观评价</Option>
+                <Option value="shanghai">客观拼价</Option>
+            </Select>
+        </FormItem>
+        <FormItem label="评分依据" prop="pfyj">
+            <Select v-model="formValidate.pfyj" placeholder="请选择">
+                <Option value="beijing">火灾检测</Option>
+                <Option value="shanghai">智慧用电</Option>
+                <Option value="shenzhen">巡检维保</Option>
+            </Select>
+        </FormItem>
+        <FormItem>
+            <Button type="primary" @click="handleSubmit('formValidate')">提交</Button>
+            <Button @click="handleReset('formValidate')" style="margin-left: 8px">重置</Button>
+        </FormItem>
+    </Form>
+       </div>
+    </div>
+</template>
+<script>
+export default {
+ name:'indicatorSetting',
+   data () {
+            return {
+                data1: [
+                    {
+                        title: '指标管理',
+                        expand: true,
+                        children: [
+                            {
+                                title: '指标1',
+                                expand: true,
+                                children: [
+                                    {
+                                        title: '指标1 1-1-1'
+                                    },
+                                    {
+                                        title: '指标1 1-1-2'
+                                    }
+                                ]
+                            },
+                            {
+                                title: '指标2',
+                                expand: true,
+                                children: [
+                                    {
+                                        title: '指标2 1-2-1'
+                                    },
+                                    {
+                                        title: '指标2 1-2-1'
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ], 
+                formValidate: {
+                    name: '',
+                    neirong: '',
+                    fangfa: '',
+                    score: '',
+                    interest: [],
+                    pfff: '',
+                    pfyj: '',
+                   
+                },
+                ruleValidate: {
+                    name: [
+                        { required: true, message: '请输入指标名称', trigger: 'blur' }
+                    ],
+                    neirong: [
+                         { required: true, message: '请输入评估内容', trigger: 'blur' },
+                        { type: 'string', min: 20, message: '内容必须大于20个字', trigger: 'blur' }
+                    ],
+                    fangfa: [
+                       { required: true, message: '请输入评估方法', trigger: 'blur' },
+                        { type: 'string', min: 20, message: '内容必须大于20个字', trigger: 'blur' }
+                    ],
+                    score: [
+                        { required: true, message: '请输入总分', trigger: 'blur' }
+                    ],
+                    pfff: [
+                        { required: true, message: '请选择评分方法', trigger: 'change' }
+                    ],
+                    pfyj: [
+                        { required: true, message: '请选择评分依据', trigger: 'change' }
+                    ],
+                
+                }
+            }
+        },
+              methods: {
+            handleSubmit (name) {
+                this.$refs[name].validate((valid) => {
+                    if (valid) {
+                        this.$Message.success('提交成功');
+                    } else {
+                        this.$Message.error('提交失败');
+                    }
+                })
+            },
+            handleReset (name) {
+                this.$refs[name].resetFields();
+            }
+        }
+}
+</script>
+<style lang="less" scoped>
+  .indicator{
+      width: 100%;
+      height: 100%;
+    
+      padding:12px;
+      display: flex;
+  .indicatorleft{
+      width: 30%;
+      height: 100%;
+        // background: #9999;
+        display: flex;
+        justify-content:space-between
+  }
+   .indicatorright{
+      width: 70%;
+       height: 100%;
+        //  background: #1999;
+         padding: 24px;
+  }
+  }
+</style>

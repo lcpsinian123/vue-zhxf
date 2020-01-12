@@ -1,0 +1,683 @@
+<template>
+<div class='container'>
+    <Tabs value="name1">
+        <TabPane label="巡检完成情况" name="name1">
+            <div class="rightHead">
+
+                <div class='navpst'>
+                    <div class='currentp'>当前位置&nbsp;:</div>
+                    <Breadcrumb separator=">">
+
+                        <BreadcrumbItem to="/baojing">{{$route.name}}</BreadcrumbItem>
+
+                    </Breadcrumb>
+                </div>
+                <div class='sousuo1'>
+                    <div style='height:40px;line-height:40px; padding-left:20px;font-size:16px; border-bottom:1px solid #eee;'>搜索查询 </div>
+                    <div class='searchMeun'>
+                        <span class="wdName_doc">
+                    区域&nbsp;:&nbsp;
+                </span>
+                <Select v-model="WY" style="width:200px" @on-change='wychange'>
+                    <Option v-for="item in wy" :value="item.ppid" :key="item.ppid">{{ item.ppname }}</Option>
+                </Select>
+                <Select v-model="XQ" style="width:200px" @on-change='xqchange'>
+                    <Option v-for="item in xq" :value="item.cpid" :key="item.cpid">{{ item.cpname }}</Option>
+                </Select>
+                <Select v-model="JZ" style="width:200px" @on-change='jzchange'>
+                    <Option v-for="item in jz" :value="item.bdid" :key="item.bdid">{{ item.note }}</Option>
+                </Select>
+
+                
+                        <span class="wdName">
+                            时间&nbsp;:&nbsp;
+                        </span>
+                        <DatePicker style='width:200px' type="date" placeholder="开始时间..." v-model="startDate"></DatePicker>
+                        <span>
+                            至&nbsp;&nbsp;
+                        </span>
+                        <DatePicker style='width:200px' type="date" placeholder="结束时间..." v-model="endDate"></DatePicker>
+                        <Button class='wdName' type="primary">查询</Button>
+
+                        <Button class='wdName' type="primary">导出</Button>
+
+                        <Modal width="700" id="add" v-model="add">
+                            <div slot="header" class="addheader">
+                                添加
+                            </div>
+                            <div class="addcontent">
+                                <div class="top">
+                                    <span class="XMLXBH">项目类型编号&nbsp;&nbsp;: </span>
+                                    <Input v-model="XMLXBH" placeholder="输入项目类型编号" style="width: 30%;margin-right:30px;" />
+                                    <span class="XMLXBH">项目类型名称&nbsp;&nbsp;: </span>
+                                    <Input v-model="XMLXBH" placeholder="输入项目类型名称" style="width: 30%" />
+                                </div>
+                                <div class="top">
+                                    <span class="XMLXBH">设备操作规范&nbsp;&nbsp;: </span>
+                                    <Input v-model="XMLXBH" style="width: 30%;margin-right:30px;" />
+                                    <span class="XMLXBH">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;备&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;注&nbsp;&nbsp;&nbsp;&nbsp;: </span>
+                                    <Input v-model="XMLXBH" style="width: 30%" />
+                                </div>
+                            </div>
+                        </Modal>
+                    </div>
+                </div>
+
+                <div class='tableBox'>
+                    <div class='topTJ'>
+                        <div class='left'>
+                            <div id='event'></div>
+                        </div>
+                    </div>
+                    <div class='bottomTJ'>
+                        <Table stripe border :columns="TableTitle" :data="TableData">
+
+                            <template slot-scope="{ row, index }" slot="action">
+                                <Button type="primary" ghost size="small" @click="xjnr = true">巡检内容</Button>
+
+                                <Modal width="700" v-model="xjnr">
+                                    <div slot="header" class="">
+                                        巡检内容列表
+                                    </div>
+                                    <div class="seaechType">
+                                        <span> 巡检类别&nbsp;&nbsp;: &nbsp;&nbsp;&nbsp;</span>
+                                        <Select v-model="floorNum" style="width:120px">
+                                            <Option v-for="item in period" :value="item.value" :key="item.value">{{ item.label }}</Option>
+                                        </Select>
+                                    </div>
+                                    <Table stripe border :columns="patrolTitle" :data="patrolcontent">
+                                        <template slot="action">
+                                            <Button type="warning" ghost size="small" @click="xjnr = true">删除</Button>
+                                        </template>
+
+                                    </Table>
+                                </Modal>
+                                <Button type="primary" ghost size="small" style="margin:0 10px" @click="updata=true">修改</Button>
+                                <Modal width="700" id="updata" v-model="updata">
+                                    <div slot="header" class="addheader">
+                                        修改
+                                    </div>
+                                    <div class="addcontent">
+                                        <div class="top">
+                                            <span class="XMLXBH">项目类型编号&nbsp;&nbsp;: </span>
+                                            <Input v-model="XMLXBH" placeholder="输入项目类型编号" style="width: 30%;margin-right:30px;" />
+                                            <span class="XMLXBH">项目类型名称&nbsp;&nbsp;: </span>
+                                            <Input v-model="XMLXBH" placeholder="输入项目类型名称" style="width: 30%" />
+                                        </div>
+                                        <div class="top">
+                                            <span class="XMLXBH">设备操作规范&nbsp;&nbsp;: </span>
+                                            <Input v-model="XMLXBH" style="width: 30%;margin-right:30px;" />
+                                            <span class="XMLXBH">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;备&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;注&nbsp;&nbsp;&nbsp;&nbsp;: </span>
+                                            <Input v-model="XMLXBH" style="width: 30%" />
+                                        </div>
+                                    </div>
+                                </Modal>
+                                <Button type="warning" ghost size="small" @click="remove(index)">删除</Button>
+
+                            </template>
+                        </Table>
+                    </div>
+                   
+                    <!--  <Page :total="TableData.length" :page-size="pageSize" show-total class="paging"></Page> -->
+                </div>
+
+            </div>
+        </TabPane>
+        <TabPane label="隐患处理情况" name="name2">
+            <div class="rightHead">
+
+                <div class='navpst'>
+                    <div class='currentp'>当前位置&nbsp;:</div>
+                    <Breadcrumb separator=">">
+
+                        <BreadcrumbItem to="/baojing">{{$route.name}}</BreadcrumbItem>
+
+                    </Breadcrumb>
+                </div>
+                <div class='sousuo1'>
+                    <div style='height:40px;line-height:40px; padding-left:20px;font-size:16px; border-bottom:1px solid #eee;'>搜索查询 </div>
+                    <div class='searchMeun'>
+                        <span class="wdName_doc">
+                            区域&nbsp;:&nbsp;
+                        </span>
+                        <Dropdown style="margin-left: 20px">
+                            <Button ghost type="primary">
+                                下拉菜单
+                                <Icon type="ios-arrow-down"></Icon>
+                            </Button>
+                            <DropdownMenu slot="list">
+                                <DropdownItem>驴打滚</DropdownItem>
+                                <DropdownItem>炸酱面</DropdownItem>
+                                <DropdownItem disabled>豆汁儿</DropdownItem>
+                                <DropdownItem>冰糖葫芦</DropdownItem>
+                                <DropdownItem divided>北京烤鸭</DropdownItem>
+                            </DropdownMenu>
+                        </Dropdown>
+                        <Dropdown style="margin-left: 20px">
+                            <Button ghost type="primary">
+                                下拉菜单
+                                <Icon type="ios-arrow-down"></Icon>
+                            </Button>
+                            <DropdownMenu slot="list">
+                                <DropdownItem>驴打滚</DropdownItem>
+                                <DropdownItem>炸酱面</DropdownItem>
+                                <DropdownItem disabled>豆汁儿</DropdownItem>
+                                <DropdownItem>冰糖葫芦</DropdownItem>
+                                <DropdownItem divided>北京烤鸭</DropdownItem>
+                            </DropdownMenu>
+                        </Dropdown>
+                        <Dropdown style="margin-left: 20px">
+                            <Button ghost type="primary">
+                                下拉菜单
+                                <Icon type="ios-arrow-down"></Icon>
+                            </Button>
+                            <DropdownMenu slot="list">
+                                <DropdownItem>驴打滚</DropdownItem>
+                                <DropdownItem>炸酱面</DropdownItem>
+                                <DropdownItem disabled>豆汁儿</DropdownItem>
+                                <DropdownItem>冰糖葫芦</DropdownItem>
+                                <DropdownItem divided>北京烤鸭</DropdownItem>
+                            </DropdownMenu>
+                        </Dropdown>
+                        <span class="wdName">
+                            时间&nbsp;:&nbsp;
+                        </span>
+                        <DatePicker style='width:200px' type="date" placeholder="开始时间..." v-model="startDate"></DatePicker>
+                        <span>
+                            至&nbsp;&nbsp;
+                        </span>
+                        <DatePicker style='width:200px' type="date" placeholder="结束时间..." v-model="endDate"></DatePicker>
+                        <Button class='wdName' type="primary">查询</Button>
+
+                        <Button class='wdName' type="primary">导出</Button>
+
+                        <Modal width="700" id="add" v-model="add">
+                            <div slot="header" class="addheader">
+                                添加
+                            </div>
+                            <div class="addcontent">
+                                <div class="top">
+                                    <span class="XMLXBH">项目类型编号&nbsp;&nbsp;: </span>
+                                    <Input v-model="XMLXBH" placeholder="输入项目类型编号" style="width: 30%;margin-right:30px;" />
+                                    <span class="XMLXBH">项目类型名称&nbsp;&nbsp;: </span>
+                                    <Input v-model="XMLXBH" placeholder="输入项目类型名称" style="width: 30%" />
+                                </div>
+                                <div class="top">
+                                    <span class="XMLXBH">设备操作规范&nbsp;&nbsp;: </span>
+                                    <Input v-model="XMLXBH" style="width: 30%;margin-right:30px;" />
+                                    <span class="XMLXBH">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;备&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;注&nbsp;&nbsp;&nbsp;&nbsp;: </span>
+                                    <Input v-model="XMLXBH" style="width: 30%" />
+                                </div>
+                            </div>
+                        </Modal>
+                    </div>
+                </div>
+
+                <div class='tableBox'>
+                    <div class='topTJ'>
+                        <div class='left'>
+                            <div id='event'></div>
+                        </div>
+                    </div>
+                    <div class='bottomTJ'>
+                        <Table stripe border :columns="TableTitle" :data="TableData">
+
+                            <template slot-scope="{ row, index }" slot="action">
+                                <Button type="primary" ghost size="small" @click="xjnr = true">巡检内容</Button>
+
+                                <Modal width="700" v-model="xjnr">
+                                    <div slot="header" class="">
+                                        巡检内容列表
+                                    </div>
+                                    <div class="seaechType">
+                                        <span> 巡检类别&nbsp;&nbsp;: &nbsp;&nbsp;&nbsp;</span>
+                                        <Select v-model="floorNum" style="width:120px">
+                                            <Option v-for="item in period" :value="item.value" :key="item.value">{{ item.label }}</Option>
+                                        </Select>
+                                    </div>
+                                    <Table stripe border :columns="patrolTitle" :data="patrolcontent">
+                                        <template slot="action">
+                                            <Button type="warning" ghost size="small" @click="xjnr = true">删除</Button>
+                                        </template>
+
+                                    </Table>
+                                </Modal>
+                                <Button type="primary" ghost size="small" style="margin:0 10px" @click="updata=true">修改</Button>
+                                <Modal width="700" id="updata" v-model="updata">
+                                    <div slot="header" class="addheader">
+                                        修改
+                                    </div>
+                                    <div class="addcontent">
+                                        <div class="top">
+                                            <span class="XMLXBH">项目类型编号&nbsp;&nbsp;: </span>
+                                            <Input v-model="XMLXBH" placeholder="输入项目类型编号" style="width: 30%;margin-right:30px;" />
+                                            <span class="XMLXBH">项目类型名称&nbsp;&nbsp;: </span>
+                                            <Input v-model="XMLXBH" placeholder="输入项目类型名称" style="width: 30%" />
+                                        </div>
+                                        <div class="top">
+                                            <span class="XMLXBH">设备操作规范&nbsp;&nbsp;: </span>
+                                            <Input v-model="XMLXBH" style="width: 30%;margin-right:30px;" />
+                                            <span class="XMLXBH">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;备&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;注&nbsp;&nbsp;&nbsp;&nbsp;: </span>
+                                            <Input v-model="XMLXBH" style="width: 30%" />
+                                        </div>
+                                    </div>
+                                </Modal>
+                                <Button type="warning" ghost size="small" @click="remove(index)">删除</Button>
+
+                            </template>
+                        </Table>
+                    </div>
+                    <!--  <Table stripe border :columns="TableTitle" :data="TableData">
+
+                <template slot-scope="{ row, index }" slot="action">
+                    <Button type="primary" ghost size="small" @click="xjnr = true">巡检内容</Button>
+
+                    <Modal width="700" v-model="xjnr">
+                        <div slot="header" class="">
+                            巡检内容列表
+                        </div>
+                        <div class="seaechType">
+                            <span> 巡检类别&nbsp;&nbsp;: &nbsp;&nbsp;&nbsp;</span>
+                            <Select v-model="floorNum" style="width:120px">
+                                <Option v-for="item in period" :value="item.value" :key="item.value">{{ item.label }}</Option>
+                            </Select>
+                        </div>
+                        <Table stripe border :columns="patrolTitle" :data="patrolcontent">
+                            <template slot="action">
+                                <Button type="warning" ghost size="small" @click="xjnr = true">删除</Button>
+                            </template>
+
+                        </Table>
+                    </Modal>
+                    <Button type="primary" ghost size="small" style="margin:0 10px" @click="updata=true">修改</Button>
+                    <Modal width="700" id="updata" v-model="updata">
+                        <div slot="header" class="addheader">
+                            修改
+                        </div>
+                        <div class="addcontent">
+                            <div class="top">
+                                <span class="XMLXBH">项目类型编号&nbsp;&nbsp;: </span>
+                                <Input v-model="XMLXBH" placeholder="输入项目类型编号" style="width: 30%;margin-right:30px;" />
+                                <span class="XMLXBH">项目类型名称&nbsp;&nbsp;: </span>
+                                <Input v-model="XMLXBH" placeholder="输入项目类型名称" style="width: 30%" />
+                            </div>
+                            <div class="top">
+                                <span class="XMLXBH">设备操作规范&nbsp;&nbsp;: </span>
+                                <Input v-model="XMLXBH" style="width: 30%;margin-right:30px;" />
+                                <span class="XMLXBH">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;备&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;注&nbsp;&nbsp;&nbsp;&nbsp;: </span>
+                                <Input v-model="XMLXBH" style="width: 30%" />
+                            </div>
+                        </div>
+                    </Modal>
+                    <Button type="warning" ghost size="small" @click="remove(index)">删除</Button>
+
+                </template>
+            </Table> -->
+                    <!--  <Page :total="TableData.length" :page-size="pageSize" show-total class="paging"></Page> -->
+                </div>
+
+            </div>
+        </TabPane>
+   
+    </Tabs>
+
+</div>
+</template>
+
+<script>
+import {
+    wyjc,
+    dwjc,
+    jzujc,
+    lcjc
+} from 'api/docManage';
+var echarts = require('echarts');
+export default {
+    data() {
+        return {
+            WY:'',
+            XQ:'',
+            JZ:'',
+            sstj: '1',
+            wy: [],
+            xq: [],
+            jz: [],
+            startDate: "",
+            endDate: '',
+            // 初始化信息总条数
+            dataCount: 0,
+            // 每页显示多少条
+            pageSize: 10,
+            floorNum: null,
+            XMLXBH: null,
+            xjnr: false,
+            add: false,
+            updata: false,
+            WordName: null,
+            drawCategory: null,
+            period: [{
+                    value: "all",
+                    label: '全部'
+                },
+                {
+                    value: "year",
+                    label: '每年巡检'
+                },
+                {
+                    value: "month",
+                    label: '每月巡检'
+                },
+                {
+                    value: "day",
+                    label: '每日巡检'
+                }
+
+            ],
+            TableTitle: [{
+                    title: '单位',
+                    width: 80,
+                    align: 'center',
+                    key: 'sortNum'
+                },
+
+                {
+                    title: '计划巡检点位数',
+                    align: 'center',
+                    key: 'docCategory'
+                },
+                {
+                    title: '实际巡检点位数',
+                    align: 'center',
+                    key: 'updataTime'
+                },
+                {
+                    title: '计划巡检设备数',
+                    align: 'center',
+                    key: 'realUnit'
+                },
+                {
+                    title: '实际巡检设备数',
+                    key: 'action',
+                    // slot: 'action',
+                    align: 'center'
+                },
+                {
+                    title: '巡检完成进度',
+                    key: 'action',
+                    // slot: 'action',
+                    align: 'center'
+                }
+            ],
+            TableData: [{
+                    sortNum: 1,
+
+                    docCategory: '平面图',
+                    updataTime: '2019-04-10',
+                    realUnit: "振南物业",
+
+                },
+                {
+                    sortNum: 2,
+
+                    docCategory: '平面图',
+                    updataTime: '2019-04-10',
+                    realUnit: "振南物业",
+
+                }
+
+            ],
+            patrolTitle: [{
+                    title: '巡检内容',
+                    align: 'center',
+                    key: 'patrolCon'
+                },
+
+                {
+                    title: '操作类型',
+                    align: 'center',
+                    key: 'actionType'
+                },
+                {
+                    title: '最大值',
+                    align: 'center',
+                    key: 'max'
+                },
+                {
+                    title: '最小值',
+                    align: 'center',
+                    key: 'min'
+                },
+                {
+                    title: '数据类型',
+                    align: 'center',
+                    key: 'datasType'
+                },
+                {
+                    title: '操作',
+                    key: 'action',
+                    slot: 'action',
+                    align: 'center'
+                }
+            ],
+            patrolcontent: [{
+                    patrolCon: "压力不足",
+                    actionType: '选择设备',
+                    max: '99',
+                    min: '1',
+                    datasType: "消防安全",
+
+                },
+                {
+                    patrolCon: "瓶体腐蚀",
+                    actionType: '选择设备',
+                    max: '9',
+                    min: '1',
+                    datasType: "消防安全",
+
+                }
+            ]
+        }
+    },
+    created() {
+        // this.initEvent()
+        this.initdata()
+    },
+    mounted() {
+        // this.initEvent()
+        this.initEvent1()
+    },
+    methods: {
+        initdata() {
+            wyjc({}).then(res => {
+                this.wy = res.obj
+            })
+        },
+        wychange(i){
+            dwjc({
+                ppid:i
+            }).then(res=>{
+                
+                this.xq=res.obj
+            })
+        },
+        xqchange(val){
+            jzujc({
+                cpid: val
+            }).then(res => {
+                this.jz = res.obj;
+            })
+        },
+        // 左侧echart初始化
+        // initEvent() {
+        //     var myChart = echarts.init(document.getElementById('event'));
+        //     myChart.setOption({
+        //         title: {
+        //             text: '',
+        //             subtext: '纯属虚构',
+        //             x: 'center'
+        //         },
+        //         tooltip: {
+        //             trigger: 'item',
+        //             formatter: "{a} <br/>{b} : {c} ({d}%)"
+        //         },
+        //         legend: {
+        //             // orient: 'vertical',
+        //             bottom: 'bottom',
+        //             data: ['直接访问', '邮件营销', '联盟广告', '视频广告', '搜索引擎']
+        //         },
+        //         series: [{
+        //             name: '访问来源',
+        //             type: 'pie',
+        //             radius: '55%',
+        //             center: ['50%', '50%'],
+        //             data: [{
+        //                     value: 335,
+        //                     name: '直接访问'
+        //                 },
+        //                 {
+        //                     value: 310,
+        //                     name: '邮件营销'
+        //                 },
+        //                 {
+        //                     value: 234,
+        //                     name: '联盟广告'
+        //                 },
+        //                 {
+        //                     value: 135,
+        //                     name: '视频广告'
+        //                 },
+        //                 {
+        //                     value: 1548,
+        //                     name: '搜索引擎'
+        //                 }
+        //             ],
+        //             itemStyle: {
+        //                 emphasis: {
+        //                     shadowBlur: 10,
+        //                     shadowOffsetX: 0,
+        //                     shadowColor: 'rgba(0, 0, 0, 0.5)'
+        //                 }
+        //             }
+        //         }]
+        //     });
+        // },
+        initEvent1() {
+            var myChart = echarts.init(document.getElementById('event'));
+            myChart.setOption({
+                xAxis: {
+                    type: 'category',
+                    data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+                },
+                yAxis: {
+                    type: 'value',
+                    splitLine: {
+                        show: false,
+                    }
+                },
+                series: [{
+                    data: [120, 200, 150, 80, 70, 110, 130],
+                    type: 'bar'
+                }]
+            });
+        }
+    },
+}
+</script>
+
+<style lang="less" scoped>
+.container {
+    height: 100%;
+    width: 100%;
+    padding: 0 3px;
+    background-color: #edf5f7;
+
+    .rightHead {
+        height: 100%;
+
+        .searchMeun {
+            padding: 0 20px;
+            position: relative;
+            // top: -27px;
+
+            // border: 1px solid #e8eaec;
+            border-top: none;
+            height: 80px;
+            line-height: 80px;
+
+            .wdName {
+                margin-left: 50px;
+            }
+        }
+
+        .tableBox {
+            margin-top: 20px;
+            background: #fff;
+            height: 73%;
+
+            .topTJ {
+                display: flex;
+                height: 240px;
+
+                .left {
+                    flex: 1;
+
+                    #event {
+                        height: 100%;
+                    }
+                }
+
+                .right {
+                    flex: 1;
+                    height: 240px;
+
+                    #category {
+                        height: 100%;
+                    }
+                }
+            }
+        }
+    }
+
+}
+</style><style>
+.seaechType {
+    width: 100%;
+    height: 40px;
+    text-align: right;
+}
+
+#add /deep/ .ivu-modal-header,
+#updata /deep/ .ivu-modal-header {
+    padding: 0;
+}
+
+#add /deep/ .ivu-modal-close,
+#updata /deep/ .ivu-modal-close {
+    top: 3px;
+}
+
+.sousuo1 {
+    background: #fff;
+    box-shadow: 0px 2px 3px -2px;
+
+    margin-top: 20px;
+    background: #fff;
+}
+
+.navpst {
+    height: 60px;
+    line-height: 60px;
+    padding-left: 20px;
+    display: flex;
+    background-color: #fff;
+    box-shadow: 0px 2px 3px -2px;
+}
+
+.navpst .currentp {
+    margin-right: 10px;
+}
+
+.navpst .ivu-breadcrumb-item-link {
+    color: #2456bb;
+}
+</style>

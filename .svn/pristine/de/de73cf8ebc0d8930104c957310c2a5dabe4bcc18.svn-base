@@ -1,0 +1,252 @@
+<!--
+ * @Author: your name
+ * @Date: 2019-10-25 15:37:31
+ * @LastEditTime: 2019-10-28 16:22:31
+ * @LastEditors: Please set LastEditors
+ * @Description: In User Settings Edit
+ * @FilePath: \vue-zzxf\src\components\securityAssessment\assessmentTask.vue
+ -->
+<template>
+    <div class="assessmenttask">
+            <Divider orientation="left">搜索查询</Divider>
+        <div class="sousuo">
+                <div class="pgzt">
+                <span>评估状态：</span>
+                 <Select placeholder="请选择">
+                <Option value="yiwanc">已完成</Option>
+                <Option value="weiwanc">未完成</Option>
+                 </Select>
+            </div>
+                <div class="pgsj">
+                <span>评估时间：</span>
+                 <DatePicker type="date" placeholder="开始时间" ></DatePicker>
+                 —
+                <DatePicker type="date" placeholder="结束时间" ></DatePicker>
+            </div>
+            <div class="btn">
+                 <Button type="primary">查询</Button>
+            </div>
+        </div>
+         <div class="btnclass">
+              <Button type="success"  @click="modal1 = true">添加</Button>
+               <Button type="warning">编辑</Button>
+                <Button type="error">批量删除</Button>
+                 <Button type="primary">导出</Button>
+         </div>
+         <div class="tablediv">
+              <Table stripe border :columns="TableTitle" :data="TableData">
+
+                        <template slot-scope="{ row, index }" slot="action">
+                            <Button type="error" ghost size="small" style="margin-right: 5px" >下发</Button>
+                            <Button type="primary" ghost size="small" >详情</Button>
+                        </template>
+                    </Table>
+         </div>
+         <Modal
+        v-model="modal1"
+        width="700"
+        title="添加计划"
+        @on-ok="ok"
+        @on-cancel="cancel">
+                    <div class="addDraw">
+                            <span>评估名称 &nbsp; :&nbsp;&nbsp; </span>
+                            <Input  placeholder="输入评估名称" style="width: 230px;margin-right:30px;" />
+                            <span class="drawLeft">评估截止时间 &nbsp; :&nbsp;&nbsp; </span>
+                         <DatePicker type="date" placeholder="输入截止时间" ></DatePicker>
+
+                        </div>
+                              <div class="addDraw">
+                            <span>评估单位 &nbsp; :&nbsp;&nbsp; </span>
+                             <Select v-model="model10" multiple style="width:230px;margin-right:30px;">
+        <Option v-for="item in cityList" :value="item.value" :key="item.value">{{ item.label }}</Option>
+    </Select>
+                            <span class="drawLeft">评估标准 &nbsp; :&nbsp;&nbsp;</span>
+                              <Select v-model="floorNum" style="width:230px">
+                                <Option v-for="item in floorLIst" :value="item.value" :key="item.value">{{ item.label }}</Option>
+                            </Select>
+                        </div>
+                          <div class="addDraw">
+                            <span>上传文件 :&nbsp;&nbsp; </span>
+                            <Upload multiple type="drag" action="//jsonplaceholder.typicode.com/posts/">
+                                <div style="padding: 20px 0">
+                                    <Icon type="ios-cloud-upload" size="52" style="color: #3399ff"></Icon>
+                                    <p>请选择需要上传的文件... </p>
+                                </div>
+                            </Upload>
+
+                        </div>
+    </Modal>
+    </div>
+</template>
+<script>
+export default {
+    name:'assessmentTask',
+    data() {
+        return {
+              modal1: false,
+               model10: [],
+               floorNum:'',
+                floorLIst: [{
+                value: "open",
+                label: "启用"
+            }, {
+                value: "close",
+                label: "不启用"
+            }],
+               cityList: [
+                    {
+                        value: 'New York',
+                        label: 'New York'
+                    },
+                    {
+                        value: 'London',
+                        label: 'London'
+                    },
+                    {
+                        value: 'Sydney',
+                        label: 'Sydney'
+                    },
+                    {
+                        value: 'Ottawa',
+                        label: 'Ottawa'
+                    },
+                    {
+                        value: 'Paris',
+                        label: 'Paris'
+                    },
+                    {
+                        value: 'Canberra',
+                        label: 'Canberra'
+                    }
+                ],
+             TableTitle: [{
+                    type: 'selection',
+                    width: 60,
+                    align: 'center'
+                },
+                {
+                    title: '序号',
+                     width: 100,
+                    key: 'sortNum'
+                },
+                {
+                    title: '评估名称',
+                    
+                    key: 'docName'
+                },
+                {
+                    title: '评估截止时间',
+                 
+                    key: 'updataTime'
+                },
+                {
+                    title: '评估单位',
+                   
+                    key: 'realUnit'
+                },
+                {
+                    title: '评估标准',
+                   
+                    key: 'buildNum'
+                },
+                {
+                    title: '状态',
+                    key: 'floorNum'
+                },
+                {
+                    title: '操作',
+                    key: 'action',
+                    slot: 'action',
+                    align: 'center'
+                }
+            ],
+            TableData: [{
+                    sortNum: 1,
+                    docName: "2019年2月22日消防安全评估",
+                    updataTime: '2019-04-10',
+                    realUnit: "振南物业",
+                    buildNum: '是否完成',
+                    floorNum: "是",
+                
+                },
+                {
+                    sortNum: 2,
+                    docName: "2019年2月22日消防安全评估",
+                    updataTime: '2019-04-10',
+                    realUnit: "振南物业",
+                    buildNum: '是否完成',
+                    floorNum: "否",
+                }
+
+            ],
+        }
+    },
+     methods: {
+            ok () {
+                this.$Message.info('添加成功');
+            },
+            cancel () {
+                this.$Message.info('取消成功');
+            }
+        }
+}
+</script>
+<style lang="less" scoped>
+.assessmenttask{
+    width: 100%;
+    height: 100%;
+    padding: 24px;
+    .sousuo{
+        width: 100%;
+        height: 100px;
+        // background: #9999;
+        position: relative;
+        top: -27px;
+        border: 1px solid #e8eaec;
+        border-top:0px;
+            display: flex;
+    align-items: center;
+    .pgzt{
+        width: 300px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding-left: 10px;
+        span{
+            width: 100px;
+        }
+    }
+    .pgsj{
+        padding-left: 24px;
+    }
+    .btn{
+        padding-left: 24px;
+    }
+    }
+    .btnclass{
+        button{
+            width: 88px;
+            margin-left: 20px;
+        }
+    }
+    .tablediv{
+        margin-top: 20px;
+    }
+ 
+}
+   .coldiv{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        span{
+            width: 140px;
+        }
+        input{
+            width: 200px;
+        }
+    }
+    .addDraw {
+    padding: 10px 0;
+
+}
+</style>
