@@ -19,7 +19,7 @@
     "echarts-liquidfill": "^2.0.5",
     "jquery": "^3.4.1",
     "qs": "^6.9.0",
-    "three": "^0.109.0",
+    "three": "^0.137.0",
     "three-obj-mtl-loader": "^1.0.3",
     "view-design": "^4.0.0",
     "vue": "^2.6.10",
